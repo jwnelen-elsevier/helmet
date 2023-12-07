@@ -1,0 +1,12 @@
+matplotlib
+numpy
+ipython
+seaborn
+transformers
+accelerate
+pytest
+setuptools
+torch==2.1.1
+PyYAML
+captum
+requests==2.27.1
