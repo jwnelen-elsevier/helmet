@@ -13,6 +13,7 @@ bs4 = "^0.0.1"
 numpy = "^1.26.2"
 transformers = "^4.35.2"
 captum = "^0.7.0"
+accelerate = "^0.25.0"
 
 
 [build-system]

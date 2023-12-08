@@ -11,22 +11,41 @@
 #         top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
 #         return self.tokenizer.decode(top_5_tokens[0])
 
+from transformers import AutoModel, AutoTokenizer
+import torch
+from torch.nn import functional as F
+
+text = "How do I unscrew a screw without a screwdriver?"
+document = """Kitchen butter knives can be used in a very similar way to coins. Insert the end of the butter knife into the longer groove and turn counterclockwise to unscrew the screw.
+If your butter knife is of low quality and strength or the screw is very tight, then you may bend your butter knife rather than unscrewing the screw. Be aware of this potential damage.[1]"""
 
 class LLM(object):
-    def __init__(self, name):
+    def __init__(self, name, model_name, tokenizer_name):
         self.name = name
+        self.model = AutoModel.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
 
-    def split(self):
-        from langchain.document_loaders import WebBaseLoader
-        loader = WebBaseLoader("https://lilianweng.github.io/posts/2023-06-23-agent/")
-        data = loader.load()
+    def describe_model(self) -> None:
+        print("model name: ", self.model.config.model_type)
+        print("model config: ", self.model.config)
+        print("can generate:", self.model.can_generate())
+        print("is parallelizable:", self.model.is_parallelizable)
 
-        from langchain.text_splitter import RecursiveCharacterTextSplitter
+    def tokenize(self, text: str = text) -> torch.Tensor:
+        tokens = self.tokenizer.encode(text, return_tensors='pt')
+        print("tokens: ", tokens)
+        for token in tokens[0]:
+            print("token:", self.tokenizer.decode([token]))
+        return tokens
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
-        all_splits = text_splitter.split_documents(data)
+    def embed(self, tokens: torch.Tensor) -> torch.Tensor:
+        print("embeddings", self.model.embeddings.word_embeddings(tokens))
 
-    def predict(self, text):
-        print(f"{text}, Hello World 2")
+        for e in self.model.embeddings.word_embeddings(tokens)[0]:
+            print("This is an embedding!", e[0])
+
+    def model_forward(self, tokens: torch.Tensor) -> torch.Tensor:
+        output = self.model(tokens)
+        return F.softmax(output.logits[:, -1, :], dim=-1)
 
         
