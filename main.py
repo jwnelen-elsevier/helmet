@@ -8,15 +8,19 @@ If your butter knife is of low quality and strength or the screw is very tight, 
 model_checkpoint = "bert-base-cased"
 lm = LLM(name="llm", model_name=model_checkpoint, tokenizer_name=model_checkpoint)
 
-tokens_text = lm.tokenizer.tokenize(text)
-indexed_tokens = lm.tokenizer.convert_tokens_to_ids(tokens_text)
+url = "http://localhost:3000"
+lm.set_explainer_url(url)
+lm.update_explainainer()
 
-lm.display_tokenized_text(tokens_text, indexed_tokens)
+# tokens_text = lm.tokenizer.tokenize(text)
+# indexed_tokens = lm.tokenizer.convert_tokens_to_ids(tokens_text)
 
-tokens_document = lm.tokenizer.tokenize(document)
-index_tokend_document = lm.tokenizer.convert_tokens_to_ids(tokens_document)
+# lm.display_tokenized_text(tokens_text, indexed_tokens)
 
-lm.display_tokenized_text(tokens_document, index_tokend_document)
+# tokens_document = lm.tokenizer.tokenize(document)
+# index_tokend_document = lm.tokenizer.convert_tokens_to_ids(tokens_document)
+
+# lm.display_tokenized_text(tokens_document, index_tokend_document)
 
 # embeddings_text = lm.embed(text)
 # embeddings_document = lm.embed(document)

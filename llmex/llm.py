@@ -14,6 +14,7 @@
 from transformers import AutoModel, AutoTokenizer
 import torch
 from torch.nn import functional as F
+import requests
 
 text = "How do I unscrew a screw without a screwdriver?"
 document = """Kitchen butter knives can be used in a very similar way to coins. Insert the end of the butter knife into the longer groove and turn counterclockwise to unscrew the screw.
@@ -40,6 +41,17 @@ class LLM(object):
         self.name = name
         self.model = AutoModel.from_pretrained(model_name)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.explainer_url = ""
+
+    def set_explainer_url(self, url):
+        self.explainer_url = url
+
+    def update_explainainer(self):
+        myobj = {'name': self.name, 
+                 'model': 'bert-base-cased', 
+                 'tokenizer': 'bert-base-cased'}
+        x = requests.post(self.explainer_url, json = myobj)
+        print(x)
 
     def describe_model(self) -> None:
         print("model name: ", self.model.config.model_type)
