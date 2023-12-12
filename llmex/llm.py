@@ -11,47 +11,49 @@
 #         top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
 #         return self.tokenizer.decode(top_5_tokens[0])
 
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from torch.nn import functional as F
 import requests
 
-text = "How do I unscrew a screw without a screwdriver?"
-document = """Kitchen butter knives can be used in a very similar way to coins. Insert the end of the butter knife into the longer groove and turn counterclockwise to unscrew the screw.
-If your butter knife is of low quality and strength or the screw is very tight, then you may bend your butter knife rather than unscrewing the screw. Be aware of this potential damage.[1]"""
-
-from scipy.spatial.distance import cosine
-import numpy as np
-
-def cosine_similarity(vector1: torch.Tensor, vector2: torch.Tensor) -> float:
-    tensor1 = torch.tensor(vector1,requires_grad=True)
-    tensor2 = torch.tensor(vector2,requires_grad=True)
-
-    # Ensure that the vectors are numpy arrays
-    vector1 = np.array(tensor1.detach().numpy())
-    vector2 = np.array(tensor2.detach().numpy())
-
-    # Calculate the cosine similarity
-    similarity = 1 - cosine(vector1, vector2)
-
-    return similarity
-
 class LLM(object):
-    def __init__(self, name, model_name, tokenizer_name):
+    def __init__(self, name, model_checkpoint, tokenizer_name):
         self.name = name
-        self.model = AutoModel.from_pretrained(model_name)
+        self.model_checkpoint = model_checkpoint
+        self.tokenizer_checkpoint = tokenizer_name
+        self.model = AutoModelForCausalLM.from_pretrained(model_checkpoint)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.explainer_url = ""
+        self.last_prompt = ""
+        self.output = ""
 
     def set_explainer_url(self, url):
         self.explainer_url = url
 
     def update_explainainer(self):
         myobj = {'name': self.name, 
-                 'model': 'bert-base-cased', 
-                 'tokenizer': 'bert-base-cased'}
-        x = requests.post(self.explainer_url, json = myobj)
-        print(x)
+                 'model': self.model_checkpoint,
+                 'tokenizer': self.tokenizer_checkpoint,
+                 'can_generate': self.model.can_generate(),
+                    'is_parallelizable': self.model.is_parallelizable,
+                'prompt': self.last_prompt,
+                'output': self.output
+        } 
+        requests.post(self.explainer_url, json = myobj)
+
+    def generate(self, prompt: str, update_explainainer) -> str:
+        print("Generating text for prompt: ", prompt)
+        inputs = self.tokenize(prompt)
+        print("Input tokens are \n {} ".format(inputs))
+        outputs = self.model.generate(inputs, max_length=250, do_sample=True, top_p=0.95, top_k=60)
+        print("Output tokens are \n {} ".format(outputs))
+        o = self.tokenizer.decode(outputs[0])
+        if update_explainainer:
+            self.last_prompt = prompt
+            self.output = o
+            self.update_explainainer()
+        return o
+    
 
     def describe_model(self) -> None:
         print("model name: ", self.model.config.model_type)
@@ -61,7 +63,7 @@ class LLM(object):
 
     def tokenize(self, text: str):
         # return self.tokenizer.encode(text, return_tensors='pt')
-        return self.tokenizer.encode(text)
+        return self.tokenizer(text, return_tensors="pt")["input_ids"]
 
     def display_tokenized_text(self, tokens, index_tokens):
         # Display the words with their indeces.
