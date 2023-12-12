@@ -1,16 +1,3 @@
-# class LM(object):
-#     def __init__(self, model: AutoModelForMaskedLM, tokenizer: AutoTokenizer):
-#         self.model = model
-#         self.tokenizer = tokenizer
-
-#     def predict(self, text):
-#         inputs = self.tokenizer(text, return_tensors="pt")
-#         mask_token_index = torch.where(inputs["input_ids"][0] == self.tokenizer.mask_token_id)
-#         token_logits = self.model(**inputs).logits
-#         mask_token_logits = token_logits[0, mask_token_index, :]
-#         top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
-#         return self.tokenizer.decode(top_5_tokens[0])
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from torch.nn import functional as F
@@ -34,14 +21,12 @@ class LLM(object):
         myobj = {'name': self.name, 
                  'model': self.model_checkpoint,
                  'tokenizer': self.tokenizer_checkpoint,
-                 'can_generate': self.model.can_generate(),
-                    'is_parallelizable': self.model.is_parallelizable,
                 'prompt': self.last_prompt,
                 'output': self.output
         } 
         requests.post(self.explainer_url, json = myobj)
 
-    def generate(self, prompt: str, update_explainainer) -> str:
+    def generate(self, prompt: str, update_explainainer: bool) -> str:
         print("Generating text for prompt: ", prompt)
         inputs = self.tokenize(prompt)
         print("Input tokens are \n {} ".format(inputs))
@@ -52,17 +37,11 @@ class LLM(object):
             self.last_prompt = prompt
             self.output = o
             self.update_explainainer()
+            print('Updated explainer')
         return o
     
 
-    def describe_model(self) -> None:
-        print("model name: ", self.model.config.model_type)
-        print("model config: ", self.model.config)
-        print("can generate:", self.model.can_generate())
-        print("is parallelizable:", self.model.is_parallelizable)
-
     def tokenize(self, text: str):
-        # return self.tokenizer.encode(text, return_tensors='pt')
         return self.tokenizer(text, return_tensors="pt")["input_ids"]
 
     def display_tokenized_text(self, tokens, index_tokens):

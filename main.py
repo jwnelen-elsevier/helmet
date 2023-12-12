@@ -7,5 +7,6 @@ lm = LLM(name="LLM Generator", model_checkpoint=model_checkpoint, tokenizer_name
 lm.set_explainer_url(url)
 
 prompt = "Today the weather is really nice and I am planning on "
-lm.update_explainainer()
-# res = lm.generate(prompt, update_explainer=True)
+
+# lm.update_explainainer()
+res = lm.generate(prompt, True)
