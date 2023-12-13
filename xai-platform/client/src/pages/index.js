@@ -29,7 +29,8 @@ function ExplainerDisplay({ data }) {
       <div>
         {Object.keys(data).map((key) => (
           <p>
-            {key}: <span className="font-mono">{data[key]}</span>
+            <span className="font-bold text-xl">{key}: </span>
+            <span className="font-mono">{data[key]}</span>
           </p>
         ))}
       </div>

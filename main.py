@@ -9,4 +9,4 @@ lm.set_explainer_url(url)
 prompt = "Today the weather is really nice and I am planning on "
 
 # lm.update_explainainer()
-res = lm.generate(prompt, True)
+res = lm.generate(prompt=prompt, update_explainainer=True)
