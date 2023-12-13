@@ -4,14 +4,37 @@ import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const serverUrl = "http://localhost:3000";
+const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
 
 export async function getStaticProps() {
-  console.log("Getting static props");
-  const res = await fetch(`${serverUrl}/explainer`);
-  const data = await res.json();
+  console.log("Getting static props from", serverUrl);
+  let res;
+  try {
+    res = await fetch(`${serverUrl}/explainer`);
+  } catch (e) {
+    console.log("Error fetching explainer at ", serverUrl);
+    console.log(e);
+    return {
+      props: {
+        data: {
+          error: "Error fetching explainer",
+        },
+      },
+    };
+  }
 
-  console.log("getstatis", data);
+  if (!res?.ok) {
+    console.log("Error fetching explainer at ", serverUrl);
+    console.log(res);
+    return {
+      props: {
+        data: {
+          error: "Error fetching explainer",
+        },
+      },
+    };
+  }
+  const data = await res.json();
 
   return {
     props: { data },
@@ -27,8 +50,8 @@ function ExplainerDisplay({ data }) {
   return (
     <div>
       <div>
-        {Object.keys(data).map((key) => (
-          <p>
+        {Object.keys(data).map((key, idx) => (
+          <p key={idx}>
             <span className="font-bold text-xl">{key}: </span>
             <span className="font-mono">{data[key]}</span>
           </p>

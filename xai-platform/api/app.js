@@ -3,6 +3,7 @@ require("dotenv").config();
 
 //libraries
 const path = require("path");
+const port = process.env.PORT || 4000;
 
 var express = require("express");
 var app = express();
@@ -15,16 +16,13 @@ let STATE = {
 app.use(cors());
 app.use(express.json());
 
-app.use("/", express.static(path.resolve(__dirname, "..", "public")));
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
 app.get("/explainer", (req, res) => {
   console.log("Got a request");
   res.json(STATE);
-});
-
-//startup
-app.listen(process.env.WEB_PORT || 3000, async (err) => {
-  console.log(`listening to localhost:${process.env.WEB_PORT || 3000}`);
 });
 
 app.post("/", function (req, res) {
@@ -34,6 +32,11 @@ app.post("/", function (req, res) {
 });
 
 //fallback to the index file
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "..", "public", "index.html"));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "..", "public", "index.html"));
+// });
+
+//startup
+app.listen(port, async (err) => {
+  console.log(`listening to localhost:${port}`);
 });
