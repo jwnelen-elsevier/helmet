@@ -55,12 +55,30 @@ function ExplainerDisplay({ data }) {
     return <div>Loading...</div>;
   }
 
-  const text = data["text"]
-    ? data["text"]
-    : "No text found. Please try again later.";
-  const fAttribution = data["fAttribution"]
-    ? data["fAttribution"]
-    : defaultData["fAttribution"];
+  return (
+    <table className="table-auto w-full">
+      <thead className="border-b">
+        <tr>
+          <th>Feature Attributions</th>
+          <th>Date</th>
+          <th>MetaData</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((d, i) => {
+          const { text, fAttribution, metaData } = d;
+          return (
+            <TextHighlighter
+              text={text}
+              fAttribution={fAttribution}
+              metaData={metaData}
+              key={i}
+            ></TextHighlighter>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 
   return (
     <TextHighlighter text={text} fAttribution={fAttribution}></TextHighlighter>
@@ -70,7 +88,7 @@ function ExplainerDisplay({ data }) {
 export default function Home({ data }) {
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      className={`flex min-h-screen min-w-screen flex-col items-center justify-between py-24 ${inter.className}`}
     >
       {data && <ExplainerDisplay data={data}></ExplainerDisplay>}
     </main>
