@@ -1,10 +1,16 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
+import TextHighlighter from "@/components/TextHighlighter";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
+
+const defaultData = {
+  text: "This is a test, you can at least see how it would look like",
+  fAttribution: [0, 1, 0, 0.5, 0, 0, 0.1, 0, 0.8, 0, 0, 0, 0, 0, 0.6, 0],
+};
 
 export async function getStaticProps() {
   console.log("Getting static props from", serverUrl);
@@ -18,6 +24,7 @@ export async function getStaticProps() {
       props: {
         data: {
           error: "Error fetching explainer",
+          ...defaultData,
         },
       },
     };
@@ -30,6 +37,7 @@ export async function getStaticProps() {
       props: {
         data: {
           error: "Error fetching explainer",
+          ...defaultData,
         },
       },
     };
@@ -47,17 +55,15 @@ function ExplainerDisplay({ data }) {
     return <div>Loading...</div>;
   }
 
+  const text = data["text"]
+    ? data["text"]
+    : "No text found. Please try again later.";
+  const fAttribution = data["fAttribution"]
+    ? data["fAttribution"]
+    : defaultData["fAttribution"];
+
   return (
-    <div>
-      <div>
-        {Object.keys(data).map((key, idx) => (
-          <p key={idx}>
-            <span className="font-bold text-xl">{key}: </span>
-            <span className="font-mono">{data[key]}</span>
-          </p>
-        ))}
-      </div>
-    </div>
+    <TextHighlighter text={text} fAttribution={fAttribution}></TextHighlighter>
   );
 }
 
