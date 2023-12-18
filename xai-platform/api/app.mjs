@@ -11,7 +11,7 @@ const port = process.env.PORT || 4000;
 
 // Data
 import defaultData from "./defaultValues.js";
-const STATE = defaultData;
+let STATE = defaultData;
 
 // Create the express app
 var app = express();
@@ -27,8 +27,13 @@ app.get("/explainer", (req, res) => {
   res.json(STATE);
 });
 
+app.post("/empty-state", (req, res) => {
+  STATE = [];
+  res.status(200).send("State cleared");
+});
+
 app.post("/", function (req, res) {
-  newRun = req.body;
+  const newRun = req.body;
   STATE.push(newRun);
   res.send("Saved").status(200);
 });

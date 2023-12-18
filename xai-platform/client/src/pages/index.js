@@ -48,8 +48,12 @@ export async function getStaticProps() {
 
 function ExplainerDisplay({ data }) {
   console.log(data);
-  if (!data || data?.length === 0) {
+  if (!data) {
     return <div>Loading...</div>;
+  }
+
+  if (data.length === 0) {
+    return <div>No data yet</div>;
   }
 
   return (
@@ -75,10 +79,6 @@ function ExplainerDisplay({ data }) {
       </tbody>
     </table>
   );
-
-  return (
-    <TextHighlighter text={text} fAttribution={fAttribution}></TextHighlighter>
-  );
 }
 
 export default function Home({ data }) {
@@ -86,7 +86,28 @@ export default function Home({ data }) {
     <main
       className={`flex min-h-screen min-w-screen flex-col items-center justify-between py-24 ${inter.className}`}
     >
-      {data && <ExplainerDisplay data={data}></ExplainerDisplay>}
+      <ExplainerDisplay data={data}></ExplainerDisplay>
+      <button
+        className="bg-blue-600 px-3 py-2 rounded text-white"
+        onClick={(e) => {
+          e.preventDefault();
+          console.log("Resetting state");
+          fetch(`${serverUrl}/empty-state`, {
+            method: "POST",
+          }).then((response) => {
+            console.log("State reset");
+            console.log(response);
+            if (response.status !== 200) {
+              console.log("Error resetting state");
+              console.log(r);
+              return;
+            }
+            window.location.reload();
+          });
+        }}
+      >
+        Reset state
+      </button>
     </main>
   );
 }

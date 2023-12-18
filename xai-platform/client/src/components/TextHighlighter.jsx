@@ -14,7 +14,6 @@ const TextHighlighter = ({ text, fAttribution, metaData }) => {
     // Kind of threshold for when we are highlighting
     colorHue = value < 0.1 ? "white" : colorHue;
 
-    console.log(colorSaturation);
     // Treshold for white text on dark background
     if (colorSaturation > 400) {
       return `text-white bg-${colorHue}-${colorSaturation}`;
