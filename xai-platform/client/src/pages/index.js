@@ -5,12 +5,9 @@ import TextHighlighter from "@/components/TextHighlighter";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const serverUrl = process.env.SERVER_URL ?? "http://localhost:3000";
+const serverUrl = process.env.SERVER_URL ?? "http://localhost:4000";
 
-const defaultData = {
-  text: "This is a test, you can at least see how it would look like",
-  fAttribution: [0, 1, 0, 0.5, 0, 0, 0.1, 0, 0.8, 0, 0, 0, 0, 0, 0.6, 0],
-};
+import { defaultData } from "../data/defaultValues.js";
 
 export async function getStaticProps() {
   console.log("Getting static props from", serverUrl);
@@ -51,7 +48,7 @@ export async function getStaticProps() {
 
 function ExplainerDisplay({ data }) {
   console.log(data);
-  if (!data || Object.keys(data).length === 0) {
+  if (!data || data?.length === 0) {
     return <div>Loading...</div>;
   }
 
@@ -66,12 +63,11 @@ function ExplainerDisplay({ data }) {
       </thead>
       <tbody>
         {data.map((d, i) => {
-          const { text, fAttribution, metaData } = d;
+          const { tokens, attributions } = d;
           return (
             <TextHighlighter
-              text={text}
-              fAttribution={fAttribution}
-              metaData={metaData}
+              text={tokens}
+              fAttribution={attributions}
               key={i}
             ></TextHighlighter>
           );
