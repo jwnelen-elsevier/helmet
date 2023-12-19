@@ -12,7 +12,7 @@ const TextHighlighter = ({ text, fAttribution, metaData }) => {
     const colorSaturation = Math.floor(newValue / newInterval) * newInterval;
     let colorHue = value < 0 ? "red" : "green";
     // Kind of threshold for when we are highlighting
-    colorHue = value < 0.1 ? "white" : colorHue;
+    colorHue = Math.abs(value) < 0.1 ? "white" : colorHue;
 
     // Treshold for white text on dark background
     if (colorSaturation > 400) {
