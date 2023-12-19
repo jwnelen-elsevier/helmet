@@ -40,7 +40,7 @@ const TextHighlighter = ({ text, fAttribution, metaData }) => {
           const { trimmedWord, m } = marginStyle(word);
 
           return (
-            <div className="flex flex-col text-center outline outline-1">
+            <div className="flex flex-col text-center ">
               <span className={`rounded-sm ${color(f)} ${m}`}>
                 {trimmedWord}
               </span>
@@ -51,6 +51,13 @@ const TextHighlighter = ({ text, fAttribution, metaData }) => {
       </td>
       {/* <td>{date}</td> */}
       {/* <td className="font-mono text-sm">{JSON.stringify(meta)}</td> */}
+      <td>
+        <div className="flex justify-center">
+          <button className="bg-blue-600 px-3 py-2 rounded text-sm text-white">
+            Details
+          </button>
+        </div>
+      </td>
     </tr>
   );
 };

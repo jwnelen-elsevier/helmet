@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:4000";
 
-import { defaultData } from "../data/defaultValues.js";
+import defaultData from "../data/defaultValues.js";
 
 export async function getStaticProps() {
   console.log("Getting static props from", serverUrl);
@@ -21,7 +21,7 @@ export async function getStaticProps() {
       props: {
         data: {
           error: "Error fetching explainer",
-          ...defaultData,
+          defaultData: defaultData,
         },
       },
     };
@@ -56,13 +56,17 @@ function ExplainerDisplay({ data }) {
     return <div>No data yet</div>;
   }
 
+  if (data.error) {
+    data = data.defaultData;
+  }
+
   return (
     <table className="table-auto w-full">
       <thead className="border-b">
         <tr>
           <th>Feature Attributions</th>
-          <th>Date</th>
-          <th>MetaData</th>
+          {/* <th>Date</th> */}
+          <th>Details</th>
         </tr>
       </thead>
       <tbody>
