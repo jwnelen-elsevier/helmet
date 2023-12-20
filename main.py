@@ -1,23 +1,26 @@
-from llmex.tasks.fillmask import FillMaskLLM 
-from transformers import BertForQuestionAnswering, BertTokenizer
+from llmex.tasks.generation import TextGenerationLLM 
+import transformers
 
-model_checkpoint = "anas-awadalla/bert-small-pretrained-finetuned-squad"
+model_checkpoint = "EleutherAI/gpt-neo-1.3B"
 device = "cpu"
 
-# m = transformers.AutoModel.from_pretrained(model_checkpoint)
-# t = transformers.AutoTokenizer.from_pretrained(model_checkpoint)
-m = BertForQuestionAnswering.from_pretrained(model_checkpoint)
-t = BertTokenizer.from_pretrained(model_checkpoint)
+m = transformers.GPTNeoForCausalLM.from_pretrained(model_checkpoint)
+t = transformers.GPT2Tokenizer.from_pretrained(model_checkpoint)
 
 url = "http://localhost:4000"
 
-lm = FillMaskLLM(name="LLM Generator", model=m, tokenizer=t)
+lm = TextGenerationLLM(name="LLM Generator", model=m, tokenizer=t)
 lm.set_explainer_url(url)
 
-prompt = "Today the weather is really nice and I am planning on "
-context = "I am planning on going for a walk in the park."
+prompt = "def hello_world():"
 
-lm.generate(prompt, context)
+res = lm.generate(prompt)
+print(res)
+
+# prompt = "Today the weather is really nice and I am planning on "
+# context = "I am planning on going for a walk in the park."
+
+# lm.generate(prompt, context)
 # lm.update_explainainer()
 
 

@@ -1,5 +1,6 @@
 import torch
 from captum.attr import LayerIntegratedGradients
+# from captum.attr import LLM
 
 def compute_attribution_scores_IDG(model, embeddings, input_ids, ref_input_ids, token_type_ids=None, position_ids=None, attention_mask=None):
     def predict(inputs, token_type_ids=None, position_ids=None, attention_mask=None):
@@ -26,3 +27,5 @@ def compute_attribution_scores_IDG(model, embeddings, input_ids, ref_input_ids, 
     
     attrs = summarize_attributions(attributions_start)
     return list(attrs.detach().numpy())
+
+
