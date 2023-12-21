@@ -2,7 +2,8 @@ import requests
 import torch
 
 from llmex.baseLLM import BaseLLM
-from captum.attr import FeatureAblation , LLMAttribution, TextTemplateInput
+import captum
+from captum.attr import LayerIntegratedGradients, TextTokenInput
 
 class TextGenerationLLM(BaseLLM):
     def update_explainainer(self, tokens, attributions):
@@ -23,20 +24,19 @@ class TextGenerationLLM(BaseLLM):
 
         input_ids = t(prompt, return_tensors="pt").input_ids.to(device)
         print("created input_ids")
-        
-        fa = FeatureAblation(m) 
-        llm_attr = LLMAttribution(fa, t) 
+        # "model.transformer.wte.weight")
+        ig = LayerIntegratedGradients(m, m.transformer.wte.weight)
+        llm_attr = captum.attr.LLMGradientAttribution(ig, t)
+        inp = TextTokenInput("Dave lives in Palm Coast , FL and is a lawyer. His personal interests include", 
+                             tokenizer=t)
 
-        inp = TextTemplateInput( # the text template 
-            "{} lives in {}, {} and is a {}. {} personal interests include", 
-            # the values of the features 
-            ["Dave", "Palm Coast", "FL", "lawyer", "His"],
-            # the reference baseline values of the features 
-            baselines=["Sarah", "Seattle", "WA", "doctor", "Her"], ) 
-        
-        attr_restult = llm_attr.attribute(inp)
-        print("created attr_restult")
-        return attr_restult
+        outputs = m.generate(input_ids, max_length=100, do_sample=True)
+        print("generated output")
+        decoded_output = t.batch_decode(outputs, skip_special_tokens=True)[0]
+
+        llm_attr.attribute(inp, target=decoded_output)
+
+        return {}
 
 
         # outputs = m.generate(input_ids, max_length=100, do_sample=True)
