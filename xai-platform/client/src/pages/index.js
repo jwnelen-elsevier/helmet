@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import TextHighlighter from "@/components/TextHighlighter";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -46,7 +46,7 @@ export async function getStaticProps() {
   };
 }
 
-function ExplainerDisplay({ data }) {
+function ExplainerDisplay({ data, showAttributions }) {
   console.log(data);
   if (!data) {
     return <div>Loading...</div>;
@@ -65,7 +65,6 @@ function ExplainerDisplay({ data }) {
       <thead className="border-b">
         <tr>
           <th>Feature Attributions</th>
-          {/* <th>Date</th> */}
           <th>Details</th>
         </tr>
       </thead>
@@ -73,11 +72,23 @@ function ExplainerDisplay({ data }) {
         {data.map((d, i) => {
           const { tokens, attributions } = d;
           return (
-            <TextHighlighter
-              text={tokens}
-              fAttribution={attributions}
-              key={i}
-            ></TextHighlighter>
+            <tr>
+              <td>
+                <TextHighlighter
+                  text={tokens}
+                  fAttribution={attributions}
+                  showAttributions={showAttributions}
+                  key={i}
+                ></TextHighlighter>
+              </td>
+              <td>
+                <div className="flex justify-center">
+                  <button className="bg-blue-600 px-3 py-2 rounded text-sm text-white">
+                    Details
+                  </button>
+                </div>
+              </td>
+            </tr>
           );
         })}
       </tbody>
@@ -86,32 +97,50 @@ function ExplainerDisplay({ data }) {
 }
 
 export default function Home({ data }) {
+  const [showAttributions, setShowAttributions] = useState(false);
+
   return (
     <main
       className={`flex min-h-screen min-w-screen flex-col items-center justify-between py-24 ${inter.className}`}
     >
-      <ExplainerDisplay data={data}></ExplainerDisplay>
-      <button
-        className="bg-blue-600 px-3 py-2 rounded text-white"
-        onClick={(e) => {
-          e.preventDefault();
-          console.log("Resetting state");
-          fetch(`${serverUrl}/empty-state`, {
-            method: "POST",
-          }).then((response) => {
-            console.log("State reset");
-            console.log(response);
-            if (response.status !== 200) {
-              console.log("Error resetting state");
-              console.log(r);
-              return;
-            }
-            window.location.reload();
-          });
-        }}
-      >
-        Reset state
-      </button>
+      <label>
+        <input
+          value={showAttributions}
+          type="checkbox"
+          onChange={(e) => setShowAttributions(!showAttributions)}
+        ></input>
+        <span className="p-1">Show Attributions</span>
+      </label>
+      <ExplainerDisplay
+        data={data}
+        showAttributions={showAttributions}
+      ></ExplainerDisplay>
+      <div className="flex gap-2">
+        <button className="bg-blue-600 px-3 py-2 rounded text-white">
+          <a href="/compare">Comparision view</a>
+        </button>
+        <button
+          className="bg-blue-600 px-3 py-2 rounded text-white"
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("Resetting state");
+            fetch(`${serverUrl}/empty-state`, {
+              method: "POST",
+            }).then((response) => {
+              console.log("State reset");
+              console.log(response);
+              if (response.status !== 200) {
+                console.log("Error resetting state");
+                console.log(r);
+                return;
+              }
+              window.location.reload();
+            });
+          }}
+        >
+          Reset state
+        </button>
+      </div>
     </main>
   );
 }

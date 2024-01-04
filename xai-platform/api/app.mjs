@@ -38,6 +38,11 @@ app.post("/", function (req, res) {
   res.send("Saved").status(200);
 });
 
+app.get("/compare", (req, res) => {
+  console.log("Got a request, comparision");
+  res.json(STATE);
+});
+
 //startup
 app.listen(port, async (err) => {
   console.log(`listening to localhost:${port}`);

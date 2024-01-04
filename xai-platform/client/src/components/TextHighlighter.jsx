@@ -1,5 +1,10 @@
 // Create a component that will highlight text
-const TextHighlighter = ({ text, fAttribution, metaData }) => {
+const TextHighlighter = ({
+  text,
+  fAttribution,
+  showAttributions = true,
+  ...props
+}) => {
   const lowest = -1;
   const highest = 1;
 
@@ -28,37 +33,26 @@ const TextHighlighter = ({ text, fAttribution, metaData }) => {
     return { trimmedWord, m };
   };
 
-  // const d = new Date(metaData.date);
-  // const date = d.toLocaleTimeString("nl-NL");
-  // const f = fAttribution[i]).toFixed(2);
+  console.log(props);
 
   return (
-    <tr className="border-b">
-      <td className="flex justify-center flex-wrap items-center align-middle">
-        {text.map((word, i) => {
-          const f = fAttribution[i].toFixed(2) || 0;
-          const { trimmedWord, m } = marginStyle(word);
+    <div
+      className={`flex justify-center flex-wrap items-center align-middle ${props.className}`}
+    >
+      {text.map((word, i) => {
+        const f = fAttribution[i].toFixed(2) || 0;
+        const { trimmedWord, m } = marginStyle(word);
 
-          return (
-            <div className="flex flex-col text-center ">
-              <span className={`rounded-sm ${color(f)} ${m}`}>
-                {trimmedWord}
-              </span>
+        return (
+          <div className="flex flex-col text-center ">
+            <span className={`rounded-sm ${color(f)} ${m}`}>{trimmedWord}</span>
+            {showAttributions && (
               <span className="rounded-sm text-xs">{f}</span>
-            </div>
-          );
-        })}
-      </td>
-      {/* <td>{date}</td> */}
-      {/* <td className="font-mono text-sm">{JSON.stringify(meta)}</td> */}
-      <td>
-        <div className="flex justify-center">
-          <button className="bg-blue-600 px-3 py-2 rounded text-sm text-white">
-            Details
-          </button>
-        </div>
-      </td>
-    </tr>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

@@ -3,12 +3,13 @@ from llmex.tasks.classification import ClassificationLLM
 
 # model_checkpoint = "EleutherAI/gpt-neo-1.3B"
 # device = "cpu"
-text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
+# text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
 
-classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-lm = ClassificationLLM(classifier)
-res = lm.generate(text, None)
-print(res)
+# classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+# lm = ClassificationLLM(classifier)
+
+# res = lm.generate(text, None)
+# print(res)
 
 # m = transformers.GPTNeoForCausalLM.from_pretrained(model_checkpoint, output_attentions=True).to(device)
 # t = transformers.GPT2Tokenizer.from_pretrained(model_checkpoint)
