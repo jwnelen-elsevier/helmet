@@ -1,12 +1,24 @@
 import requests
-import torch
+from dataclasses import dataclass
 
 from llmex.baseLLM import BaseLLM
 import captum
 from captum.attr import LayerIntegratedGradients, TextTokenInput
 
+@dataclass
 class TextGenerationLLM(BaseLLM):
-    def update_explainainer(self, tokens, attributions):
+    def update_explainer_model(self):
+        myobj = {
+            'givenname': self.name,
+            'modelname': self.model.config.model_type,
+            'task': 'generation',
+        }
+        # posting it to the xai-platform
+        url = f"{self.explainer_url}/model"
+        requests.post(url, json = myobj)
+        print("updated explainer with new model")
+
+    def update_explainer_explainations(self, tokens, attributions):
         myobj = {
             'name': self.name, 
             'model': self.model.config.model_type,

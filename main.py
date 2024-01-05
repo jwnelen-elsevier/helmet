@@ -1,9 +1,19 @@
-from transformers import pipeline
-from llmex.tasks.classification import ClassificationLLM
+from transformers import AutoConfig, AutoModel, AutoTokenizer
+from llmex.tasks import TextGenerationLLM
 
-# model_checkpoint = "EleutherAI/gpt-neo-1.3B"
-# device = "cpu"
+model_checkpoint = "EleutherAI/gpt-neo-1.3B"
+device = "cpu"
 # text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
+
+model = AutoModel.from_pretrained(model_checkpoint, output_attentions=True).to(device)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+
+url = "http://localhost:4000"
+
+explainer_model = TextGenerationLLM(name="LLM Generator", model=model, 
+                                    tokenizer=tokenizer, explainer_url=url)
+
+print("created explainer model")
 
 # classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
 # lm = ClassificationLLM(classifier)
@@ -14,7 +24,6 @@ from llmex.tasks.classification import ClassificationLLM
 # m = transformers.GPTNeoForCausalLM.from_pretrained(model_checkpoint, output_attentions=True).to(device)
 # t = transformers.GPT2Tokenizer.from_pretrained(model_checkpoint)
 
-url = "http://localhost:4000"
 
 
 

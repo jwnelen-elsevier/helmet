@@ -11,7 +11,12 @@ const port = process.env.PORT || 4000;
 
 // Data
 import defaultData from "./defaultValues.js";
-let STATE = defaultData;
+let STATE = {
+  data: defaultData,
+  model: {
+    givenname: "givenname",
+  }, // givenname, modelname and task
+};
 
 // Create the express app
 var app = express();
@@ -20,26 +25,32 @@ var app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => res.status(200).send("Healty!"));
-
-app.get("/explainer", (req, res) => {
-  console.log("Got a request");
-  res.json(STATE);
+app.post("/model", (req, res) => {
+  console.log("Got a request, model");
+  const model = req.body;
+  STATE.model = model;
 });
 
 app.post("/empty-state", (req, res) => {
-  STATE = [];
+  STATE.data = [];
   res.status(200).send("State cleared");
 });
 
 app.post("/", function (req, res) {
   const newRun = req.body;
-  STATE.push(newRun);
+  STATE.data.push(newRun);
   res.send("Saved").status(200);
 });
 
+app.get("/", (req, res) => res.status(200).send("Healty!"));
+
 app.get("/compare", (req, res) => {
   console.log("Got a request, comparision");
+  res.json(STATE);
+});
+
+app.get("/explainer", (req, res) => {
+  console.log("Got a request");
   res.json(STATE);
 });
 

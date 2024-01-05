@@ -1,27 +1,36 @@
-from abc import ABC, abstractmethod
+import abc
+from dataclasses import dataclass
 import transformers
 
-class BaseLLM(ABC):
-    def __init__(self, name, model: transformers.PreTrainedModel, tokenizer: transformers.PreTrainedTokenizer, device="cpu"):
-        self.name = name
-        self.model = model
-        self.tokenizer = tokenizer
-        self.device = device
-        self.explainer_url = ""
-        # self.reset_model()
-        super().__init__()
+@dataclass
+class BaseLLM(abc.ABC):
+    name: str
+    model: transformers.PreTrainedModel
+    tokenizer: transformers.PreTrainedTokenizer
+    explainer_url: str = None
+    device: str = "cpu"
+
+    def __post_init__(self):
+        self.reset_model()
+        self.update_explainer_model()
 
     def set_explainer_url(self, url):
         self.explainer_url = url
+        print('explainer url set to', url)
 
     def reset_model(self):      
         self.model.eval()
         self.model.zero_grad()
+        print('model reset')
 
-    @abstractmethod
-    def update_explainainer(self, tokens, attributions):
+    @abc.abstractmethod
+    def update_explainer_model(self):
         pass
 
-    @abstractmethod
-    def generate(self, inputs, context):
+    @abc.abstractmethod
+    def update_explainer_explainations(self, tokens, attributions):
+        pass
+
+    @abc.abstractmethod
+    def generate(self, prompt:str):
         pass
