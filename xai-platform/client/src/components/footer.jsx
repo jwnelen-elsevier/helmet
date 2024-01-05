@@ -1,9 +1,16 @@
-const Footer = () => {
-  return (
-    <footer className="absolute bottom-0 left-0 w-full outline outline-gray-200">
-      <div className="w-full mx-auto text-center p-1">XAI platform </div>
-    </footer>
-  );
-};
+// "use client";
 
-export default Footer;
+// const FooterComponent = () => {
+//   return (
+//     <div className="absolute bottom-0 w-full">
+//       <Footer container className="">
+//         <Footer.Copyright href="#" by="XAI Platform" year={2024} />
+//         <Footer.LinkGroup>
+//           <Footer.Link href="/about">About</Footer.Link>
+//         </Footer.LinkGroup>
+//       </Footer>
+//     </div>
+//   );
+// };
+
+// export default FooterComponent;

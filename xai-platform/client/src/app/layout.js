@@ -1,16 +1,18 @@
-import Footer from "@/components/footer";
+"use client";
+import NavigationBar from "@/components/Navigation";
 import "@/styles/globals.css";
+import { initFlowbite } from "flowbite";
+import { useEffect } from "react";
 
-export default function RootLayout({
-  // Layouts must accept a children prop.
-  // This will be populated with nested layouts or pages
-  children,
-}) {
+export default function RootLayout({ children }) {
+  useEffect(() => {
+    initFlowbite();
+  });
   return (
     <html lang="en">
       <body>
+        <NavigationBar />
         {children}
-        <Footer />
       </body>
     </html>
   );
