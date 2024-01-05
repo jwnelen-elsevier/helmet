@@ -44,7 +44,7 @@ const TextHighlighter = ({
         const { trimmedWord, m } = marginStyle(word);
 
         return (
-          <div className="flex flex-col text-center ">
+          <div className="flex flex-col text-center " key={i}>
             <span className={`rounded-sm ${color(f)} ${m}`}>{trimmedWord}</span>
             {showAttributions && (
               <span className="rounded-sm text-xs">{f}</span>
