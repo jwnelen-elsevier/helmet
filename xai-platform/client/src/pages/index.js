@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import { useState } from "react";
 
 import TextHighlighter from "@/components/TextHighlighter";
-
+import ModelCard from "@/components/ModelCard";
 const inter = Inter({ subsets: ["latin"] });
 
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:4000";
@@ -103,6 +103,7 @@ export default function Home({ data }) {
     <main
       className={`flex min-h-screen min-w-screen flex-col items-center justify-between py-24 ${inter.className}`}
     >
+      <ModelCard model={data.model}></ModelCard>
       <label>
         <input
           value={showAttributions}
@@ -112,7 +113,7 @@ export default function Home({ data }) {
         <span className="p-1">Show Attributions</span>
       </label>
       <ExplainerDisplay
-        data={data}
+        data={data.data}
         showAttributions={showAttributions}
       ></ExplainerDisplay>
       <div className="flex gap-2">
