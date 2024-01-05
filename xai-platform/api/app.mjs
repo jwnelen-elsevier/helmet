@@ -29,6 +29,7 @@ app.post("/model", (req, res) => {
   console.log("Got a request, model");
   const model = req.body;
   STATE.model = model;
+  res.status(200).send("Model updated");
 });
 
 app.post("/empty-state", (req, res) => {
