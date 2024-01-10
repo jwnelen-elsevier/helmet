@@ -29,7 +29,7 @@ class TextGenerationLLM(BaseLLM):
         # posting it to the xai-platform
         requests.post(self.explainer_url, json = myobj)
 
-    def generate(self, prompt:str):
+    def run(self, prompt:str):
         t = self.tokenizer
         m = self.model
         device = self.device

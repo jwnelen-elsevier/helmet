@@ -3,6 +3,7 @@ from captum.attr import LayerIntegratedGradients
 # from captum.attr import LLM
 
 def compute_attribution_scores_IDG(model, embeddings, input_ids, ref_input_ids, token_type_ids=None, position_ids=None, attention_mask=None):
+    
     def predict(inputs, token_type_ids=None, position_ids=None, attention_mask=None):
         output = model(inputs, token_type_ids=token_type_ids, position_ids=position_ids, attention_mask=attention_mask)
         

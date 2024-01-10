@@ -1,2 +1,3 @@
 from .generation import TextGenerationLLM
-__all__ = ['TextGenerationLLM', 'Class2', 'Class3']
+from .classification import TextClassificationLLM
+__all__ = ['TextGenerationLLM', 'TextClassificationLLM']

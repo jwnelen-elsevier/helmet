@@ -41,6 +41,7 @@ app.post("/", function (req, res) {
   const newRun = req.body;
   STATE.data.push(newRun);
   res.send("Saved").status(200);
+  console.log("Saved run", STATE);
 });
 
 app.get("/", (req, res) => res.status(200).send("Healty!"));

@@ -1,7 +1,7 @@
 // Create a component that will highlight text
 const TextHighlighter = ({
-  text,
-  fAttribution,
+  tokens,
+  attributions,
   showAttributions = true,
   ...props
 }) => {
@@ -33,14 +33,16 @@ const TextHighlighter = ({
     return { trimmedWord, m };
   };
 
-  console.log(props);
+  console.log("props", props);
 
   return (
     <div
       className={`flex justify-center flex-wrap items-center align-middle ${props.className}`}
     >
-      {text.map((word, i) => {
-        const f = fAttribution[i].toFixed(2) || 0;
+      {tokens?.map((word, i) => {
+        let score = attributions[i];
+        console.log(score);
+        const f = score.toFixed(2) || 0;
         const { trimmedWord, m } = marginStyle(word);
 
         return (

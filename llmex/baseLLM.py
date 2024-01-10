@@ -1,12 +1,14 @@
 import abc
+from .explanation import Explanation
 from dataclasses import dataclass
-import transformers
+from typing import Union
+from transformers import PreTrainedModel, AutoModelForSequenceClassification, PreTrainedTokenizer
 
 @dataclass
 class BaseLLM(abc.ABC):
     name: str
-    model: transformers.PreTrainedModel
-    tokenizer: transformers.PreTrainedTokenizer
+    model: Union[PreTrainedModel, AutoModelForSequenceClassification]
+    tokenizer: PreTrainedTokenizer
     explainer_url: str = None
     device: str = "cpu"
 
@@ -28,9 +30,9 @@ class BaseLLM(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def update_explainer_explainations(self, tokens, attributions):
+    def update_explainer_explainations(self, exp: Explanation):
         pass
 
     @abc.abstractmethod
-    def generate(self, prompt:str):
+    def run(self, prompt:str):
         pass
