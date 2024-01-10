@@ -9,7 +9,7 @@ const serverUrl = process.env.SERVER_URL ?? "http://localhost:4000";
 
 async function fetchExplainerData() {
   try {
-    const res = await fetch(`${serverUrl}/explainer`, {
+    const res = await fetch(`${serverUrl}/runs`, {
       cache: "no-cache",
     });
     return await res.json();
@@ -21,7 +21,7 @@ async function fetchExplainerData() {
 
 export default async function Page() {
   const data = await fetchExplainerData();
-  const explanations = data?.data;
+  const explanations = data;
 
   if (!explanations) {
     return (
@@ -33,9 +33,9 @@ export default async function Page() {
 
   return (
     <div>
-      <ModelCard model={data.model}></ModelCard>
-      {explanations.map((f) => (
+      {explanations.map((f, index) => (
         <TextHighlighter
+          key={index}
           tokens={f.tokens}
           attributions={f.attributions}
         ></TextHighlighter>

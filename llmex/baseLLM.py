@@ -32,7 +32,6 @@ class BaseLLM(abc.ABC):
     
     def run(self, prompt:str):
         res = self.predict(prompt)
-        
         expl = self.explain(prompt, *res)
         
         self.update_explainer_explaination(expl)
@@ -50,9 +49,11 @@ class BaseLLM(abc.ABC):
             'tokens': e.tokens,
             'attributions': scores
         }
+
     
         # posting it to the xai-platform
-        requests.post(self.explainer_url, json = myobj)
+        u = f"{self.explainer_url}/runs"
+        requests.post(u, json = myobj)
 
     def update_explainer_model(self):
         pass
