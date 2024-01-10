@@ -8,29 +8,38 @@ export const metadata = {
 const serverUrl = process.env.SERVER_URL ?? "http://localhost:4000";
 
 async function fetchExplainerData() {
-  const res = await fetch(`${serverUrl}/explainer`, {
-    cache: "no-cache",
-  });
-  if (!res?.ok) {
-    throw new Error("Error fetching explainer");
+  try {
+    const res = await fetch(`${serverUrl}/explainer`, {
+      cache: "no-cache",
+    });
+    return await res.json();
+  } catch (e) {
+    console.log("error fetching explainer", e);
+    return {};
   }
-
-  return res.json();
 }
 
 export default async function Page() {
   const data = await fetchExplainerData();
-  console.log("got data", data);
-  const f = data.data[0];
+  const explanations = data?.data;
 
-  console.log("f", f);
+  if (!explanations) {
+    return (
+      <div className="w-full h-full text-center m-auto">
+        Could not load data
+      </div>
+    );
+  }
+
   return (
     <div>
       <ModelCard model={data.model}></ModelCard>
-      <TextHighlighter
-        tokens={f.tokens}
-        attributions={f.attributions}
-      ></TextHighlighter>
+      {explanations.map((f) => (
+        <TextHighlighter
+          tokens={f.tokens}
+          attributions={f.attributions}
+        ></TextHighlighter>
+      ))}
     </div>
   );
 }

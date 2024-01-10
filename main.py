@@ -18,7 +18,7 @@ input = {
     "text": "Hello, my dog is cute",
 }
 
-res = explainer_model.run(input["text"], input["label"])
+res = explainer_model.run(input["text"])
 print(res)
 
 # print("created explainer model")

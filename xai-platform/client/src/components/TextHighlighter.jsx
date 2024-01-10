@@ -33,15 +33,12 @@ const TextHighlighter = ({
     return { trimmedWord, m };
   };
 
-  console.log("props", props);
-
   return (
     <div
       className={`flex justify-center flex-wrap items-center align-middle ${props.className}`}
     >
       {tokens?.map((word, i) => {
         let score = attributions[i];
-        console.log(score);
         const f = score.toFixed(2) || 0;
         const { trimmedWord, m } = marginStyle(word);
 

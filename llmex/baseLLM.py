@@ -1,8 +1,13 @@
-import abc
-from .explanation import Explanation
 from dataclasses import dataclass
 from typing import Union
 from transformers import PreTrainedModel, AutoModelForSequenceClassification, PreTrainedTokenizer
+
+import abc
+import requests
+import numpy as np
+
+from .explanation import Explanation
+
 
 @dataclass
 class BaseLLM(abc.ABC):
@@ -24,15 +29,38 @@ class BaseLLM(abc.ABC):
         self.model.eval()
         self.model.zero_grad()
         print('model reset')
+    
+    def run(self, prompt:str):
+        res = self.predict(prompt)
+        
+        expl = self.explain(prompt, *res)
+        
+        self.update_explainer_explaination(expl)
+        
+        return res
 
-    @abc.abstractmethod
+    def update_explainer_explaination(self, e: Explanation):
+        scores = list(np.float64(e.scores))
+
+        myobj = {
+            'name': self.name,
+            'model': self.model.config.model_type,
+            'tokenizer': self.tokenizer.name_or_path,
+            'text': e.text,
+            'tokens': e.tokens,
+            'attributions': scores
+        }
+    
+        # posting it to the xai-platform
+        requests.post(self.explainer_url, json = myobj)
+
     def update_explainer_model(self):
         pass
 
     @abc.abstractmethod
-    def update_explainer_explainations(self, exp: Explanation):
+    def predict(self, prompt: str):
         pass
 
     @abc.abstractmethod
-    def run(self, prompt:str):
+    def explain(self, prompt: str) -> Explanation:
         pass
