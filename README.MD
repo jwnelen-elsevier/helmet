@@ -10,3 +10,17 @@ After activating the environment, you can install the packages listed in your re
 
 txt
 Please ensure that your requirements.txt file is in the same directory where you're running this command. If it's in a different directory, provide the full path to the file.
+
+#### MongoDB
+
+Starting a dev server;
+
+```
+brew services start mongodb-community@7.0
+```
+
+To stop it again:
+
+```
+brew services stop mongodb-community@7.0
+```

@@ -1,33 +1,53 @@
-from llmex.llm import LLM, cosine_similarity
+from transformers import AutoConfig, AutoModel, AutoTokenizer, AutoModelForSequenceClassification
+from llmex.tasks import TextClassificationLLM
 
-text = "How do I unscrew a screw without a screwdriver?"
-document = """Kitchen butter knives can be used in a very similar way to coins. Insert the end of the butter knife into the longer groove and turn counterclockwise to unscrew the screw.
-If your butter knife is of low quality and strength or the screw is very tight, then you may bend your butter knife rather than unscrewing the screw. Be aware of this potential damage.[1]"""
+model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+device = "cpu"
+# text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
+
+model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, output_attentions=True).to(device)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+
+url = "http://localhost:4000"
+
+explainer_model = TextClassificationLLM(name="LLM Generator", model=model, 
+                                    tokenizer=tokenizer, explainer_url=url)
+
+input = {
+    "label": 0,
+    "text": "Hello, my dog is cute",
+}
+
+res = explainer_model.run(input["text"], input["label"])
+print(res)
+
+# print("created explainer model")
+
+# classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+# lm = ClassificationLLM(classifier)
+
+# res = lm.generate(text, None)
+# print(res)
+
+# m = transformers.GPTNeoForCausalLM.from_pretrained(model_checkpoint, output_attentions=True).to(device)
+# t = transformers.GPT2Tokenizer.from_pretrained(model_checkpoint)
 
 
-model_checkpoint = "bert-base-cased"
-lm = LLM(name="llm", model_name=model_checkpoint, tokenizer_name=model_checkpoint)
 
-tokens_text = lm.tokenizer.tokenize(text)
-indexed_tokens = lm.tokenizer.convert_tokens_to_ids(tokens_text)
 
-lm.display_tokenized_text(tokens_text, indexed_tokens)
+# lm = TextGenerationLLM(name="LLM Generator", model=m, tokenizer=t)
+# lm.set_explainer_url(url)
 
-tokens_document = lm.tokenizer.tokenize(document)
-index_tokend_document = lm.tokenizer.convert_tokens_to_ids(tokens_document)
+# prompt = "def hello_world():"
 
-lm.display_tokenized_text(tokens_document, index_tokend_document)
+# res = lm.generate(prompt)
+# print(res)
 
-# embeddings_text = lm.embed(text)
-# embeddings_document = lm.embed(document)
+# prompt = "Today the weather is really nice and I am planning on "
+# context = "I am planning on going for a walk in the park."
 
-# # max_tokens = max(len(tokens_text), len(tokens_document))
+# lm.generate(prompt, context)
+# lm.update_explainainer()
 
-# # vector_a = embeddings_text[0][0]
-# # vector_b = embeddings_document[0][0]
-# # len(vector_a)
-# # len(vector_b)
 
-# similarity_score = cosine_similarity(embeddings_text, embeddings_document)
-# # similarity_score = cosine_similarity(vector_a, vector_b)
-# print("similarity_score: ", similarity_score)
+# TODO: https://captum.ai/tutorials/Bert_SQUAD_Interpret

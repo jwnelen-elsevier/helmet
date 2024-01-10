@@ -2431,6 +2431,19 @@ tests = ["autopep8", "flake8", "isort", "numpy", "pytest", "scipy (>=1.7.1)"]
 tutorials = ["matplotlib", "pandas", "tabulate"]
 
 [[package]]
+name = "trulens"
+version = "0.13.4"
+description = "Library containing attribution and interpretation methods for deep nets."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "trulens-0.13.4-py3-none-any.whl", hash = "sha256:672f8f99e92d0fe9eee1b8ab0d74ac00b41d782951448888d3c406e6b215c4a9"},
+]
+
+[package.dependencies]
+numpy = ">=1.23.5"
+
+[[package]]
 name = "typing-extensions"
 version = "4.8.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -2578,4 +2591,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6f7c0ea515e07e57e2d5797d0ea03106313d9d029b20a345d3ef7a4781842286"
+content-hash = "2b66424dc3f3e4cf451aca5ded75086a3bbb4d3f1a0a9b4c83e44a5d1d81d472"

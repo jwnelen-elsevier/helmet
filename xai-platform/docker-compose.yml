@@ -1,0 +1,28 @@
+# Adding network to docker-compose.yml
+networks:
+  my-network:
+version: "3.8"
+services:
+  api:
+    build: ./api
+    container_name: api
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./api:/app
+    networks:
+      - my-network
+  # client:
+  client:
+    build: ./client
+    container_name: client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+    depends_on:
+      - api
+    environment:
+      - SERVER_URL=http://api:4000
+    networks:
+      - my-network
