@@ -15,6 +15,8 @@ transformers = "^4.35.2"
 captum = "^0.7.0"
 accelerate = "^0.25.0"
 trulens = "^0.13.4"
+fastapi = "^0.109.0"
+uvicorn = "^0.26.0"
 
 
 [build-system]
