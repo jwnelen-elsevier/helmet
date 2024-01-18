@@ -1,17 +1,22 @@
-from transformers import AutoConfig, AutoModel, AutoTokenizer, AutoModelForSequenceClassification
-from llmex.tasks import TextClassificationLLM
+# from transformers import AutoModelForSequenceClassification
+# from llmex.tasks import TextClassificationLLM
 
 import llmex
-server = llmex.launch_app(port=8000)
+session = llmex.launch_app()
 
+print("launched app")
+
+# print(session.state.get_session())
 
 # model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-# # model_checkpoint = "t5-small"
+# model_checkpoint = "t5-small"
 # device = "cpu"
 # # text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
 
 # model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, output_attentions=True).to(device)
 # tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+
+# session.load_model(model)
 
 # url = "http://localhost:4000"
 
