@@ -1,25 +1,32 @@
 from transformers import AutoConfig, AutoModel, AutoTokenizer, AutoModelForSequenceClassification
 from llmex.tasks import TextClassificationLLM
 
-model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-device = "cpu"
-# text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
+import llmex
+server = llmex.launch_app(port=8000)
 
-model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, output_attentions=True).to(device)
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-url = "http://localhost:4000"
+# model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+# # model_checkpoint = "t5-small"
+# device = "cpu"
+# # text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
 
-explainer_model = TextClassificationLLM(name="LLM Generator", model=model, 
-                                    tokenizer=tokenizer, explainer_url=url)
+# model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, output_attentions=True).to(device)
+# tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-input = {
-    "label": 0,
-    "text": "Hello, my dog is cute",
-}
+# url = "http://localhost:4000"
 
-res = explainer_model.run(input["text"])
-print(res)
+# model = TextClassificationLLM(name="LLM Generator", model=model, 
+#                                     tokenizer=tokenizer, explainer_url=url)
+
+# prefix = "Take a deep breath and work on this problem step-by-step."
+
+# input = {
+#     "label": 0,
+#     "text": "Hello, my dog is stupid",
+# }
+
+# res = model.run(input["text"])
+# print(res)
 
 # print("created explainer model")
 
