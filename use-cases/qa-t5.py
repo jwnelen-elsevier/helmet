@@ -4,8 +4,9 @@ from datasets import load_dataset
 
 dataset = load_dataset("squad")
 
-example = dataset["train"][0]
-print(example)
+dataset = load_dataset("squad", split="train")
+
+example = dataset[0]
 
 # from  transformers  import  AutoTokenizer, AutoModelWithLMHead, pipeline
 

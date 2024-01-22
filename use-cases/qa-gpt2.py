@@ -1,17 +1,18 @@
 import torch 
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import requests
+from transformers import GPT2TokenizerFast, AutoModelForCausalLM
 from datasets import load_dataset
 
-dataset = load_dataset("squad")
+dataset = load_dataset("squad", split="train")
 
-example = dataset["train"][0]
+example = dataset[0]
 
 # from  transformers  import  AutoTokenizer, AutoModelWithLMHead, pipeline
 
 # Encoder-Decoder
 model_name = "m3hrdadfi/gpt2-QA"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = GPT2TokenizerFast.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
 question = example['question']
@@ -31,4 +32,18 @@ output = model.generate(input_ids = encoded_input.input_ids,
 # Get the answer
 answer = tokenizer.decode(output[0], skip_special_tokens=True)
 
-print(answer)
+tokens = tokenizer.batch_decode(output[0])
+# print(answer)
+myobj = {
+    'name': "gpt-2",
+    'model': model.config.name_or_path,
+    'tokenizer': tokenizer.name_or_path,
+    'text': tokens,
+    'tokens': tokens,
+}
+
+
+explainer_url = "http://localhost:4000"
+# posting it to the xai-platform
+u = f"{explainer_url}/runs"
+requests.post(u, json = myobj)

@@ -2,10 +2,9 @@ import torch
 from transformers import BertForQuestionAnswering, AutoTokenizer
 from datasets import load_dataset
 
-dataset = load_dataset("squad")
+dataset = load_dataset("squad", split="train")
 
-example = dataset["train"][0]
-print(example)
+example = dataset[0]
 
 model_name = "'bert-large-uncased-whole-word-masking-finetuned-squad"
 
@@ -32,5 +31,4 @@ end_index = torch.argmax(end_scores)
 answer = ' '.join(tokens[start_index:end_index+1])
 
 
-# Print the answer
-print(f"Answer: {predicted_answer}")
+
