@@ -1,4 +1,5 @@
-# from transformers import AutoModelForSequenceClassification
+from transformers import  AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+
 # from llmex.tasks import TextClassificationLLM
 
 import llmex
@@ -15,59 +16,71 @@ model = hookedTransformer.HookedTransformer.from_pretrained(checkpoint, device=d
 
 
 # print(session.state.get_session())
+import torch
+from captum.attr import (
+    FeatureAblation, 
+    ShapleyValues,
+    LayerIntegratedGradients, 
+    LLMAttribution, 
+    LLMGradientAttribution, 
+    TextTokenInput, 
+    TextTemplateInput,
+    ProductBaselines,
+)
+
+import time
+def print_time():
+    t = time.localtime()
+    current_time = time.strftime("%H:%M:%S", t)
+    print(current_time)
+
+print_time()
 
 # model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 # model_checkpoint = "t5-small"
-# device = "cpu"
-# # text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
 
-# model = AutoModelForSequenceClassification.from_pretrained(model_checkpoint, output_attentions=True).to(device)
-# tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+model_checkpoint = "TinyLlama/TinyLlama-1.1B-Chat-v1.0" # For Text Generation
 
-# session.load_model(model)
+device = "cpu"
+text = "This was a masterpiece. Not completely faithful to the books, but enthralling from beginning to end. Might be my favorite of the three."
 
-# url = "http://localhost:4000"
-
-# model = TextClassificationLLM(name="LLM Generator", model=model, 
-#                                     tokenizer=tokenizer, explainer_url=url)
-
-# prefix = "Take a deep breath and work on this problem step-by-step."
-
-# input = {
-#     "label": 0,
-#     "text": "Hello, my dog is stupid",
-# }
-
-# res = model.run(input["text"])
-# print(res)
-
-# print("created explainer model")
-
-# classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-# lm = ClassificationLLM(classifier)
-
-# res = lm.generate(text, None)
-# print(res)
-
-# m = transformers.GPTNeoForCausalLM.from_pretrained(model_checkpoint, output_attentions=True).to(device)
-# t = transformers.GPT2Tokenizer.from_pretrained(model_checkpoint)
+import bitsandbytes as bnb
 
 
 
 
-# lm = TextGenerationLLM(name="LLM Generator", model=m, tokenizer=t)
-# lm.set_explainer_url(url)
+model = AutoModelForCausalLM.from_pretrained(model_checkpoint, config=create_bnb_config())
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-# prompt = "def hello_world():"
+# Needed for LLaMA tokenizer
+tokenizer.pad_token = tokenizer.eos_token
 
-# res = lm.generate(prompt)
-# print(res)
+eval_prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
-# prompt = "Today the weather is really nice and I am planning on "
-# context = "I am planning on going for a walk in the park."
+model_input = tokenizer(eval_prompt, return_tensors="pt")
+model.eval()
+with torch.no_grad():
+    output_ids = model.generate(model_input["input_ids"], max_new_tokens=15)[0]
+    response = tokenizer.decode(output_ids, skip_special_tokens=True)
+    print(response)
 
-# lm.generate(prompt, context)
-# lm.update_explainainer()
+print("Starting Attribution")
+fa = FeatureAblation(model)
+llm_attr = LLMAttribution(fa, tokenizer)
+
+inp = TextTemplateInput(
+    template="{} lives in {}, {} and is a {}. {} personal interests include", 
+    values=["Dave", "Palm Coast", "FL", "lawyer", "His"],
+)
+
+target = "playing golf, hiking, and cooking."
 
 
-# TODO: https://captum.ai/tutorials/Bert_SQUAD_Interpret
+
+
+print_time()
+attr_res = llm_attr.attribute(inp, target=target)
+
+print_time()
+
+attr_res.plot_token_attr(show=True)
