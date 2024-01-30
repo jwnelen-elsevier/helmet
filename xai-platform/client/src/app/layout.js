@@ -1,20 +1,17 @@
-"use client";
 import NavigationBar from "@/components/Navigation";
 import FooterComponent from "@/components/footer";
 import "@/styles/globals.css";
-import { initFlowbite } from "flowbite";
-import { useEffect } from "react";
+import { SocketProvider } from "@/components/providers/socket-provider";
 
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    initFlowbite();
-  });
   return (
     <html lang="en">
       <body>
-        <NavigationBar />
-        {children}
-        <FooterComponent />
+        <SocketProvider>
+          <NavigationBar />
+          {children}
+          <FooterComponent />
+        </SocketProvider>
       </body>
     </html>
   );
