@@ -1,7 +1,6 @@
 "use client";
 
 import { useStatus } from "@/providers/status";
-import { Suspense } from "react";
 
 export const StatusIndicator = () => {
   const { isConnected, isLoading } = useStatus();

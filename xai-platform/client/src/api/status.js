@@ -14,3 +14,16 @@ export const fetchStatus = async () => {
   }
   return false;
 };
+
+export const fetchModel = async () => {
+  try {
+    const response = await fetch(`${url}/model`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+  return {};
+};

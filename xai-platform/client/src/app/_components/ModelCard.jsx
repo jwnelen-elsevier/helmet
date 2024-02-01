@@ -1,7 +1,11 @@
-const ModelCard = ({ model }) => {
-  const { givenname, modelname, task } = model;
+import { fetchModel } from "@/api/status";
 
-  if (!givenname) {
+const ModelCard = async () => {
+  const model = await fetchModel();
+  console.log(model);
+  const isLoaded = model.isLoaded;
+
+  if (!isLoaded) {
     return (
       <div className="card">
         <div className="card-body">
@@ -11,13 +15,17 @@ const ModelCard = ({ model }) => {
     );
   }
 
+  const { model_checkpoint, tokenizer_checkpoint, model_type } = model.model;
+
   return (
     <div className="card">
       <div className="card-body">
-        <h1>Model details</h1>
-        {givenname && <h5 className="card-title">Given Name: {givenname}</h5>}
-        {modelname && <h5 className="card-title">Model Name: {modelname}</h5>}
-        {task && <h5 className="card-title">Task: {task}</h5>}
+        <h1>Model detail:s</h1>
+        <h5 className="card-title">model checkpoint: {model_checkpoint}</h5>
+        <h5 className="card-title">
+          tokenizer checkpoint: {tokenizer_checkpoint}
+        </h5>
+        <h5 className="card-title">model type: {model_type}</h5>
       </div>
     </div>
   );

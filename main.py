@@ -2,9 +2,10 @@
 # from llmex.tasks import TextClassificationLLM
 
 import llmex
-session = llmex.launch_app()
 
-print("launched app")
+checkpoint = "gpt2"
+device = "cpu"
+model, tokenizer = llmex.load_model(checkpoint, device)
 
 # print(session.state.get_session())
 
