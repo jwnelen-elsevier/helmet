@@ -1,17 +1,19 @@
-import NavigationBar from "@/components/Navigation";
-import FooterComponent from "@/components/footer";
+import NavigationBar from "@/app/_components/Navigation";
+import FooterComponent from "@/app/_components/Footer";
 import "@/styles/globals.css";
-import { SocketProvider } from "@/components/providers/socket-provider";
+import { StatusProvider } from "@/providers/status";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <SocketProvider>
+        <StatusProvider>
           <NavigationBar />
           {children}
           <FooterComponent />
-        </SocketProvider>
+        </StatusProvider>
       </body>
     </html>
   );
