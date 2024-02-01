@@ -10,9 +10,12 @@ export const StatusIndicator = () => {
   }
 
   return (
-    <div>
-      <p>{isConnected ? "Connected" : "Disconnected"}</p>
-    </div>
+    <p>
+      Connected to NodeJS:{" "}
+      <span className={isConnected ? "text-green-500" : "text-red-500"}>
+        {isConnected ? "Yes" : "No"}
+      </span>
+    </p>
   );
 };
 
