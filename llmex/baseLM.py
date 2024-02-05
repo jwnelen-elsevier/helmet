@@ -15,7 +15,7 @@ class BaseLM(ABC):
     def __post_init__(self):
         print("post init")
         self.reset_model()
-        self.update_explainer_model()
+        # self.update_explainer_model()
     
     def update_explainer_model(self):
         b = {
@@ -31,8 +31,8 @@ class BaseLM(ABC):
         self.model.eval()
         self.model.zero_grad()
 
+
     @abstractmethod
-    def predict(self, prompt: str, **kwargs):
-        # Could also raise a NotImplementedError here
+    def predict(self, *args, **kwargs):
         pass
     

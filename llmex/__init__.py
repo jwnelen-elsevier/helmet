@@ -23,7 +23,10 @@ def from_pretrained(model_checkpoint, config={}, device="cpu"):
     assert config["model_type"] in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
 
     model_cls = model_type_to_class[model_type]
-    hfModel = model_cls.from_pretrained(model_checkpoint)
+    if config.get("num_labels", None) is not None:
+        hfModel = model_cls.from_pretrained(model_checkpoint, num_labels=config["num_labels"])
+    else:
+        hfModel = model_cls.from_pretrained(model_checkpoint)
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     platform_url = config.get("platform_url", url)
