@@ -1,18 +1,20 @@
-from transformers import PreTrainedModel, PreTrainedTokenizerBase
 from llmex.updater import update_app
+from abc import ABC, abstractmethod
 
-class BaseLM():
-    def __init__(self, model_checkpoint: str, model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, model_type: str, url: str):
-        self.model_checkpoint = model_checkpoint
+
+class BaseLM(ABC):    
+    def __init__(self, model_checkpoint: str, model, 
+                 tokenizer, model_type: str, url: str):
         self.model = model
+        self.model_checkpoint = model_checkpoint
         self.tokenizer = tokenizer
-        self.model_type = model_type
         self.platform_url = url
+        self.model_type = model_type
         self.__post_init__()
     
     def __post_init__(self):
         print("post init")
-        # self.reset_model()
+        self.reset_model()
         self.update_explainer_model()
     
     def update_explainer_model(self):
@@ -29,13 +31,8 @@ class BaseLM():
         self.model.eval()
         self.model.zero_grad()
 
-    def __call__(self, prompt: str):
-        return self.model(prompt)
-
-    # @abc.abstractmethod
-    # def predict(self, prompt: str):
-    #     pass
-
-    # @abc.abstractmethod
-    # def explain(self, prompt: str) -> Explanation:
-    #     pass
+    @abstractmethod
+    def predict(self, prompt: str, **kwargs):
+        # Could also raise a NotImplementedError here
+        pass
+    
