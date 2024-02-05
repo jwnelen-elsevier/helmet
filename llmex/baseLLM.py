@@ -10,7 +10,7 @@ from .explanation import Explanation
 
 
 @dataclass
-class BaseLLM(abc.ABC):
+class HookedTransformer(abc.ABC):
     name: str
     model: Union[PreTrainedModel, AutoModelForSequenceClassification]
     tokenizer: PreTrainedTokenizer

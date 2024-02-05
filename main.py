@@ -2,9 +2,17 @@
 # from llmex.tasks import TextClassificationLLM
 
 import llmex
-session = llmex.launch_app()
+from llmex import hookedTransformer
 
-print("launched app")
+
+
+checkpoint = "gpt2"
+device = "cpu"
+
+
+# model, tokenizer = llmex.load_model(checkpoint, device)
+model = hookedTransformer.HookedTransformer.from_pretrained(checkpoint, device=device)
+
 
 # print(session.state.get_session())
 

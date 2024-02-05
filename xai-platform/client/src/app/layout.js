@@ -1,20 +1,19 @@
-"use client";
-import NavigationBar from "@/components/Navigation";
-import FooterComponent from "@/components/footer";
+import NavigationBar from "@/app/_components/Navigation";
+import FooterComponent from "@/app/_components/Footer";
 import "@/styles/globals.css";
-import { initFlowbite } from "flowbite";
-import { useEffect } from "react";
+import { StatusProvider } from "@/providers/status";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    initFlowbite();
-  });
   return (
     <html lang="en">
       <body>
-        <NavigationBar />
-        {children}
-        <FooterComponent />
+        <StatusProvider>
+          <NavigationBar />
+          {children}
+          <FooterComponent />
+        </StatusProvider>
       </body>
     </html>
   );
