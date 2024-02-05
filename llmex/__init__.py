@@ -1,9 +1,10 @@
 from transformers import AutoModel, AutoTokenizer
+import requests
+
 
 url = "http://localhost:4000"
 
 def update_app(body):
-    import requests
     r = requests.post(url + "/update_model", json=body)
     print("updated app", r.status_code)
 

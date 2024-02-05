@@ -34,7 +34,15 @@ def print_time():
     current_time = time.strftime("%H:%M:%S", t)
     print(current_time)
 
+<<<<<<< Updated upstream
 print_time()
+=======
+checkpoint = "gpt2"
+device = "cpu"
+
+model = hookedTransformer.HookedTransformer.from_pretrained(checkpoint, device=device)
+
+>>>>>>> Stashed changes
 
 # model_checkpoint = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 # model_checkpoint = "t5-small"
