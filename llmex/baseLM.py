@@ -20,7 +20,7 @@ class BaseLM(ABC):
         # self.update_explainer_model()
     
     def _tokenize(self, text: str, **kwargs):
-        print('base processing')
+        print('base tokinizer')
         return self.tokenizer(text, return_tensors="pt", **kwargs)
 
     def get_tokens(self, text: str):

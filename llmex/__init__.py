@@ -7,7 +7,7 @@ url = "http://localhost:4000"
 
 # Mapping from model_type to model class
 model_type_to_class = {
-    "enc": transformers.AutoModelForQuestionAnswering,
+    "enc": transformers.AutoModelForSequenceClassification,
     "dec": transformers.AutoModelForCausalLM,
     "enc-dec": transformers.AutoModelForSeq2SeqLM,
 }

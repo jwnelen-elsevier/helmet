@@ -1,3 +1,5 @@
+from datasets import load_dataset
+
 import llmex
 
 # checkpoint = "deepset/tinyroberta-squad2"
@@ -14,25 +16,21 @@ config = {
 model_args = {
     "num_labels": 3,
     "id2label": {0: "negative", 1: "neutral", 2: "positive"},
+    "output_attentions": True
 }
 
 model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
 
-from datasets import load_dataset
-
 imdb = load_dataset("imdb")
+
 amount_examples = 10
 small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
-example = small_train_dataset[0]
+example = small_train_dataset[0] # {text, label}
+
+res = model.predict(example['text'], ground_truth=example['label'])
+print(res)
+
 
 # squad = load_dataset("squad")
 # example = squad["train"][0]
-
-# print(small_train_dataset)
-
-print(example)
-
-# print(ground_truth)
-
 # result = model.predict(example['question'], example['context'])
-# print(result)
