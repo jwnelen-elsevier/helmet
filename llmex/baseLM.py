@@ -1,15 +1,17 @@
 from llmex.updater import update_app
 from abc import ABC, abstractmethod
-
-
+from typing import Optional, Tuple, Union
+from transformers import BatchEncoding
+import torch
 class BaseLM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
-                 tokenizer, model_type: str, url: str):
+                 tokenizer, model_type: str, url: str, embeddings):
         self.model = model
         self.model_checkpoint = model_checkpoint
         self.tokenizer = tokenizer
         self.platform_url = url
         self.model_type = model_type
+        self.embeddings = embeddings
         self.__post_init__()
     
     def __post_init__(self):
@@ -17,6 +19,27 @@ class BaseLM(ABC):
         self.reset_model()
         # self.update_explainer_model()
     
+    def _tokenize(self, text: str, **kwargs):
+        print('base processing')
+        return self.tokenizer(text, return_tensors="pt", **kwargs)
+
+    def get_tokens(self, text: str):
+        return self.tokenizer.get_tokens(text)
+    
+    def get_input_embeddings(self, text: str):
+        """Extract input embeddings
+
+        :param text str: the string to extract embeddings from.
+        """
+        item = self._tokenize(text)
+        item = {k: v.to(self.model.device) for k, v in item.items()}
+        embeddings = self._get_input_embeds_from_ids(item["input_ids"][0])
+        embeddings = embeddings.unsqueeze(0)
+        return embeddings
+    
+    def _get_input_embeds_from_ids(self, ids) -> torch.Tensor:
+        return self.model.get_input_embeddings()(ids)
+
     def update_explainer_model(self):
         b = {
             "model_checkpoint": self.model_checkpoint,

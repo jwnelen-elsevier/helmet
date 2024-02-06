@@ -1,16 +1,33 @@
 from transformers import AutoModelForQuestionAnswering, PreTrainedTokenizer
 from .baseLM import BaseLM
 import torch
-from captum.attr import LayerIntegratedGradients
+from captum.attr import InputXGradient
+from operator import attrgetter
+from typing import Dict, Any
 
 class ENC_LM(BaseLM):
-    def __init__(self, model_checkpoint: str, model: AutoModelForQuestionAnswering, tokenizer: PreTrainedTokenizer, url: str):
+    def __init__(self, model_checkpoint: str, model: AutoModelForQuestionAnswering, tokenizer: PreTrainedTokenizer, url: str, model_config: dict = {}):
         self.model_type = "enc"
         self.model = model
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url)
+        self.config = model_config
 
-    def preprocess(self, prompt, paragraph, **tokenizer_kwargs) -> dict:
-        return self.tokenizer.encode_plus(text=prompt, text_pair=paragraph, return_tensors="pt", **tokenizer_kwargs)
+        try:
+            assert "embeddings" in model_config, AssertionError("embeddings must be specified in model_config")
+            retriever = attrgetter(model_config["embeddings"])
+            embeddings = retriever(self.model).weight
+            assert embeddings is not None, AssertionError(f"embeddings {model_config['embeddings']} not found in model")
+        except Exception as e:
+            print(e)
+            raise KeyError("embeddings must be specified in model_config")
+
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, embeddings)
+
+    def _tokenize_pair(self, prompt, paragraph, **tokenizer_kwargs) -> dict:
+        return self.tokenizer(text=prompt, text_pair=paragraph, return_tensors="pt", **tokenizer_kwargs)
+
+    def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
+        print("enc tokenizing")
+        return self.tokenizer(text=prompt, return_tensors="pt", **tokenizer_kwargs)
 
     def forward(self, inputs):
         with torch.no_grad():
@@ -27,17 +44,31 @@ class ENC_LM(BaseLM):
         return predicted_answer
 
     def explain(self, input, output):
-        lig = LayerIntegratedGradients(self.predict, self.model.roberta.embeddings)
-        attributions, delta = lig.attribute(inputs=input["input_ids"], baselines=input["input_ids"].clone(), return_convergence_delta=True)
+        def _f(input_ids):
+            with torch.no_grad():
+                input_embeddings = self._get_input_embeds_from_ids(input_ids)
+                output = self.model(inputs_embeds=input_embeddings)
+                start_idx = torch.argmax(output.start_logits)
+                end_idx = torch.argmax(output.end_logits)
+                r = input_ids[0][start_idx:end_idx + 1]
+                return r
+
+        print("explaining")
+        inputs = input["input_ids"]
+
+        lig = InputXGradient(_f)
+        attributions = lig.attribute(inputs=inputs, target=inputs)
+        attributions = attributions.detach().cpu().numpy()
+        
         return attributions
 
     
     # This is for extractive QA
     def predict(self, prompt: str, context: str, **kwargs):
-        inputs = self.preprocess(prompt, context) # {input_ids, attention_mask, token_type_ids}
+        inputs = self._tokenize_pair(prompt, context)
         output = self.forward(inputs)
         result = self.postprocess_result(inputs, output)
-        # explanation = self.explain(inputs, output)
+        explanation = self.explain(inputs, output)
 
         return result
         
