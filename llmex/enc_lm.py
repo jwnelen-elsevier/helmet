@@ -6,7 +6,7 @@ from captum.attr import InputXGradient
 from operator import attrgetter
 from typing import Dict, Any
 from functools import partial
-
+from llmex.utils.typing import Explanation
 
 class ENC_LM(BaseLM):
     def __init__(self, model_checkpoint: str, model: AutoModelForSequenceClassification, 
@@ -34,7 +34,7 @@ class ENC_LM(BaseLM):
         return F.softmax(output.logits, dim=1)
         
     def postprocess_result(self, input, output):
-        return output
+        return torch.argmax(output)
         # start_idx, end_idx = output
         # r = input["input_ids"][0][start_idx:end_idx + 1]
         # predicted_tokens = self.tokenizer.convert_ids_to_tokens(r, skip_special_tokens=True)
@@ -47,9 +47,6 @@ class ENC_LM(BaseLM):
             output = model(inputs_embeds=inp, **extra_forward_args)
             return F.softmax(output.logits, dim=1)
     
-        print("explaining")
-        output = torch.argmax(output)
-
         input_embeds = self.get_input_embeddings(prompt)
         attention_mask = input["attention_mask"]
 
@@ -57,22 +54,41 @@ class ENC_LM(BaseLM):
 
         lig = InputXGradient(forward_func)
         attributions = lig.attribute(inputs=input_embeds, target=output)
-        
-        # attributions = attributions.detach().cpu().numpy()
-        
-        return attributions
+        attributions = attributions.detach().cpu().numpy()
+        r = attributions[0, :, :]
+        attr = r.sum(axis=1)
+
+        return attr
+
+    def _format_output(self, prompt, inputs, output, attr):
+        return Explanation(**{
+            "input": prompt,
+            "input_tokens": self.tokenizer.tokenize(prompt),
+            "input_attribution": list(attr),
+            # "output_text": str(output.argmax().item()),
+            # "output_tokens": None,
+            # "explanation_method": "Input X Gradient"
+        })
 
     
     # This is for extractive QA
     def predict(self, prompt: str, **kwargs):
-        # for k, v in kwargs.items():
-        #     print(f"{k}: {v}")
-
         inputs = self._tokenize(prompt)
         output = self.forward(inputs)
         result = self.postprocess_result(inputs, output)
-        print(self.explain(prompt, inputs, output))
+        explanation = self.explain(prompt, inputs, result)
+        prediction = result.item()
+        # exp = self._format_output(prompt, inputs, result, explanation)
 
+        # print(list(explanation))
 
-        return result
+        res = {
+            # "input": prompt, # works
+            # "input_tokens": self.tokenizer.tokenize(prompt), # works
+            "input_attribution": explanation, # works not yet
+            # "prediction": prediction, #works
+        }
+
+        self.update_run(res)
+        return result, explanation
         

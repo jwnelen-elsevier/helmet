@@ -34,6 +34,12 @@ app.post("/update_model", (req, res) => {
   res.status(200).send("Updated!");
 });
 
+app.post("/update_run", (req, res) => {
+  console.log(req.body);
+  // s.setRun(req.body);
+  res.status(200).send("Updated!");
+});
+
 // app.get("/model", (req, res) => {
 //   res.status(200).send(state.model);
 // });
