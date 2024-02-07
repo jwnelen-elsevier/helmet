@@ -2,15 +2,12 @@ import { fetchModel } from "@/api/status";
 
 const ModelCard = async () => {
   const model = await fetchModel();
-  console.log(model);
   const isLoaded = model.isLoaded;
 
   if (!isLoaded) {
     return (
       <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">No Model Loaded</h5>
-        </div>
+        <h5 className="p-2">No Model Loaded</h5>
       </div>
     );
   }

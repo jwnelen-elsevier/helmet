@@ -2,7 +2,7 @@ from llmex.updater import update_app
 from abc import ABC, abstractmethod
 from typing import Any
 from transformers import BatchEncoding
-from llmex.utils.typing import Explanation
+from llmex.utils.typing import Run
 import torch
 class BaseLM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
@@ -41,8 +41,8 @@ class BaseLM(ABC):
     def _get_input_embeds_from_ids(self, ids) -> torch.Tensor:
         return self.model.get_input_embeddings()(ids)
 
-    def update_run(self, run: dict[str, Any]):
-        update_app(self.platform_url, "/update_run", run)
+    def update_run(self, run: Run):
+        update_app(self.platform_url, "/runs", run.dict())
 
     def update_explainer_model(self):
         b = {

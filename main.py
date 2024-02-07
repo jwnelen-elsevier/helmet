@@ -2,7 +2,6 @@ from datasets import load_dataset
 
 import llmex
 
-# checkpoint = "deepset/tinyroberta-squad2"
 checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
 
 device = "cpu"
