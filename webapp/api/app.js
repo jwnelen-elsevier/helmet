@@ -4,8 +4,9 @@ const bodyParser = require("body-parser");
 
 require("dotenv").config();
 
-// import runs from "./routes/runs.mjs";
-
+// import routes
+const runs = require("./routes/runs");
+// define the port
 const port = process.env.PORT || 4000;
 
 // Create the express app
@@ -34,17 +35,11 @@ app.post("/update_model", (req, res) => {
   res.status(200).send("Updated!");
 });
 
-app.post("/update_run", (req, res) => {
-  console.log(req.body);
-  // s.setRun(req.body);
-  res.status(200).send("Updated!");
-});
-
 // app.get("/model", (req, res) => {
 //   res.status(200).send(state.model);
 // });
 
-// app.use("/runs", runs);
+app.use("/runs", runs);
 
 // Global error handling
 app.use((err, _req, res, next) => {
