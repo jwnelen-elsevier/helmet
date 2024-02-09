@@ -11,7 +11,7 @@ const TextHighlighter = ({
 
   const color = (value) => {
     // Map to new range of 0 to 1000 with interval of 50
-    const newRange = 900;
+    const newRange = 500;
     const oldRange = highest - lowest;
     const newValue = ((value - lowest) * newRange) / oldRange;
     const newInterval = 100;
@@ -21,7 +21,7 @@ const TextHighlighter = ({
     colorHue = Math.abs(value) < 0.1 ? "white" : colorHue;
 
     // Treshold for white text on dark background
-    if (colorSaturation > 400) {
+    if (colorSaturation > 100) {
       return `text-white bg-${colorHue}-${colorSaturation}`;
     }
     return `bg-${colorHue}-${colorSaturation}`;
@@ -45,7 +45,6 @@ const TextHighlighter = ({
       {tokens?.map((word, i) => {
         let score = attributions ? attributions[i] : 0;
         const f = score.toFixed(2) || 0;
-        console.log(f);
         const { trimmedWord, addSpace } = marginStyle(word);
 
         return (

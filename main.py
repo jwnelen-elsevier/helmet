@@ -27,8 +27,9 @@ squad = load_dataset("squad")
 
 amount_examples = 10
 small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
-example = small_train_dataset[0] # {text, label}
 
+# Number 4 gives an error because the text is too long
+example = small_train_dataset[5] # {text, label}
 res = model.predict(example['text'], ground_truth=example['label'])
 print(res)
 

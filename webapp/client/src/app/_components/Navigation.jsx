@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { StatusIndicator } from "@/app/_components/ui/Status";
 
 const links = [
   { label: "Home", href: "/" },
@@ -15,11 +16,15 @@ const NagivationBar = () => {
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
       <div className="flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="/" className="space-x-3 rtl:space-x-reverse">
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
             LLM XAI Platform
           </span>
         </a>
+        <div className="flex items-center">
+          {" "}
+          Status: <StatusIndicator></StatusIndicator>
+        </div>
         <button
           data-collapse-toggle="navbar-dropdown"
           type="button"
