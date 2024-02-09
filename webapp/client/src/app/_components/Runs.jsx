@@ -1,13 +1,15 @@
 "use client";
 import TextHighlighter from "./TextHighlighter";
 import { useState } from "react";
+import { deleteRun } from "@/api/runs";
 
 const Runs = ({ runs }) => {
   const [showAttributions, s] = useState(false);
+  const [runState, setRuns] = useState(runs);
 
   const maxLetters = 100;
 
-  if (!runs) {
+  if (!runState) {
     return (
       <div className="card">
         <h5 className="card-title">No Runs</h5>
@@ -15,20 +17,35 @@ const Runs = ({ runs }) => {
     );
   }
 
+  const deleteR = async (id) => {
+    deleteRun(id).then((res) => {
+      if (res.deletedCount === 1) {
+        const r = runState.filter((run) => run._id !== id);
+        setRuns(r);
+      } else {
+        console.log("Failed to delete run with id: ", id);
+      }
+    });
+  };
+
+  const getDateString = (date) => {
+    let d = new Date(date);
+    // by setting the locale, we are not getting the hydration error of Nextjs.
+    return `${d.toLocaleTimeString("nl-NL")}`;
+  };
+
   return (
     <div>
-      <p className="text-xl bold">All Runs ({runs.length})</p>
-      {runs?.map((run, index) => {
+      <p className="text-xl bold">All Runs ({runState.length})</p>
+      {runState?.map((run, index) => {
         const { date, output, input, explanation, input_tokens, _id } = run;
-        console.log(_id);
-        const { input_attribution } = explanation;
+        const { input_attribution, explanation_method } = explanation;
         const InputTruncated =
           input.length > maxLetters
             ? input.substring(0, maxLetters) +
               "..." +
               input.substring(input.length - maxLetters, input.length)
             : input;
-        const dateFormatted = new Date(date).toLocaleTimeString();
 
         return (
           <div key={index} className="flex flex-row py-2">
@@ -38,10 +55,11 @@ const Runs = ({ runs }) => {
               showAttributions={showAttributions}
             />
             <p className="px-2">Classified: {output}</p>
-            <p className="px-2">Date: {dateFormatted}</p>
-            <div>
+            <p>{`Attribution method: ${explanation_method}`}</p>
+            <p className="px-2">{getDateString(date)}</p>
+            <div className="flex flex-col justify-center">
               <button
-                onClick={() => s(!showAttributions)}
+                onClick={() => deleteR(_id)}
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
               >
                 <svg
