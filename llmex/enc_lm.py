@@ -8,6 +8,7 @@ from typing import Dict, Any
 from functools import partial
 from llmex.utils.typing import Explanation, Run
 from datetime import datetime
+import numpy as np
 
 class ENC_LM(BaseLM):
     def __init__(self, model_checkpoint: str, model: AutoModelForSequenceClassification, 
@@ -42,6 +43,11 @@ class ENC_LM(BaseLM):
         # predicted_answer = self.tokenizer.convert_tokens_to_string(predicted_tokens)
         # return predicted_answer
 
+    def normalize(self, attr):
+        l2_norm = np.linalg.norm(attr)
+        l2_normalized_matrix = attr / l2_norm
+        return l2_normalized_matrix
+
     def explain(self, prompt, input, output):
 
         def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
@@ -58,6 +64,7 @@ class ENC_LM(BaseLM):
         attributions = attributions.detach().cpu().numpy()
         r = attributions[0, :, :]
         attr = r.sum(axis=1)
+        attr = self.normalize(attr)
 
         return attr
 
