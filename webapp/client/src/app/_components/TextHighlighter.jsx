@@ -1,4 +1,5 @@
 // Create a component that will highlight text
+"use client";
 const TextHighlighter = ({
   tokens,
   attributions,
@@ -26,11 +27,15 @@ const TextHighlighter = ({
     return `bg-${colorHue}-${colorSaturation}`;
   };
 
+  const isNewWord = (word) =>
+    !word.includes("##") ||
+    word.includes("Ġ") ||
+    !word.includes([",", "!", "."]);
+
   const marginStyle = (word) => {
-    const belongsToPreviousWord = word.includes("##");
-    const trimmedWord = word.replace(/#/g, "");
-    const m = belongsToPreviousWord ? "mr-2" : "ml-2";
-    return { trimmedWord, m };
+    const addSpace = isNewWord(word);
+    let trimmedWord = word.replace(/#/g, "").replace(/Ġ/g, "");
+    return { trimmedWord, addSpace };
   };
 
   return (
@@ -40,11 +45,17 @@ const TextHighlighter = ({
       {tokens?.map((word, i) => {
         let score = attributions ? attributions[i] : 0;
         const f = score.toFixed(2) || 0;
-        const { trimmedWord, m } = marginStyle(word);
+        console.log(f);
+        const { trimmedWord, addSpace } = marginStyle(word);
 
         return (
           <div className="flex flex-col text-center " key={i}>
-            <span className={`rounded-sm ${color(f)} ${m}`}>{trimmedWord}</span>
+            <div>
+              {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
+              <span className={`rounded-sm whitespace-pre-line${color(f)}`}>
+                {trimmedWord}
+              </span>
+            </div>
             {showAttributions && (
               <span className="rounded-sm text-xs">{f}</span>
             )}
