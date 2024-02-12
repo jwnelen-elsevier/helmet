@@ -15,6 +15,22 @@ export const fetchRuns = async () => {
   } catch (error) {
     console.log(error);
   }
+  return null;
+};
+
+export const fetchRun = async (id) => {
+  try {
+    const response = await fetch(`${url}/runs/${id}`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
   return [];
 };
 
