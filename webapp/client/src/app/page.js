@@ -1,16 +1,20 @@
-import ModelCard from "@/app/_components/modelDetails";
-import Runs from "@/app/_components/runsList";
-import { fetchRuns } from "@/api/runs";
-import { fetchModel } from "@/api/status";
+import Link from "next/link";
 
 export default async function Page() {
-  const runs = await fetchRuns();
-  const model = await fetchModel();
-
   return (
     <div className="container text-center mx-auto">
-      <ModelCard model={model}></ModelCard>
-      <Runs runs={runs}></Runs>
+      <h1>Welcom to the XAI Platform of LLMEX</h1>
+      <p>
+        Go to the{" "}
+        <Link href={"/runs"} className="italic">
+          All runs
+        </Link>{" "}
+        page
+      </p>
+      <p>
+        You can find more information about this app at{" "}
+        <Link href={"/resources"}></Link>
+      </p>
     </div>
   );
 }
