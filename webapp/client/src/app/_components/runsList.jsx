@@ -12,11 +12,7 @@ const Runs = ({ runs }) => {
   const maxLetters = 100;
 
   if (!runState) {
-    return (
-      <div className="card">
-        <h5 className="card-title">No Runs</h5>
-      </div>
-    );
+    return <h2 className="">No Runs to display</h2>;
   }
 
   const deleteR = async (id) => {
@@ -38,7 +34,7 @@ const Runs = ({ runs }) => {
 
   return (
     <div>
-      <p className="text-xl bold">All Runs ({runState.length})</p>
+      <h2 className="">All runs ({runState.length})</h2>
       {runState?.map((run, index) => {
         const { date, output, input, explanation, input_tokens, _id } = run;
         const { input_attribution, explanation_method } = explanation;
