@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
+
 import TextHighlighter from "@/app/_components/textHighlighter";
 import { QuestionIcon } from "@/app/_components/ui/icons";
 
@@ -9,7 +11,7 @@ const DetailDisplayer = ({ props }) => {
   const [showAttributions, s] = useState(false);
 
   return (
-    <div className="flex flex-row py-2">
+    <div className="flex flex-row py-2 ">
       <TextHighlighter
         tokens={input_tokens}
         attributions={input_attribution}
@@ -17,7 +19,10 @@ const DetailDisplayer = ({ props }) => {
       />
       <p className="px-2">Classified: {output}</p>
       <p>
-        {`Attribution method: ${explanation_method}`} <QuestionIcon />
+        {`Attribution method: ${explanation_method}`}
+        <Link href={"/resources#gradientxinput"}>
+          <QuestionIcon />
+        </Link>
       </p>
     </div>
   );

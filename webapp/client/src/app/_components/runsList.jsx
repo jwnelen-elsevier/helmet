@@ -6,6 +6,7 @@ import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
 import Link from "next/link";
 import Modal from "@/app/_components/modal";
 import clsx from "clsx";
+import { deleteAllRuns } from "@/api/runs";
 
 const Runs = ({ runs, params }) => {
   const show = params?.show;
@@ -29,6 +30,17 @@ const Runs = ({ runs, params }) => {
         console.log("Failed to delete run with id: ", id);
       }
     });
+  };
+
+  const deleteAll = async () => {
+    deleteAllRuns().then((res) => {
+      if (res.deletedCount > 0) {
+        setRuns([]);
+      } else {
+        console.log("Failed to delete all runs");
+      }
+    });
+    console.log("delete all runs");
   };
 
   const getDateString = (date) => {
@@ -87,6 +99,13 @@ const Runs = ({ runs, params }) => {
       {show && (
         <Modal func={() => deleteR(toDeleteId)} backRef={"/runs"}></Modal>
       )}
+      <button
+        onClick={() => deleteAll()}
+        className="flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+      >
+        <DeleteIcon />
+        Delete all runs
+      </button>
     </div>
   );
 };

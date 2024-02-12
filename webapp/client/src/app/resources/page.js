@@ -1,10 +1,22 @@
+"use client";
+import techniques from "@/data/techniques";
+import { usePathname, useSearchParams } from "next/navigation";
+
 export default async function Page() {
   return (
     <div className="container mx-auto text-center">
       <h1 className="">Information</h1>
-      <p>This is a placeholder for the information page.</p>
-      <h2 className="">Gradien x Input</h2>
-      <p>This is a placeholder for the information page.</p>
+      {techniques.map((technique, index) => {
+        const { id, name, description, fullDescription } = technique;
+
+        return (
+          <div key={index} className="p-4">
+            <h2 className="">{name}</h2>
+            <h3>{description}</h3>
+            <p>{fullDescription}</p>
+          </div>
+        );
+      })}
     </div>
   );
 }

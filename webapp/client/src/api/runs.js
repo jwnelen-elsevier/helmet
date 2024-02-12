@@ -49,3 +49,19 @@ export const deleteRun = async (id) => {
   }
   return [];
 };
+
+export const deleteAllRuns = async () => {
+  try {
+    const response = await fetch(`${url}/runs`, {
+      method: "DELETE",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+  return [];
+};

@@ -18,7 +18,7 @@ const TextHighlighter = ({
     const colorSaturation = Math.floor(newValue / newInterval) * newInterval;
     let colorHue = value < 0 ? "red" : "green";
     // Kind of threshold for when we are highlighting
-    colorHue = Math.abs(value) < 0.1 ? "white" : colorHue;
+    colorHue = Math.abs(value) < 0.05 ? "white" : colorHue;
 
     // Treshold for white text on dark background
     if (colorSaturation > 100) {
@@ -40,7 +40,7 @@ const TextHighlighter = ({
 
   return (
     <div
-      className={`flex justify-center flex-wrap items-center align-middle ${props.className}`}
+      className={`flex justify-center flex-wrap items-center content-start ${props.className}`}
     >
       {tokens?.map((word, i) => {
         let score = attributions ? attributions[i] : 0;
