@@ -1,5 +1,5 @@
-import ModelCard from "@/app/_components/ModelCard";
-import Runs from "@/app/_components/Runs";
+import ModelCard from "@/app/_components/modelDetails";
+import Runs from "@/app/_components/runsList";
 import { fetchRuns } from "@/api/runs";
 import { fetchModel } from "@/api/status";
 

@@ -23,6 +23,15 @@ router.post("/", async function (req, res) {
   res.send(result).status(200);
 });
 
+// GET /run/:id
+router.get("/:id", async function (req, res) {
+  let db = await getConnection();
+  let collection = await db.collection("runs");
+  const id = req.params.id;
+  let result = await collection.findOne({ _id: new ObjectId(id) });
+  res.send(result).status(200);
+});
+
 // DELETE /run/:id
 router.delete("/:id", async function (req, res) {
   let db = await getConnection();
