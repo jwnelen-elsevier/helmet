@@ -8,5 +8,9 @@ export default async function Page({ params }) {
     return <div>Run not found</div>;
   }
 
-  return <DetailDisplayer props={runDetails} />;
+  return (
+    <div className="container mx-auto">
+      <DetailDisplayer props={runDetails} />
+    </div>
+  );
 }

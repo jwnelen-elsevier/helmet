@@ -42,9 +42,12 @@ router.delete("/:id", async function (req, res) {
   res.send(result).status(200);
 });
 
-router.post("/empty", (req, res) => {
-  STATE.data = [];
-  res.status(200).send("State cleared");
+// DELETE /run
+router.delete("/", async function (req, res) {
+  let db = await getConnection();
+  let collection = await db.collection("runs");
+  let result = await collection.deleteMany({});
+  res.send(result).status(200);
 });
 
 module.exports = router;
