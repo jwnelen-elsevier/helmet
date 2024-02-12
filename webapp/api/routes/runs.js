@@ -38,6 +38,7 @@ router.delete("/:id", async function (req, res) {
   let collection = await db.collection("runs");
   // dbo.collection<{_id: string}>("my-collection").deleteOne({ _id: id }, (err, obj) => {
   let result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+  console.log("deleted", result);
   res.send(result).status(200);
 });
 
