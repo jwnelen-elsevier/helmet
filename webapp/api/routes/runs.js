@@ -4,7 +4,7 @@ const ObjectId = require("mongodb").ObjectId;
 const getConnection = require("../db/conn").getConnection;
 const router = express.Router();
 
-// GET /run
+// GET /runs
 router.get("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
@@ -12,7 +12,7 @@ router.get("/", async function (req, res) {
   res.send(result).status(200);
 });
 
-// POST /run
+// POST /runs
 router.post("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
@@ -23,7 +23,7 @@ router.post("/", async function (req, res) {
   res.send(result).status(200);
 });
 
-// GET /run/:id
+// GET /runs/:id
 router.get("/:id", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
@@ -32,7 +32,7 @@ router.get("/:id", async function (req, res) {
   res.send(result).status(200);
 });
 
-// DELETE /run/:id
+// DELETE /runs/:id
 router.delete("/:id", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
@@ -42,7 +42,7 @@ router.delete("/:id", async function (req, res) {
   res.send(result).status(200);
 });
 
-// DELETE /run
+// DELETE /runs
 router.delete("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");

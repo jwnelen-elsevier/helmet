@@ -1,7 +1,6 @@
-from llmex.updater import update_app
+from llmex.updater import update_app, get_run
 from abc import ABC, abstractmethod
 from typing import Any
-from transformers import BatchEncoding
 from llmex.utils.typing import Run
 import torch
 class BaseLM(ABC):    
@@ -41,6 +40,12 @@ class BaseLM(ABC):
     def _get_input_embeds_from_ids(self, ids) -> torch.Tensor:
         return self.model.get_input_embeddings()(ids)
 
+    def get_run(self, run_id: str) -> Run | None:
+        resp = get_run(self.platform_url, run_id)
+        if resp is None:
+            return None
+        return Run(**resp)
+
     def update_run(self, run: Run):
         update_app(self.platform_url, "/runs", run.dict())
 
@@ -61,5 +66,5 @@ class BaseLM(ABC):
 
     @abstractmethod
     def predict(self, *args, **kwargs):
-        pass
+        pass 
     
