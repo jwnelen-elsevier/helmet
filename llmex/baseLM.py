@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 from llmex.utils.typing import Run
 import torch
+import numpy as np 
 class BaseLM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
                  tokenizer, model_type: str, url: str, embeddings):
@@ -45,6 +46,11 @@ class BaseLM(ABC):
         if resp is None:
             return None
         return Run(**resp)
+
+    def normalize(self, attr):
+        l2_norm = np.linalg.norm(attr)
+        l2_normalized_matrix = attr / l2_norm
+        return l2_normalized_matrix
 
     def update_run(self, run: Run):
         update_app(self.platform_url, "/runs", run.dict())
