@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
-  let result = await collection.find({}).toArray();
+  let result = await collection.find({}).sort({ date: -1 }).toArray();
   res.send(result).status(200);
 });
 
