@@ -41,6 +41,7 @@ class Run:
     output: str | list[str]
     explanation: Explanation
     _id: Optional[str] = None
+    groundtruth: Optional[str | list[str]] = None
     
     def dict(self) -> dict:
         d = {
@@ -56,4 +57,6 @@ class Run:
         }
         if self._id is not None:
             d["_id"] = self._id
+        if self.groundtruth is not None:
+            d["groundtruth"] = self.groundtruth
         return d
