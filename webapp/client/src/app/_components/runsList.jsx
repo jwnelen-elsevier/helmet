@@ -50,7 +50,7 @@ const Runs = ({ runs, params }) => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center gap-1">
       <h2 className="">All runs ({runState.length})</h2>
       {runState?.map((run, index) => {
         const { date, output, input, explanation, input_tokens, _id } = run;
