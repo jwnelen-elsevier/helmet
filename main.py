@@ -1,10 +1,9 @@
 from datasets import load_dataset
 
 import llmex
-from llmex.utils.typing import ContextInput
 
 # checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
-model_path = 'psmathur/orca_mini_3b'
+checkpoint = "soleimanian/financial-roberta-large-sentiment"
 
 device = "cpu"
 config = {
@@ -25,14 +24,18 @@ model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, 
 
 squad = load_dataset("squad")
 
-amount_examples = 15
+amount_examples = 3
 small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
 
-# # # Number 4 gives an error because the text is too long
-for i in range(5, amount_examples):
+# # # # Number 4 gives an error because the text is too long
+for i in range(amount_examples):
     example = small_train_dataset[i] # {text, label}
     res = model.predict(example['text'], ground_truth=example['label'])
-    # print(res)
+    print(res)
+
+# id = "65cb2446eb042cc4f86cdcb0"
+# res = model.predict_from_run(id, explanation_type="saliency")
+# print(res)
 
 # # example = small_train_dataset[5] # {text, label}
 # res = model.predict(example['text'], ground_truth=example['label'])
@@ -44,4 +47,6 @@ for i in range(5, amount_examples):
 # model.why_not(id=_id, "negative")
 
 
-
+# squad = load_dataset("squad")
+# example = squad["train"][0]
+# result = model.predict(example['question'], example['context'])
