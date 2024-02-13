@@ -95,17 +95,20 @@ const Runs = ({ runs, params }) => {
               </p>
               <p className="px-2">{getDateString(date)}</p>
               <div className="flex flex-col justify-center gap-1">
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
-                  <Link href={`/runs/?show=true&id=${_id}`}>
-                    <DeleteIcon />
-                  </Link>
-                </button>
+                <Link
+                  className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded-full"
+                  href={`/runs/?show=true&id=${_id}`}
+                  scroll={false}
+                >
+                  <DeleteIcon />
+                </Link>
 
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                  <Link href={`/details/${_id}`}>
-                    <DetailsIcon />
-                  </Link>
-                </button>
+                <Link
+                  className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-full"
+                  href={`/details/${_id}`}
+                >
+                  <DetailsIcon />
+                </Link>
               </div>
             </div>
           );
