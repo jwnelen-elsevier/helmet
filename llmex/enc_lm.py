@@ -89,6 +89,10 @@ class ENC_LM(BaseLM):
         })
 
     
+    def predict_from_run(self, id: str):
+        run = self.get_run(id)
+        return self.predict(str(run.input), ground_truth=str(run.groundtruth))
+
     # This is for extractive QA
     def predict(self, prompt: str, **kwargs):
         inputs = self._tokenize(prompt)

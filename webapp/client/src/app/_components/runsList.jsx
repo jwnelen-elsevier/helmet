@@ -70,7 +70,8 @@ const Runs = ({ runs, params }) => {
             : input;
 
         const isToBeDeleted = toDeleteId === _id;
-        const isCorrect = output === groundtruth;
+        const isCorrect = `${output}` === `${groundtruth}`;
+
         return (
           <div
             key={index}
