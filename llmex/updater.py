@@ -45,8 +45,7 @@ def get_run(url: str, run_id: str) -> dict:
     if url is None or run_id is None:
         raise ValueError(f"url cannot be None url: {url} run_id:{run_id}")
     final_url = f"{url}/runs/{run_id}"
-    print(final_url)
-    r = requests.get(f"{url}/runs/{run_id}")
+    r = requests.get(final_url)
     if r.status_code != 200:
         raise ValueError(f"Failed to get run. Status code: {r.status_code}")
     
