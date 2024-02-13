@@ -61,54 +61,56 @@ const Runs = ({ runs, params }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-1">
       <h2 className="">All runs ({runState.length})</h2>
-      {runState?.map((run, index) => {
-        const {
-          date,
-          output,
-          input,
-          _id,
-          groundtruth,
-          model_type,
-          model_checkpoint,
-        } = run;
+      <div className="flex flex-col gap-1">
+        {runState?.map((run, index) => {
+          const {
+            date,
+            output,
+            input,
+            _id,
+            groundtruth,
+            model_type,
+            model_checkpoint,
+          } = run;
 
-        const isToBeDeleted = toDeleteId === _id;
-        const isCorrect = `${output}` === `${groundtruth}`;
+          const isToBeDeleted = toDeleteId === _id;
+          const isCorrect = `${output}` === `${groundtruth}`;
 
-        return (
-          <div
-            key={index}
-            className={clsx(
-              "flex flex-row p-2 hover:bg-gray-200 hover:rounded transition duration-100 ease-in-out",
-              isToBeDeleted ? "bg-red-200" : "",
-              isCorrect ? "bg-green-100" : "bg-red-100"
-            )}
-          >
-            <p className="px-2">{input}</p>
-            <p className="px-2">Output: {output}</p>
-            {groundtruth !== null && (
-              <p className="px-2">{`GT: ${groundtruth}`}</p>
-            )}
-            <p className="px-2 font-mono text-sm">
-              Model: {model_checkpoint} ({getModelType(model_type)})
-            </p>
-            <p className="px-2">{getDateString(date)}</p>
-            <div className="flex flex-col justify-center gap-1">
-              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
-                <Link href={`/runs/?show=true&id=${_id}`}>
-                  <DeleteIcon />
-                </Link>
-              </button>
+          return (
+            <div
+              key={index}
+              className={clsx(
+                "flex flex-row p-2 hover:bg-gray-200 rounded transition duration-100 ease-in-out",
+                isToBeDeleted ? "bg-red-200" : "",
+                isCorrect ? "bg-green-100" : "bg-red-100"
+              )}
+            >
+              <p className="px-2">{input}</p>
+              <p className="px-2">Output: {output}</p>
+              {groundtruth !== null && (
+                <p className="px-2">{`GT: ${groundtruth}`}</p>
+              )}
+              <p className="px-2 font-mono text-sm">
+                Model: {model_checkpoint} ({getModelType(model_type)})
+              </p>
+              <p className="px-2">{getDateString(date)}</p>
+              <div className="flex flex-col justify-center gap-1">
+                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
+                  <Link href={`/runs/?show=true&id=${_id}`}>
+                    <DeleteIcon />
+                  </Link>
+                </button>
 
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                <Link href={`/details/${_id}`}>
-                  <DetailsIcon />
-                </Link>
-              </button>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                  <Link href={`/details/${_id}`}>
+                    <DetailsIcon />
+                  </Link>
+                </button>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
       {show && (
         <Modal func={() => deleteR(toDeleteId)} backRef={"/runs"}></Modal>
       )}
