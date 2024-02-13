@@ -8,18 +8,19 @@ import Modal from "@/app/_components/modal";
 import clsx from "clsx";
 import { deleteAllRuns } from "@/api/runs";
 
+const model_types = {
+  enc: "Encoder-only",
+  enc_dec: "Encoder-Decoder",
+  dec: "Decoder-only",
+};
+
 const Runs = ({ runs, params }) => {
   const show = params?.show;
   const toDeleteId = params?.id;
 
-  const [showAttributions, s] = useState(false);
   const [runState, setRuns] = useState(runs);
 
   const maxLetters = 100;
-
-  if (!runState) {
-    return <h2 className="">No Runs to display</h2>;
-  }
 
   const deleteR = async (id) => {
     deleteRun(id).then((res) => {
@@ -49,6 +50,14 @@ const Runs = ({ runs, params }) => {
     return `${d.toLocaleTimeString("nl-NL")}`;
   };
 
+  const getModelType = (type) => {
+    return model_types[type];
+  };
+
+  if (!runState || runState.length === 0) {
+    return <h2 className="">No Runs to display</h2>;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center gap-1">
       <h2 className="">All runs ({runState.length})</h2>
@@ -57,17 +66,11 @@ const Runs = ({ runs, params }) => {
           date,
           output,
           input,
-          explanation,
-          input_tokens,
           _id,
           groundtruth,
+          model_type,
+          model_checkpoint,
         } = run;
-        const InputTruncated =
-          input.length > maxLetters
-            ? input.substring(0, maxLetters) +
-              "..." +
-              input.substring(input.length - maxLetters, input.length)
-            : input;
 
         const isToBeDeleted = toDeleteId === _id;
         const isCorrect = `${output}` === `${groundtruth}`;
@@ -82,10 +85,13 @@ const Runs = ({ runs, params }) => {
             )}
           >
             <p className="px-2">{input}</p>
-            <p className="px-2">Classified: {output}</p>
+            <p className="px-2">Output: {output}</p>
             {groundtruth !== null && (
               <p className="px-2">{`GT: ${groundtruth}`}</p>
             )}
+            <p className="px-2 font-mono text-sm">
+              Model: {model_checkpoint} ({getModelType(model_type)})
+            </p>
             <p className="px-2">{getDateString(date)}</p>
             <div className="flex flex-col justify-center gap-1">
               <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
