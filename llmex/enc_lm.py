@@ -74,7 +74,7 @@ class ENC_LM(BaseLM):
             "explanation_method": "Input X Gradient"
         })
     
-    def _format_run(self, prompt, result, explanation) -> Run:
+    def _format_run(self, prompt, result, explanation, **kwargs) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -84,7 +84,8 @@ class ENC_LM(BaseLM):
             "input": prompt,
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
-            "explanation": explanation
+            "explanation": explanation,
+            **kwargs
         })
 
     
@@ -94,9 +95,10 @@ class ENC_LM(BaseLM):
         output = self.forward(inputs)
         result = self.postprocess_result(output)
         explanation = self.explain(prompt, inputs, result)
-
         exp = self._format_explanation(explanation)
-        r = self._format_run(prompt, result, exp)
+        
+        gt = kwargs.get("ground_truth", None)
+        r = self._format_run(prompt, result, exp, groundtruth=gt)
 
         self.update_run(r)
         return result, explanation
