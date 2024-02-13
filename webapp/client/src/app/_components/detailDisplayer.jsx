@@ -8,7 +8,16 @@ import { CopyIcon, CopySucceedIcon } from "./ui/icons";
 import clsx from "clsx";
 
 const DetailDisplayer = ({ props }) => {
-  const { date, output, input, explanation, input_tokens, _id } = props;
+  const {
+    date,
+    output,
+    groundtruth,
+    input,
+    explanation,
+    input_tokens,
+    _id,
+    model_checkpoint,
+  } = props;
   const { input_attribution, explanation_method } = explanation;
   const [showAttributions, s] = useState(false);
 
@@ -21,13 +30,17 @@ const DetailDisplayer = ({ props }) => {
 
   return (
     <div className="flex flex-col items-center">
+      <h2 className="font-bold">Model: {model_checkpoint}</h2>
+      <p className="px-2">Classified: {output}</p>
+      {groundtruth !== null && (
+        <p className="px-2">Ground truth: {groundtruth}</p>
+      )}
       <div className="flex flex-row py-2 ">
         <TextHighlighter
           tokens={input_tokens}
           attributions={input_attribution}
           showAttributions={showAttributions}
         />
-        <p className="px-2">Classified: {output}</p>
         <p>
           {`Attribution method: ${explanation_method}`}
           <Link href={"/resources#gradientxinput"}>

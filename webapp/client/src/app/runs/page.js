@@ -1,7 +1,6 @@
 import Runs from "@/app/_components/runsList";
 import { fetchRuns } from "@/api/runs";
 
-
 export default async function Page({ searchParams }) {
   console.log(searchParams);
   const runs = await fetchRuns();
