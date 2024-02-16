@@ -4,7 +4,9 @@ import { deleteRun, deleteAllRuns } from "@/api/runs";
 import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
 import Link from "next/link";
 import Modal from "@/app/_components/modal";
+import CollapsibleText from "@/app/_components/ui/collapsibleText";
 import clsx from "clsx";
+import { getDateString } from "@/utils/strings";
 
 import {
   Table,
@@ -14,6 +16,7 @@ import {
   TableRow,
   TableCell,
   Button,
+  Tooltip,
 } from "@nextui-org/react";
 
 const model_types = {
@@ -60,7 +63,7 @@ const Runs = ({ runs, params }) => {
     setRuns(runs);
   }, [toDeleteId]);
 
-  const maxLetters = 100;
+  const maxLength = 200;
 
   const deleteR = async (id) => {
     deleteRun(id).then((res) => {
@@ -84,19 +87,18 @@ const Runs = ({ runs, params }) => {
     console.log("delete all runs");
   };
 
-  const getDateString = (date) => {
-    let d = new Date(date);
-    // by setting the locale, we are not getting the hydration error of Nextjs.
-    return `${d.toLocaleTimeString("nl-NL")}`;
-  };
-
   const getModelType = (type) => {
     return model_types[type];
   };
 
+  const Filter = () => {
+    return <div className="flex items-center gap-2"></div>;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      <h2 className="">All runs ({runState.length})</h2>
+      <h2 className="">Runs ({runState.length})</h2>
+      <Filter></Filter>
       <Table
         className="text-left"
         removeWrapper
@@ -122,7 +124,12 @@ const Runs = ({ runs, params }) => {
                     : "bg-red-100 hover:bg-red-200"
                 )}
               >
-                <TableCell>{row.input}</TableCell>
+                <TableCell>
+                  <CollapsibleText
+                    text={row.input}
+                    maxLength={maxLength}
+                  ></CollapsibleText>
+                </TableCell>
                 <TableCell>{row.output}</TableCell>
                 <TableCell>{row.groundtruth}</TableCell>
                 <TableCell>
@@ -133,19 +140,26 @@ const Runs = ({ runs, params }) => {
                 <TableCell>{getDateString(row.date)}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Link
-                      className="text-sm text-default-400 cursor-pointer"
-                      href={`/details/${row._id}`}
+                    <Tooltip
+                      showArrow={true}
+                      content="Show explanation details"
                     >
-                      <DetailsIcon />
-                    </Link>
-                    <Link
-                      className="text-sm text-red-400 cursor-pointer"
-                      href={`/runs/?show=true&id=${row._id}`}
-                      scroll={false}
-                    >
-                      <DeleteIcon />
-                    </Link>
+                      <Link
+                        className="text-sm text-default-400 cursor-pointer"
+                        href={`/details/${row._id}`}
+                      >
+                        <DetailsIcon />
+                      </Link>
+                    </Tooltip>
+                    <Tooltip showArrow={true} content="Delete run">
+                      <Link
+                        className="text-sm text-red-400 cursor-pointer"
+                        href={`/runs/?show=true&id=${row._id}`}
+                        scroll={false}
+                      >
+                        <DeleteIcon />
+                      </Link>
+                    </Tooltip>
                   </div>
                 </TableCell>
               </TableRow>
@@ -162,7 +176,7 @@ const Runs = ({ runs, params }) => {
           className="flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
         >
           <DeleteIcon />
-          Delete all runs
+          Delete all
         </Button>
       )}
     </div>

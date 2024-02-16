@@ -6,6 +6,7 @@ import BackIcon from "./back";
 import NextIcon from "./next";
 import CopyIcon from "./copy";
 import CopySucceedIcon from "./copySucceed";
+import HorizontalDotsIcon from "./horizontalDots";
 
 export {
   DeleteIcon,
@@ -16,4 +17,5 @@ export {
   NextIcon,
   CopyIcon,
   CopySucceedIcon,
+  HorizontalDotsIcon,
 };
