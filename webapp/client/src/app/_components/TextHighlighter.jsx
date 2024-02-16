@@ -42,7 +42,7 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
         const { trimmedWord, addSpace } = marginStyle(word);
 
         return (
-          <div className="flex flex-col text-center text-black" key={i}>
+          <div className="flex flex-col text-center" key={i}>
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
               <span
