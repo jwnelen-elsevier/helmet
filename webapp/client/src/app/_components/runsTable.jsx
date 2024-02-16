@@ -97,7 +97,11 @@ const Runs = ({ runs, params }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <h2 className="">All runs ({runState.length})</h2>
-      <Table className="text-left" aria-label="Example static collection table">
+      <Table
+        className="text-left"
+        removeWrapper
+        aria-label="Example static collection table"
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid}>{column.name}</TableColumn>
@@ -106,13 +110,16 @@ const Runs = ({ runs, params }) => {
         <TableBody items={runState} emptyContent={"No rows to display."}>
           {(row) => {
             const isToBeDeleted = toDeleteId === row._id;
-            console.log(isToBeDeleted);
+            const isCorrect = `${row.output}` === `${row.groundtruth}`;
+
             return (
               <TableRow
                 key={row._id}
                 className={clsx(
-                  "hover:bg-gray-100",
-                  isToBeDeleted ? "bg-red-400" : ""
+                  isToBeDeleted ? "bg-red-400" : "",
+                  isCorrect
+                    ? "bg-green-100 hover:bg-green-200"
+                    : "bg-red-100 hover:bg-red-200"
                 )}
               >
                 <TableCell>{row.input}</TableCell>
