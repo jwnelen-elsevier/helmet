@@ -11,3 +11,29 @@ body {
   background-color: rebeccapurple;
   color: white;
 }
+
+body {
+  min-height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  @apply text-2xl;
+}
+h2 {
+  @apply text-xl;
+}
+h3 {
+  @apply text-lg;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-bold my-1;
+}
+.footer {
+  margin-top: auto; /* Footer will be at the bottom of the page */
+}

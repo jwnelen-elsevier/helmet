@@ -1,7 +1,6 @@
 import { fetchModel } from "@/api/status";
 
-const ModelCard = async () => {
-  const model = await fetchModel();
+const ModelCard = ({ model }) => {
   const isLoaded = model.isLoaded;
 
   if (!isLoaded) {

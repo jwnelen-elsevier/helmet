@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-
+from typing import Optional
 @dataclass
 class Explanation:
     """Generic explanation dataclass"""
@@ -30,9 +30,11 @@ class Run:
     input_tokens: list[str]
     output: str | list[str]
     explanation: Explanation
+    _id: Optional[str] = None
+    groundtruth: Optional[str | list[str]] = None
     
     def dict(self) -> dict:
-        return {
+        d = {
             "date": self.date,
             "model_checkpoint": self.model_checkpoint,
             "model": self.model,
@@ -43,3 +45,8 @@ class Run:
             "output": self.output,
             "explanation": self.explanation.dict()
         }
+        if self._id is not None:
+            d["_id"] = self._id
+        if self.groundtruth is not None:
+            d["groundtruth"] = self.groundtruth
+        return d

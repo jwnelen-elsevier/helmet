@@ -1,13 +1,12 @@
 from transformers import AutoModelForSequenceClassification, PreTrainedTokenizer
 from .baseLM import BaseLM
 import torch
-from torch.nn import functional as F
-from captum.attr import InputXGradient
 from operator import attrgetter
-from typing import Dict, Any
-from functools import partial
 from llmex.utils.typing import Explanation, Run
 from datetime import datetime
+from torch.nn import functional as F
+import numpy as np
+from llmex.explainers.gradients import compute_gradient
 
 class ENC_LM(BaseLM):
     def __init__(self, model_checkpoint: str, model: AutoModelForSequenceClassification, 
@@ -42,32 +41,16 @@ class ENC_LM(BaseLM):
         # predicted_answer = self.tokenizer.convert_tokens_to_string(predicted_tokens)
         # return predicted_answer
 
-    def explain(self, prompt, input, output):
+    def explain(self, prompt, input, output, gradient_type: str):
+        return compute_gradient(self, prompt, input, output, gradient_type)
 
-        def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
-            output = model(inputs_embeds=inp, **extra_forward_args)
-            return F.softmax(output.logits, dim=1)
-    
-        input_embeds = self.get_input_embeddings(prompt)
-        attention_mask = input["attention_mask"]
-
-        forward_func = partial(model_forward, model=self.model, extra_forward_args={"attention_mask": attention_mask})
-
-        lig = InputXGradient(forward_func)
-        attributions = lig.attribute(inputs=input_embeds, target=output)
-        attributions = attributions.detach().cpu().numpy()
-        r = attributions[0, :, :]
-        attr = r.sum(axis=1)
-
-        return attr
-
-    def _format_explanation(self, attr) -> Explanation:
+    def _format_explanation(self, attr, gradient_type: str) -> Explanation:
         return Explanation(**{
             "input_attribution": list(attr),
-            "explanation_method": "Input X Gradient"
+            "explanation_method": gradient_type
         })
     
-    def _format_run(self, prompt, result, explanation) -> Run:
+    def _format_run(self, prompt, result, explanation, **kwargs) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -77,19 +60,28 @@ class ENC_LM(BaseLM):
             "input": prompt,
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
-            "explanation": explanation
+            "explanation": explanation,
+            **kwargs
         })
 
     
+    def predict_from_run(self, id: str, **kwargs):
+        run = self.get_run(id)
+        return self.predict(str(run.input), ground_truth=str(run.groundtruth), **kwargs)
+
     # This is for extractive QA
     def predict(self, prompt: str, **kwargs):
         inputs = self._tokenize(prompt)
         output = self.forward(inputs)
         result = self.postprocess_result(output)
-        explanation = self.explain(prompt, inputs, result)
+        explanation_type = kwargs.get("explanation_type", "input_x_gradient")
+        print(explanation_type)
 
-        exp = self._format_explanation(explanation)
-        r = self._format_run(prompt, result, exp)
+        explanation = self.explain(prompt, inputs, result, explanation_type)
+        exp = self._format_explanation(explanation, explanation_type)
+        
+        gt = kwargs.get("ground_truth", None)
+        r = self._format_run(prompt, result, exp, groundtruth=gt)
 
         self.update_run(r)
         return result, explanation

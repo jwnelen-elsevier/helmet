@@ -1,11 +1,20 @@
-import ModelCard from "@/app/_components/ModelCard";
-import Runs from "@/app/_components/Runs";
+import Link from "next/link";
 
 export default async function Page() {
   return (
-    <div className="w-full h-full text-center m-auto">
-      <ModelCard></ModelCard>
-      <Runs></Runs>
+    <div className="container text-center mx-auto">
+      <h1>Welcom to the XAI Platform of LLMEX</h1>
+      <p>
+        Go to the{" "}
+        <Link href={"/runs"} className="italic">
+          All runs
+        </Link>{" "}
+        page
+      </p>
+      <p>
+        You can find more information about this app at{" "}
+        <Link href={"/resources"}></Link>
+      </p>
     </div>
   );
 }

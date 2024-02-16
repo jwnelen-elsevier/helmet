@@ -1,9 +1,8 @@
-import NavigationBar from "@/app/_components/Navigation";
-import FooterComponent from "@/app/_components/Footer";
+import NavigationBar from "@/app/_components/navBar";
+import FooterComponent from "@/app/_components/footer";
 import "@/styles/globals.css";
 import { StatusProvider } from "@/providers/status";
-import { Suspense } from "react";
-import Loading from "@/app/loading";
+import PageNav from "@/app/_components/pageNav";
 
 export default function RootLayout({ children }) {
   return (
@@ -11,6 +10,7 @@ export default function RootLayout({ children }) {
       <body>
         <StatusProvider>
           <NavigationBar />
+          <PageNav />
           {children}
           <FooterComponent />
         </StatusProvider>
