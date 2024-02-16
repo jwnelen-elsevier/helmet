@@ -1,6 +1,5 @@
 "use client";
 import techniques from "@/data/techniques";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default async function Page() {
   return (
