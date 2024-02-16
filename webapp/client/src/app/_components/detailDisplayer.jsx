@@ -6,6 +6,7 @@ import TextHighlighter from "@/app/_components/textHighlighter";
 import { QuestionIcon } from "@/app/_components/ui/icons";
 import { CopyIcon, CopySucceedIcon } from "./ui/icons";
 import clsx from "clsx";
+import { Button, Tooltip } from "@nextui-org/react";
 
 const DetailDisplayer = ({ props }) => {
   const {
@@ -37,9 +38,11 @@ const DetailDisplayer = ({ props }) => {
       )}
       <span className="flex gap-2 items-center">
         {`Attribution method: ${explanation_method}`}
-        <Link href={"/resources#gradientxinput"}>
-          <QuestionIcon />
-        </Link>
+        <Tooltip showArrow={true} content={"Info about explainability methods"}>
+          <Link href={"/resources#gradientxinput"}>
+            <QuestionIcon />
+          </Link>
+        </Tooltip>
       </span>
       <div className="flex flex-row py-2 ">
         <TextHighlighter
@@ -49,24 +52,29 @@ const DetailDisplayer = ({ props }) => {
         />
       </div>
       <div className="flex flex-row gap-2">
-        <button
+        <Button
           onClick={() => s(!showAttributions)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Show attributions
-        </button>
+        </Button>
       </div>
       <div className="flex flex-row items-center group">
         {_id}
-        <button
-          onClick={() => copyToClipboard(_id)}
-          className={clsx(
-            " cursor-pointer text-black",
-            isCopied ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          )}
+        <Tooltip
+          showArrow={true}
+          content={isCopied ? "Copied to clipboard!" : "Copy to clipboard"}
         >
-          {isCopied ? <CopySucceedIcon /> : <CopyIcon />}
-        </button>
+          <button
+            onClick={() => copyToClipboard(_id)}
+            className={clsx(
+              " cursor-pointer text-black",
+              isCopied ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+            )}
+          >
+            {isCopied ? <CopySucceedIcon /> : <CopyIcon />}
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
