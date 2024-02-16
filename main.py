@@ -23,18 +23,18 @@ model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, 
 
 imdb = load_dataset("imdb")
 
-# amount_examples = 15
-# small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
+amount_examples = 3
+small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
 
 # # # # Number 4 gives an error because the text is too long
-# for i in range(5, amount_examples):
-#     example = small_train_dataset[i] # {text, label}
-#     res = model.predict(example['text'], ground_truth=example['label'])
-    # print(res)
+for i in range(amount_examples):
+    example = small_train_dataset[i] # {text, label}
+    res = model.predict(example['text'], ground_truth=example['label'])
+    print(res)
 
-id = "65cb2446eb042cc4f86cdcb0"
-res = model.predict_from_run(id, explanation_type="saliency")
-print(res)
+# id = "65cb2446eb042cc4f86cdcb0"
+# res = model.predict_from_run(id, explanation_type="saliency")
+# print(res)
 
 # # example = small_train_dataset[5] # {text, label}
 # res = model.predict(example['text'], ground_truth=example['label'])
