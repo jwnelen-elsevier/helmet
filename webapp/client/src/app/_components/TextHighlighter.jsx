@@ -48,10 +48,10 @@ const TextHighlighter = ({
         const { trimmedWord, addSpace } = marginStyle(word);
 
         return (
-          <div className="flex flex-col text-center " key={i}>
+          <div className="flex flex-col text-center" key={i}>
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
-              <span className={`rounded-sm whitespace-pre-line${color(f)}`}>
+              <span className={`rounded-sm whitespace-pre-line ${color(f)}`}>
                 {trimmedWord}
               </span>
             </div>
