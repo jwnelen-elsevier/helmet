@@ -1,4 +1,5 @@
-import Runs from "@/app/_components/runsList";
+// import Runs from "@/app/_components/runsList";
+import Runs from "@/app/_components/runsTable";
 import { fetchRuns } from "@/api/runs";
 
 export default async function Page({ searchParams }) {
