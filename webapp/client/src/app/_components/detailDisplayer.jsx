@@ -35,18 +35,18 @@ const DetailDisplayer = ({ props }) => {
       {groundtruth !== null && (
         <p className="px-2">Ground truth: {groundtruth}</p>
       )}
+      <span className="flex gap-2 items-center">
+        {`Attribution method: ${explanation_method}`}
+        <Link href={"/resources#gradientxinput"}>
+          <QuestionIcon />
+        </Link>
+      </span>
       <div className="flex flex-row py-2 ">
         <TextHighlighter
           tokens={input_tokens}
           attributions={input_attribution}
           showAttributions={showAttributions}
         />
-        <p>
-          {`Attribution method: ${explanation_method}`}
-          <Link href={"/resources#gradientxinput"}>
-            <QuestionIcon />
-          </Link>
-        </p>
       </div>
       <div className="flex flex-row gap-2">
         <button
