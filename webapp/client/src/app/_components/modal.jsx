@@ -12,7 +12,7 @@ export default function Modal({ func, backRef }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-hidden h-full w-full flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-hidden h-full w-full flex items-center justify-center z-10">
       <div className="p-8 border w-96 shadow-lg rounded-md bg-white">
         <div className="text-center">
           <h3 className="text-2xl font-bold text-gray-900">Delete run?</h3>

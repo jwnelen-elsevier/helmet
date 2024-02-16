@@ -4,7 +4,6 @@
 
 body {
   font-family: "Roboto", sans-serif;
-  background-color: #f5f5f5;
   min-height: 100vh !important;
   max-height: 100vh !important;
   display: flex;
@@ -14,13 +13,6 @@ body {
 [data-theme="dark"] {
   background-color: rebeccapurple;
   color: white;
-}
-
-/* Needed because NextUI does some fancy stuff that I don't like */
-#__next {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 h1 {
