@@ -1,11 +1,7 @@
 // Create a component that will highlight text
-"use client";
-const TextHighlighter = ({
-  tokens,
-  attributions,
-  showAttributions = true,
-  ...props
-}) => {
+import clsx from "clsx";
+
+const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
   const lowest = -1;
   const highest = 1;
 
@@ -22,7 +18,7 @@ const TextHighlighter = ({
 
     // Treshold for white text on dark background
     if (colorSaturation > 100) {
-      return `text-white bg-${colorHue}-${colorSaturation}`;
+      return `bg-${colorHue}-${colorSaturation}`;
     }
     return `bg-${colorHue}-${colorSaturation}`;
   };
@@ -39,19 +35,19 @@ const TextHighlighter = ({
   };
 
   return (
-    <div
-      className={`flex justify-center flex-wrap items-center content-start ${props.className}`}
-    >
+    <div className={`flex justify-center flex-wrap items-center content-start`}>
       {tokens?.map((word, i) => {
         let score = attributions ? attributions[i] : 0;
         const f = score.toFixed(2) || 0;
         const { trimmedWord, addSpace } = marginStyle(word);
 
         return (
-          <div className="flex flex-col text-center " key={i}>
+          <div className="flex flex-col text-center" key={i}>
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
-              <span className={`rounded-sm whitespace-pre-line${color(f)}`}>
+              <span
+                className={clsx(`rounded-sm whitespace-pre-line`, color(f))}
+              >
                 {trimmedWord}
               </span>
             </div>
