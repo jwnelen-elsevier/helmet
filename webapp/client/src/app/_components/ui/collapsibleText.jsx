@@ -2,16 +2,17 @@ import { useState, useEffect } from "react";
 
 const CollapsibleText = ({ text, maxLength }) => {
   const [showAll, setShowAll] = useState(false);
-  const [showText, setShowText] = useState(text);
+  // const [showText, setShowText] = useState(text);
 
-  useEffect(() => {
+  const displayedText = () => {
     if (text.split("").length > maxLength) {
-      setShowText(text.substring(0, maxLength) + "...");
+      return text.substring(0, maxLength) + "...";
     } else {
-      setShowText(text);
+      return text;
     }
-    return () => {};
-  }, [text]);
+  };
+
+  const showText = showAll ? text : displayedText();
 
   const toggleShowAll = () => {
     setShowAll(!showAll);
@@ -25,7 +26,7 @@ const CollapsibleText = ({ text, maxLength }) => {
 
   return (
     <p>
-      {showAll ? text : showText}
+      {showText}
       {text.split("").length > maxLength && <ExpandButton />}
     </p>
   );
