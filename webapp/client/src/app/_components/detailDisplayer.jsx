@@ -56,7 +56,7 @@ const DetailDisplayer = ({ props }) => {
           onClick={() => s(!showAttributions)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Show attributions
+          {showAttributions ? "Hide attributions" : "Show attributions"}
         </Button>
       </div>
       <div className="flex flex-row items-center group">
