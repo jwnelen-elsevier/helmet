@@ -1,15 +1,17 @@
 import torch
+from transformers import AutoModelForSeq2SeqLM, PreTrainedTokenizer
 from operator import attrgetter
-from llmex.utils.typing import Explanation, Run
 from datetime import datetime
 from torch.nn import functional as F
-import numpy as np
-from llmex.explainers.gradients import compute_gradient
 
-class ENC_LM(BaseLM):
-    def __init__(self, model_checkpoint: str, model: AutoModelForSequenceClassification, 
+from llmex.utils.typing import Explanation, Run, ContextInput
+from llmex.explainers.gradients import compute_gradient
+from llmex.baseLM import BaseLM
+
+class ENC_DEC_LM(BaseLM):
+    def __init__(self, model_checkpoint: str, model: AutoModelForSeq2SeqLM, 
                  tokenizer: PreTrainedTokenizer, url: str, model_config: dict = {}):
-        self.model_type = "enc"
+        self.model_type = "enc-dec"
         self.config = model_config
 
         try:
@@ -23,16 +25,15 @@ class ENC_LM(BaseLM):
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, embeddings)
 
-    def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
-        print("enc tokenizing")
-        return self.tokenizer(prompt, return_tensors="pt", **tokenizer_kwargs)
+    def _tokenize(self, input: ContextInput, **tokenizer_kwargs) -> dict:
+        tokens = self.tokenizer(input.prompt, input.context, return_tensors="pt", **tokenizer_kwargs)
+        return tokens
 
     def forward(self, inputs):
-        output = self.model(**inputs)
-        return F.softmax(output.logits, dim=1)
+        return self.model(**inputs)
         
     def postprocess_result(self, output):
-        return torch.argmax(output).item()
+        return self.tokenizer.decode(output[0], skip_special_tokens=True)
         # start_idx, end_idx = output
         # r = input["input_ids"][0][start_idx:end_idx + 1]
         # predicted_tokens = self.tokenizer.convert_ids_to_tokens(r, skip_special_tokens=True)
@@ -67,20 +68,21 @@ class ENC_LM(BaseLM):
         run = self.get_run(id)
         return self.predict(str(run.input), ground_truth=str(run.groundtruth), **kwargs)
 
-    # This is for extractive QA
-    def predict(self, prompt: Input, **kwargs):
-        inputs = self._tokenize(prompt)
+    # This is for abstactive QA
+    def predict(self, input: ContextInput, **kwargs):
+        inputs = self._tokenize(input)
         output = self.forward(inputs)
         result = self.postprocess_result(output)
-        explanation_type = kwargs.get("explanation_type", "input_x_gradient")
-        print(explanation_type)
 
-        explanation = self.explain(prompt, inputs, result, explanation_type)
-        exp = self._format_explanation(explanation, explanation_type)
+        # explanation_type = kwargs.get("explanation_type", "input_x_gradient")
+        # print(explanation_type)
+
+        # explanation = self.explain(prompt, inputs, result, explanation_type)
+        # exp = self._format_explanation(explanation, explanation_type)
         
-        gt = kwargs.get("ground_truth", None)
-        r = self._format_run(prompt, result, exp, groundtruth=gt)
+        # gt = kwargs.get("ground_truth", None)
+        # r = self._format_run(prompt, result, exp, groundtruth=gt)
 
-        self.update_run(r)
-        return result, explanation
+        # self.update_run(r)
+        return result
         

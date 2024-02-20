@@ -2,6 +2,7 @@ import transformers
 from transformers import AutoTokenizer
 
 from llmex.enc_lm import ENC_LM
+from llmex.enc_dec_lm import ENC_DEC_LM
 
 url = "http://localhost:4000"
 
@@ -14,6 +15,7 @@ model_type_to_class = {
 
 model_type_to_implementation = {
     "enc": ENC_LM,
+    "enc-dec": ENC_DEC_LM
 }
 
 def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, device="cpu"):
