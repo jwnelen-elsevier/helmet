@@ -1,7 +1,7 @@
 import transformers
 from datetime import datetime
 
-from llmex.models.base_lm import Base_LM
+from llmex.models import Base_LM
 from llmex.utils.typing import Explanation, Run
 
 class DEC_LM(Base_LM):
@@ -24,7 +24,8 @@ class DEC_LM(Base_LM):
         )[0]
     
     def postprocess_result(self, output):
-        pass
+        # Return back the string
+        return self.tokenizer.decode(output, skip_special_tokens=True)
     
     def explain(self, prompt, input, output, gradient_type: str):
         pass
@@ -52,5 +53,12 @@ class DEC_LM(Base_LM):
     def predict(self, prompt, *args, **kwargs):
         input = self._tokenize(prompt)
         output = self.forward(input)
-        string = self.tokenizer.decode(output, skip_special_tokens=True)
-        return string
+        result = self.postprocess_result(output)
+
+        # explanation_type = kwargs.get("explanation_type", "input_x_gradient")
+        # explanation = self.explain(prompt, input, output, explanation_type)
+        # formatted_expl = self._format_explanation(explanation, explanation_type)
+        # formatted_run = self._format_run(prompt, result, formatted_expl)
+
+        # return result, explanation
+        return result

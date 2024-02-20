@@ -23,7 +23,7 @@ model_args = {
 
 model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
 
-prompt = "this is a test prompt"
+prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
 res = model.predict(prompt)
 print(res)
