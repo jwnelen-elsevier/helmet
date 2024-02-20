@@ -1,8 +1,7 @@
 import transformers
 from transformers import AutoTokenizer
 
-from llmex.enc_lm import ENC_LM
-from llmex.enc_dec_lm import ENC_DEC_LM
+from llmex.models import ENC_LM, ENC_DEC_LM
 
 url = "http://localhost:4000"
 

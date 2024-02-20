@@ -1,10 +1,9 @@
 from captum.attr import InputXGradient, Saliency
 from typing import Dict, Any
 from functools import partial
-from llmex.baseLM import BaseLM
 from torch.nn import functional as F
 
-def compute_gradient(wrapper: BaseLM, prompt, input, output, gradient_type):
+def compute_gradient(wrapper, prompt, input, output, gradient_type):
     def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
             output = model(inputs_embeds=inp, **extra_forward_args)
             return F.softmax(output.logits, dim=1)
