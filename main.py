@@ -4,7 +4,7 @@ import llmex
 
 # checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
 # checkpoint = "soleimanian/financial-roberta-large-sentiment"
-checkpoint = "model_path = 'psmathur/orca_mini_3b'"
+checkpoint = "openai-community/gpt2"
 
 device = "cpu"
 config = {
@@ -26,7 +26,7 @@ model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, 
 prompt = "this is a test prompt"
 
 res = model.predict(prompt)
-
+print(res)
 
 # imdb = load_dataset("imdb")
 
