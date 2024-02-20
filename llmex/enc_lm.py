@@ -1,5 +1,3 @@
-from transformers import AutoModelForSequenceClassification, PreTrainedTokenizer
-from .baseLM import BaseLM
 import torch
 from torch.nn import functional as F
 from captum.attr import InputXGradient
@@ -82,7 +80,7 @@ class ENC_LM(BaseLM):
 
     
     # This is for extractive QA
-    def predict(self, prompt: str, **kwargs):
+    def predict(self, prompt: Input, **kwargs):
         inputs = self._tokenize(prompt)
         output = self.forward(inputs)
         result = self.postprocess_result(output)

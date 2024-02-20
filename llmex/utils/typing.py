@@ -17,7 +17,17 @@ class Explanation:
             "explanation_method": self.explanation_method,
             "input_attribution": self.input_attribution
         }
-    
+
+@dataclass  
+class Input:
+    """Generic Prompt Class"""
+    prompt: str
+
+@dataclass
+class ContextInput(Input):
+    """Prompt & Context"""
+    context: str
+
 @dataclass
 class Run:
     """Generic run dataclass"""
@@ -26,7 +36,7 @@ class Run:
     model: str
     tokenizer: str
     model_type: str
-    input: str | list[str]
+    input: Input
     input_tokens: list[str]
     output: str | list[str]
     explanation: Explanation
