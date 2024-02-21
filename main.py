@@ -10,7 +10,7 @@ device = "cpu"
 config = {
     "platform_url": "http://localhost:4000",
     "model_type": "dec",
-    # "embeddings": "shared"
+    "embeddings": "transformer.wte"
     # "embeddings": "roberta.embeddings.word_embeddings",
     # "special_tokens_mask": true, ?? adapted from Thermostat -> Only needed with Bert, not Roberta
 }
@@ -25,7 +25,7 @@ model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, 
 
 prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
-res = model.predict(prompt)
+res = model.predict(prompt, explanation_type="gradient")
 print(res)
 
 # imdb = load_dataset("imdb")
