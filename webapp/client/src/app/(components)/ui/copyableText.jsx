@@ -13,7 +13,7 @@ const CopyableText = ({ text }) => {
   };
 
   return (
-    <div className="flex flex-row items-center group">
+    <span className="flex flex-row items-center group">
       {text}
       <Tooltip
         showArrow={true}
@@ -29,7 +29,7 @@ const CopyableText = ({ text }) => {
           {isCopied ? <CopySucceedIcon /> : <CopyIcon />}
         </button>
       </Tooltip>
-    </div>
+    </span>
   );
 };
 
