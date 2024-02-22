@@ -8,11 +8,12 @@ from llmex.utils.typing import Run
  
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
-                 tokenizer, model_type: str, url: str, embeddings):
+                 tokenizer, model_type: str, url: str, project_id:str, embeddings):
         self.model = model
         self.model_checkpoint = model_checkpoint
         self.tokenizer = tokenizer
         self.platform_url = url
+        self.project_id = project_id
         self.model_type = model_type
         self.embeddings = embeddings
         self.__post_init__()

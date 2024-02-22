@@ -9,7 +9,7 @@ from llmex.explainers.gradients import compute_gradients_causal
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
-                 tokenizer: transformers.PreTrainedTokenizer, url: str, model_config: dict = {}):
+                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id: str, model_config: dict = {}):
         self.model_type = "dec"
         self.config = model_config
 
@@ -22,7 +22,7 @@ class DEC_LM(Base_LM):
             print(e)
             raise KeyError("embeddings must be specified in model_config")
 
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, None)
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, None)
 
     def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
         has_eos_token = tokenizer_kwargs.get("eos_token", False)
@@ -70,6 +70,7 @@ class DEC_LM(Base_LM):
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
             "explanation": explanation,
+            "project_id": self.project_id,
             **kwargs
         })
     

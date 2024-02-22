@@ -10,7 +10,7 @@ from llmex.utils.typing import Explanation, Run, Input
 
 class ENC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForSequenceClassification, 
-                 tokenizer: transformers.PreTrainedTokenizer, url: str, model_config: dict = {}):
+                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id, model_config: dict = {}):
         self.model_type = "enc"
         self.config = model_config
 
@@ -23,7 +23,7 @@ class ENC_LM(Base_LM):
             print(e)
             raise KeyError("embeddings must be specified in model_config")
 
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, embeddings)
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
 
     def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
         print("enc tokenizing")
@@ -61,16 +61,17 @@ class ENC_LM(Base_LM):
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
             "explanation": explanation,
+            "project_id": self.project_id,
             **kwargs
         })
 
     
     def predict_from_run(self, id: str, **kwargs):
         run = self.get_run(id)
-        return self.predict(run.input, ground_truth=str(run.groundtruth), **kwargs)
+        return self.predict(run.input.prompt, ground_truth=str(run.groundtruth), **kwargs)
 
     # This is for extractive QA
-    def predict(self, prompt: Input, **kwargs):
+    def predict(self, prompt: str, **kwargs):
         inputs = self._tokenize(prompt)
         output = self.forward(inputs)
         result = self.postprocess_result(output)

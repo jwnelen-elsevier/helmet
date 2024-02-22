@@ -31,6 +31,7 @@ class ContextInput(Input):
 @dataclass
 class Run:
     """Generic run dataclass"""
+    project_id: str
     date: datetime
     model_checkpoint: str
     model: str
@@ -53,7 +54,8 @@ class Run:
             "input": self.input,
             "input_tokens": self.input_tokens,
             "output": self.output,
-            "explanation": self.explanation.dict()
+            "explanation": self.explanation.dict(),
+            "project_id": self.project_id,
         }
         if self._id is not None:
             d["_id"] = self._id
