@@ -15,7 +15,6 @@ router.post("/", async function (req, res) {
   let collection = await db.collection("projects");
   const newProject = req.body;
   let result = await collection.insertOne(newProject);
-  console.log("newProject", newProject);
   res.send(result).status(200);
 });
 

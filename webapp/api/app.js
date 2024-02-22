@@ -32,7 +32,6 @@ app.get("/model", (req, res) => {
 });
 
 app.post("/update_model", (req, res) => {
-  console.log(req.body);
   s.setModel(req.body);
   res.status(200).send("Updated!");
 });

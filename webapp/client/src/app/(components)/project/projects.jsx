@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import CreateProjectModal from "@/app/(components)/setup_modal";
+import CreateProjectModal from "@/app/(components)/project/projectModal";
 
 const DisplayProjects = ({ projectsIn, createNewProject }) => {
   const [projects, setProjects] = useState(projectsIn);

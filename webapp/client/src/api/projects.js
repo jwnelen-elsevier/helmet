@@ -28,7 +28,6 @@ export const createProject = async (project) => {
       },
       body: JSON.stringify(project),
     });
-    console.log("response", response);
     return response.json();
   } catch (error) {
     console.log(error);

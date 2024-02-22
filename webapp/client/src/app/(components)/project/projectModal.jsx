@@ -11,11 +11,13 @@ import {
   useDisclosure,
   Input,
 } from "@nextui-org/react";
+import TaskSelector from "@/app/(components)/project/taskSelector";
 
 export default function CreateProjectModal({ createProjectFunc }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [formData, setForData] = React.useState({
     projectName: "",
+    task: "q_a",
   });
 
   const handleInputChange = (e) => {
@@ -23,9 +25,14 @@ export default function CreateProjectModal({ createProjectFunc }) {
     setForData({ ...formData, [name]: value });
   };
 
+  const handleTaskChange = (value) => {
+    setForData({ ...formData, task: value });
+  };
+
   return (
     <div>
       <Button onPress={onOpen}>New Project</Button>
+
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => {
@@ -37,7 +44,7 @@ export default function CreateProjectModal({ createProjectFunc }) {
             return (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  Setup Wizard for New Project
+                  Setup Wizard for new project
                 </ModalHeader>
                 <ModalBody>
                   <Input
@@ -45,8 +52,13 @@ export default function CreateProjectModal({ createProjectFunc }) {
                     label="Project Name"
                     placeholder="Name"
                     name="projectName"
+                    labelPlacement="outside"
                     variant="bordered"
                     onChange={handleInputChange}
+                  />
+                  <TaskSelector
+                    val={formData["task"]}
+                    onChangeTask={handleTaskChange}
                   />
                 </ModalBody>
                 <ModalFooter>
