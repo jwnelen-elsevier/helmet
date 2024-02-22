@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
           <StatusProvider>
             <NavigationBar />
             <PageNav />
-            {children}
+            <div className="text-center">{children}</div>
             <FooterComponent />
           </StatusProvider>
         </Providers>
