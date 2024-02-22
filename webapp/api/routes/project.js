@@ -14,8 +14,8 @@ router.post("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("projects");
   const newProject = req.body;
-  newProject.date = new Date(newProject.date);
   let result = await collection.insertOne(newProject);
+  console.log("newProject", newProject);
   res.send(result).status(200);
 });
 
