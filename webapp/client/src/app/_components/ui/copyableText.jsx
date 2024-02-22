@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CopyIcon, CopySucceedIcon } from "../ui/icons";
+import { CopyIcon, CopySucceedIcon } from "./icons";
 import clsx from "clsx";
 import { Tooltip } from "@nextui-org/react";
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import CreateProjectModal from "@/app/(components)/project/projectModal";
-import CopyableText from "@/app/(components)/ui/copyableText";
+import CreateProjectModal from "@/app/_components/project/projectModal";
+import CopyableText from "@/app/_components/ui/copyableText";
 
 const DisplayProjects = ({ projectsIn, createNewProject }) => {
   const [projects, setProjects] = useState(projectsIn);

@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { deleteRun, deleteAllRuns } from "@/api/runs";
-import { DeleteIcon, DetailsIcon } from "@/app/(components)/ui/icons";
+import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
 import Link from "next/link";
-import Modal from "@/app/(components)/runs/modal";
-import CollapsibleText from "@/app/(components)/ui/collapsibleText";
+import Modal from "@/app/_components/runs/modal";
+import CollapsibleText from "@/app/_components/ui/collapsibleText";
 import clsx from "clsx";
 import { getDateString } from "@/utils/strings";
 

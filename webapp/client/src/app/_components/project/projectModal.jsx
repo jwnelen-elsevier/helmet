@@ -11,7 +11,7 @@ import {
   useDisclosure,
   Input,
 } from "@nextui-org/react";
-import TaskSelector from "@/app/(components)/project/taskSelector";
+import TaskSelector from "@/app/_components/project/taskSelector";
 
 export default function CreateProjectModal({ createProjectFunc }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

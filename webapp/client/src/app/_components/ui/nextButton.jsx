@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { NextIcon } from "@/app/(components)/ui/icons";
+import { NextIcon } from "@/app/_components/ui/icons";
 
 export default function NextButton() {
   const router = useRouter();

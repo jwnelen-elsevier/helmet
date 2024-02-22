@@ -1,5 +1,5 @@
 import { fetchProjects, createProject } from "@/api/projects";
-import DisplayProjects from "@/app/(components)/project/projects";
+import DisplayProjects from "@/app/_components/project/projects";
 
 export default async function Page() {
   const projects = await fetchProjects();

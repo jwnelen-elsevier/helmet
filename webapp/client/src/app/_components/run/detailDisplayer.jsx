@@ -2,10 +2,10 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import TextHighlighter from "@/app/(components)/run/textHighlighter";
-import { QuestionIcon } from "@/app/(components)/ui/icons";
+import TextHighlighter from "@/app/_components/run/textHighlighter";
+import { QuestionIcon } from "@/app/_components/ui/icons";
 import { Button, Tooltip } from "@nextui-org/react";
-import CopyableText from "@/app/(components)/ui/copyableText";
+import CopyableText from "@/app/_components/ui/copyableText";
 
 const DetailDisplayer = ({ props }) => {
   const {
