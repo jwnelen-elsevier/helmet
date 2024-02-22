@@ -10,7 +10,7 @@ const DisplayProjects = ({ projectsIn, createNewProject }) => {
     // createProject server side
     const newProjectId = await createNewProject(p);
     if (!newProjectId) return;
-    p["id"] = newProjectId;
+    p["_id"] = newProjectId;
     setProjects([...projects, p]);
   };
 
