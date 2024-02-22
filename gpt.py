@@ -39,24 +39,9 @@ decoded = tokenizer.decode(output, skip_special_tokens=True)
 print(decoded)
 
 # For decoder models, only Layered Integrated Gradients is supported
-def compute_gradients_causal(m, t, e, p, o):
-    
-    def model_forward(inp, mod, extra_forward_args: Dict[str, Any] = {}):
-        max_new_tokens = 5
-        return mod.generate(
-            input_ids=inp,
-            use_cache=True, 
-            max_new_tokens=max_new_tokens,
-            **extra_forward_args
-    )
-
-    input_embeds = t(p, return_tensors="pt")
-    attention_mask = input_embeds["attention_mask"]
-   
-    forward_func = partial(model_forward, mod=m, extra_forward_args={"attention_mask": attention_mask})
-
+def compute_gradients_causal(m, t, e, p, o):    
     # LayerIntegratedGradients is only supported for decoder models
-    ig = LayerIntegratedGradients(forward_func=m, layer=m.get_input_embeddings())
+    ig = LayerIntegratedGradients(forward_func=m, layer=m.get_output_embeddings())
 
     # LLM attribution
     llm_attr = LLMGradientAttribution(ig, t)
@@ -69,6 +54,9 @@ def compute_gradients_causal(m, t, e, p, o):
     )
     
     res = llm_attr.attribute(inp=input, target=o)
-    return res
+    r = res.seq_attr.detach().cpu().numpy()
+    return r
 
-compute_gradients_causal(model, tokenizer, embeddings, prompt, output)
+r = compute_gradients_causal(model, tokenizer, embeddings, prompt, output)
+print(r)
+

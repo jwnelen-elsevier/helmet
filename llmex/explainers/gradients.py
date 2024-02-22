@@ -26,12 +26,11 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
     attr = wrapper.normalize(attr)
 
     return attr
-# embed_tokens
 
 # For decoder models, only Layered Integrated Gradients is supported
 def compute_gradients_causal(wrapper, prompt, output):
     # LayerIntegratedGradients is only supported for decoder models
-    ig = LayerIntegratedGradients(wrapper.model, wrapper._get_embedding_layer())
+    ig = LayerIntegratedGradients(forward_func=wrapper.model, layer=wrapper.model.get_output_embeddings())
 
     # LLM attribution
     llm_attr = LLMGradientAttribution(ig, wrapper.tokenizer)
@@ -44,4 +43,4 @@ def compute_gradients_causal(wrapper, prompt, output):
     )
     
     res = llm_attr.attribute(input, target=output)
-    return res
+    return res.seq_attr.detach().cpu().numpy()

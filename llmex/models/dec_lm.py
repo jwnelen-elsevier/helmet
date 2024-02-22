@@ -29,9 +29,6 @@ class DEC_LM(Base_LM):
         if has_eos_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         return self.tokenizer(prompt, return_tensors="pt")
-    
-    def _get_embedding_layer(self):
-        return self.embeddings
 
     def forward(self, inputs, **kwargs):
         input_len = len(inputs["input_ids"])
