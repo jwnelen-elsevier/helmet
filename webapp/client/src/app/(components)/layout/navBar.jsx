@@ -2,9 +2,9 @@
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
-import StatusIndicator from "@/app/_components/ui/Status";
-import { MenuIcon } from "@/app/_components/ui/icons";
-import BackButton from "./ui/backButton";
+import StatusIndicator from "@/app/(components)/ui/Status";
+import { MenuIcon } from "@/app/(components)/ui/icons";
+import BackButton from "../ui/backButton";
 
 const links = [
   { label: "All runs", href: "/runs" },

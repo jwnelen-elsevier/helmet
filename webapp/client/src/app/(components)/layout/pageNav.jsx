@@ -1,5 +1,5 @@
-import BackButton from "./ui/backButton";
-import NextButton from "./ui/nextButton";
+import BackButton from "../ui/backButton";
+import NextButton from "../ui/nextButton";
 
 const PageNav = () => {
   return (

@@ -1,5 +1,5 @@
 import { fetchRun } from "@/api/runs";
-import DetailDisplayer from "@/app/_components/detailDisplayer";
+import DetailDisplayer from "@/app/(components)/run/detailDisplayer";
 
 export default async function Page({ params }) {
   const runDetails = await fetchRun(params.id);

@@ -3,8 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 
 import TextHighlighter from "@/app/_components/textHighlighter";
-import { QuestionIcon } from "@/app/_components/ui/icons";
-import { CopyIcon, CopySucceedIcon } from "./ui/icons";
+import { QuestionIcon } from "@/app/(components)/ui/icons";
+import { CopyIcon, CopySucceedIcon } from "../ui/icons";
 import clsx from "clsx";
 import { Button, Tooltip } from "@nextui-org/react";
 
