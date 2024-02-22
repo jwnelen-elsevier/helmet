@@ -1,5 +1,5 @@
 import NavigationBar from "@/app/(components)/layout/navBar";
-import FooterComponent from "@/app/_components/footer";
+import FooterComponent from "@/app/(components)/layout/footer";
 import "@/styles/globals.css";
 import { StatusProvider } from "@/providers/status";
 import PageNav from "@/app/(components)/layout/pageNav";

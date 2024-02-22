@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-import TextHighlighter from "@/app/_components/textHighlighter";
+import TextHighlighter from "@/app/(components)/run/textHighlighter";
 import { QuestionIcon } from "@/app/(components)/ui/icons";
 import { CopyIcon, CopySucceedIcon } from "../ui/icons";
 import clsx from "clsx";
