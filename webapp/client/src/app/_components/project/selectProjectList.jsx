@@ -9,6 +9,8 @@ import {
 
 import CopyableText from "@/app/_components/ui/copyableText";
 import { CheckIcon } from "../ui/icons";
+import { getDateString } from "@/utils/strings";
+
 const columns = [
   {
     name: "",
@@ -21,6 +23,10 @@ const columns = [
   {
     name: "ID",
     uid: "_id",
+  },
+  {
+    name: "Creation date",
+    uid: "date",
   },
 ];
 
@@ -47,6 +53,7 @@ export default function ({ selectProject, projects, selectedProject }) {
             <TableCell>
               <CopyableText text={project._id}></CopyableText>
             </TableCell>
+            <TableCell>{getDateString(project.date)}</TableCell>
           </TableRow>
         )}
       </TableBody>

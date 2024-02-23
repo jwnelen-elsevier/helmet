@@ -28,7 +28,7 @@ export default function SelectProjectModal() {
       >
         {selectedProject?.projectName || "No Project Selected"}
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
         <ModalContent>
           {(onClose) => {
             const selectP = (p) => {
