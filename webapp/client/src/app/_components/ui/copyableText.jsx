@@ -1,8 +1,8 @@
 "use client";
+import { Tooltip } from "@nextui-org/react";
+import clsx from "clsx";
 import { useState } from "react";
 import { CopyIcon, CopySucceedIcon } from "./icons";
-import clsx from "clsx";
-import { Tooltip } from "@nextui-org/react";
 
 const CopyableText = ({ text }) => {
   const [isCopied, setCopied] = useState(false);

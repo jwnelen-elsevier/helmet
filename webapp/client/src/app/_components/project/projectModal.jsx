@@ -1,18 +1,18 @@
 "use client"; // This is needed for the useDisclosure hook to work
 
-import React from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useDisclosure,
-  Input,
-} from "@nextui-org/react";
 import TaskSelector from "@/app/_components/project/taskSelector";
 import { useSelectedProject } from "@/providers/project";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
+import React from "react";
 
 const defaultFormData = {
   projectName: "",
@@ -46,10 +46,8 @@ export default function CreateProjectModal() {
         <ModalContent>
           {(onClose) => {
             const createProject = () => {
-              console.log("creating project");
               const data = formData;
               createNewProject(data).then((ack) => {
-                console.log("closing", ack);
                 resetForm();
                 onClose();
               });

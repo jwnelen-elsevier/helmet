@@ -1,21 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
-import { deleteRun, deleteAllRuns } from "@/api/runs";
-import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
-import Link from "next/link";
+import { deleteAllRuns, deleteRun } from "@/api/runs";
 import Modal from "@/app/_components/runs/modal";
 import CollapsibleText from "@/app/_components/ui/collapsibleText";
-import clsx from "clsx";
+import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
 import { getDateString } from "@/utils/strings";
+import clsx from "clsx";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
   Tooltip,
 } from "@nextui-org/react";
 

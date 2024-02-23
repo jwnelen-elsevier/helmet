@@ -1,12 +1,12 @@
 "use client";
-import { createContext, useState, useEffect, useContext } from "react";
-import { fetchProjects, createProject } from "@/api/projects";
+import { createProject, fetchProjects } from "@/api/projects";
+import { createContext, useContext, useEffect, useState } from "react";
 
-export const SelectedProjectContext = createContext(null);
+export const ProjectsContext = createContext(null);
 
-export const useSelectedProject = () => useContext(SelectedProjectContext);
+export const useSelectedProject = () => useContext(ProjectsContext);
 
-export const ProjectProvider = ({ children }) => {
+export const ProjectsProvider = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState();
   const [projects, setProjects] = useState([]);
 
@@ -47,20 +47,15 @@ export const ProjectProvider = ({ children }) => {
   const createNewProject = async (newP) => {
     // create a new project
     const createdProject = await createProject(newP);
-    console.log("created project called", createdProject);
     if (!createdProject) return null;
-    console.log("There is a project", createdProject);
-
     if (createdProject.acknowledged === false) return null;
-    console.log("it is acknowledged");
-
     newP["_id"] = createdProject.insertedId;
     setProjects([...projects, newP]);
     return createdProject.acknowledged;
   };
 
   return (
-    <SelectedProjectContext.Provider
+    <ProjectsContext.Provider
       value={{
         projects,
         selectedProject,
@@ -69,6 +64,6 @@ export const ProjectProvider = ({ children }) => {
       }}
     >
       {children}
-    </SelectedProjectContext.Provider>
+    </ProjectsContext.Provider>
   );
 };

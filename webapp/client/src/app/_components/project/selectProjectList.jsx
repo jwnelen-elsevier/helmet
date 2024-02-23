@@ -1,15 +1,15 @@
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableColumn,
-  TableRow,
   TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
 } from "@nextui-org/react";
 
 import CopyableText from "@/app/_components/ui/copyableText";
-import { CheckIcon } from "../ui/icons";
 import { getDateString } from "@/utils/strings";
+import { CheckIcon } from "../ui/icons";
 
 const columns = [
   {

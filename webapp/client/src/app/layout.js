@@ -1,24 +1,24 @@
-import NavigationBar from "@/app/_components/layout/navBar";
 import FooterComponent from "@/app/_components/layout/footer";
-import "@/styles/globals.css";
-import { StatusProvider } from "@/providers/status";
+import NavigationBar from "@/app/_components/layout/navBar";
 import PageNav from "@/app/_components/layout/pageNav";
 import { Providers } from "@/providers/nextUI";
-import { ProjectProvider } from "@/providers/project";
+import { ProjectsProvider } from "@/providers/project";
+import { StatusProvider } from "@/providers/status";
+import "@/styles/globals.css";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
         <Providers>
-          <ProjectProvider>
+          <ProjectsProvider>
             <StatusProvider>
               <NavigationBar />
               <PageNav />
               <div className="text-center">{children}</div>
               <FooterComponent />
             </StatusProvider>
-          </ProjectProvider>
+          </ProjectsProvider>
         </Providers>
       </body>
     </html>

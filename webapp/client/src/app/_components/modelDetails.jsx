@@ -1,5 +1,3 @@
-import { fetchModel } from "@/api/status";
-
 const ModelCard = ({ model }) => {
   const isLoaded = model.isLoaded;
 

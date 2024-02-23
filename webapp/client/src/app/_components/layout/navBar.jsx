@@ -1,16 +1,9 @@
 "use client"; // This is needede because of the use of usePathName
-import React from "react";
-import { usePathname } from "next/navigation";
-import { useContext } from "react";
-import Link from "next/link";
-import {
-  SelectedProjectContext,
-  useSelectedProject,
-} from "@/providers/project";
-import StatusIndicator from "@/app/_components/ui/Status";
-import { MenuIcon, DownIcon } from "@/app/_components/ui/icons";
-import { Button } from "@nextui-org/react";
 import SelectProjectModal from "@/app/_components/project/selectProjectModal";
+import StatusIndicator from "@/app/_components/ui/Status";
+import { MenuIcon } from "@/app/_components/ui/icons";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const links = [
   { label: "All runs", href: "/runs" },
@@ -19,9 +12,6 @@ const links = [
 
 const NagivationBar = () => {
   const pathName = usePathname();
-
-  const { selectedProject } = useSelectedProject();
-  const [showModal, setShowModal] = React.useState(false);
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">

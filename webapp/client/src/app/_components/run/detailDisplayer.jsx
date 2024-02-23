@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 import TextHighlighter from "@/app/_components/run/textHighlighter";
+import CopyableText from "@/app/_components/ui/copyableText";
 import { QuestionIcon } from "@/app/_components/ui/icons";
 import { Button, Tooltip } from "@nextui-org/react";
-import CopyableText from "@/app/_components/ui/copyableText";
 
 const DetailDisplayer = ({ props }) => {
   const {
