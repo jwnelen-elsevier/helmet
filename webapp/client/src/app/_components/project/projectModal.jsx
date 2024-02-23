@@ -14,14 +14,20 @@ import {
 import TaskSelector from "@/app/_components/project/taskSelector";
 import { useSelectedProject } from "@/providers/project";
 
+const defaultFormData = {
+  projectName: "",
+  task: "q_a",
+};
+
 export default function CreateProjectModal() {
   const { createNewProject } = useSelectedProject();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [formData, setForData] = React.useState({
-    projectName: "",
-    task: "q_a",
-  });
+  const [formData, setForData] = React.useState(defaultFormData);
+
+  const resetForm = () => {
+    setForData(defaultFormData);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,9 +46,13 @@ export default function CreateProjectModal() {
         <ModalContent>
           {(onClose) => {
             const createProject = () => {
+              console.log("creating project");
               const data = formData;
-              createNewProject(data);
-              onClose();
+              createNewProject(data).then((ack) => {
+                console.log("closing", ack);
+                resetForm();
+                onClose();
+              });
             };
             return (
               <>

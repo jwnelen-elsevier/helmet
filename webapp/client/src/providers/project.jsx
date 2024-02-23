@@ -46,12 +46,17 @@ export const ProjectProvider = ({ children }) => {
 
   const createNewProject = async (newP) => {
     // create a new project
-    createProject(newP).then((createdProject) => {
-      if (!createdProject) return;
-      if (createdProject.acknowledged === false) return;
-      newP["_id"] = createdProject.insertedId;
-      setProjects([...projects, newP]);
-    });
+    const createdProject = await createProject(newP);
+    console.log("created project called", createdProject);
+    if (!createdProject) return null;
+    console.log("There is a project", createdProject);
+
+    if (createdProject.acknowledged === false) return null;
+    console.log("it is acknowledged");
+
+    newP["_id"] = createdProject.insertedId;
+    setProjects([...projects, newP]);
+    return createdProject.acknowledged;
   };
 
   return (
