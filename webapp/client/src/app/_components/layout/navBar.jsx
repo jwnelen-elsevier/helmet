@@ -1,10 +1,11 @@
 "use client"; // This is needede because of the use of usePathName
 import { usePathname } from "next/navigation";
-
+import { useContext } from "react";
 import Link from "next/link";
+import { SelectedProjectContext } from "@/providers/project";
 import StatusIndicator from "@/app/_components/ui/Status";
-import { MenuIcon } from "@/app/_components/ui/icons";
-import BackButton from "../ui/backButton";
+import { MenuIcon, DownIcon } from "@/app/_components/ui/icons";
+import { Button } from "@nextui-org/react";
 
 const links = [
   { label: "All runs", href: "/runs" },
@@ -14,6 +15,11 @@ const links = [
 const NagivationBar = () => {
   const pathName = usePathname();
 
+  const { selectedProject, setSelectedProject } = useContext(
+    SelectedProjectContext
+  );
+
+  console.log("pathName", pathName);
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
       <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2">
@@ -22,6 +28,9 @@ const NagivationBar = () => {
             LLM XAI Platform
           </span>
         </a>
+        <Button color="default" variant="bordered" endContent={<DownIcon />}>
+          {selectedProject?.name || "No Project Selected"}
+        </Button>
         <div className="flex items-center">
           {" "}
           Status: <StatusIndicator></StatusIndicator>
@@ -57,7 +66,6 @@ const NagivationBar = () => {
           })}
         </ul>
       </div>
-      {/* </div> */}
     </nav>
   );
 };
