@@ -12,10 +12,11 @@ import {
 } from "@nextui-org/react";
 import { DownIcon } from "@/app/_components/ui/icons";
 import { useSelectedProject } from "@/providers/project";
+import SelectProjectList from "@/app/_components/project/selectProjectList";
 
 export default function SelectProjectModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { selectedProject } = useSelectedProject();
+  const { projects, selectedProject, selectProject } = useSelectedProject();
 
   return (
     <div>
@@ -25,19 +26,26 @@ export default function SelectProjectModal() {
         variant="bordered"
         endContent={<DownIcon />}
       >
-        {selectedProject?.name || "No Project Selected"},{" "}
+        {selectedProject?.projectName || "No Project Selected"}
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => {
-            const selectProject = async () => {
-              console.log("Selecting project");
+            const selectP = (p) => {
+              console.log("Selecting project", p);
+              selectProject(p);
               onClose();
             };
             return (
               <>
                 <ModalHeader>Select a project</ModalHeader>
-                <ModalBody></ModalBody>
+                <ModalBody>
+                  <SelectProjectList
+                    selectProject={selectP}
+                    projects={projects}
+                    selectedProject={selectedProject}
+                  ></SelectProjectList>
+                </ModalBody>
                 <ModalFooter>
                   <Button onPress={onClose}>Close</Button>
                 </ModalFooter>

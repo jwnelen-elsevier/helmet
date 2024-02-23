@@ -39,9 +39,9 @@ export default function CreateProjectModal() {
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => {
-            const createProject = async () => {
+            const createProject = () => {
               const data = formData;
-              await createNewProject(data);
+              createNewProject(data);
               onClose();
             };
             return (
