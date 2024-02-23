@@ -1,14 +1,16 @@
 "use client";
-import CreateProjectModal from "@/app/_components/project/projectModal";
+import CreateProjectModal from "@/app/_components/project/newProjectModal";
 import CopyableText from "@/app/_components/ui/copyableText";
+import { useSelectedProject } from "@/providers/project";
 
-const DisplayProjects = ({ projects }) => {
+const DisplayProjects = () => {
+  const { projects } = useSelectedProject();
   return (
     <div>
       <h1>Projects page</h1>
       <h3>Create a new project</h3>
       <CreateProjectModal />
-      <h3 className="mt-10">Existing projects</h3>
+      <h3 className="mt-10">Existing projects {`(${projects?.length})`}</h3>
       {projects?.map((p, i) => (
         <div
           key={i}

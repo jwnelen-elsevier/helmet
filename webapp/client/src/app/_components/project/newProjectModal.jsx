@@ -1,4 +1,5 @@
 "use client"; // This is needed for the useDisclosure hook to work
+import { useState } from "react";
 
 import TaskSelector from "@/app/_components/project/taskSelector";
 import { useSelectedProject } from "@/providers/project";
@@ -12,7 +13,6 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import React from "react";
 
 const defaultFormData = {
   projectName: "",
@@ -20,10 +20,10 @@ const defaultFormData = {
 };
 
 export default function CreateProjectModal() {
-  const { createNewProject } = useSelectedProject();
-
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [formData, setForData] = React.useState(defaultFormData);
+  const [formData, setForData] = useState(defaultFormData);
+
+  const { createNewProject, selectProject } = useSelectedProject();
 
   const resetForm = () => {
     setForData(defaultFormData);
@@ -45,12 +45,14 @@ export default function CreateProjectModal() {
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => {
-            const createProject = () => {
+            const createProjectHandler = async () => {
               const data = formData;
-              createNewProject(data).then((ack) => {
-                resetForm();
-                onClose();
-              });
+              const newP = await createNewProject(data);
+              if (newP) {
+                await selectProject(newP);
+              }
+              resetForm();
+              onClose();
             };
             return (
               <>
@@ -76,7 +78,7 @@ export default function CreateProjectModal() {
                   <Button color="danger" variant="light" onClick={onClose}>
                     Cancel
                   </Button>
-                  <Button color="primary" onPress={createProject}>
+                  <Button color="primary" onPress={createProjectHandler}>
                     Create Project
                   </Button>
                 </ModalFooter>

@@ -16,7 +16,12 @@ router.post("/", async function (req, res) {
   date = new Date();
   newProject.date = date;
   let result = await collection.insertOne(newProject);
-  res.status(200).send(result);
+  if (result.acknowledged === false) {
+    res.status(500).send("Failed to create project");
+    return;
+  }
+  newProject._id = result.insertedId;
+  res.status(200).send(newProject);
 });
 
 module.exports = router;

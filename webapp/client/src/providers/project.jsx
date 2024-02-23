@@ -20,11 +20,9 @@ export const ProjectsProvider = ({ children }) => {
     const projectId = localStorage.getItem("projectId");
 
     if (projectId && projects.length > 0) {
-      console.log("Project ID found in local storage", projectId, projects);
       const projectDetails = projects.find(
         (p) => `${p._id}` === `${projectId}`
       );
-      console.log(projectDetails);
       if (!projectDetails) {
         localStorage.removeItem("projectId");
       }
@@ -32,26 +30,16 @@ export const ProjectsProvider = ({ children }) => {
     }
   }, [projects]);
 
-  const selectProject = (project) => {
-    console.log("selecting project", project);
+  const selectProject = async (project) => {
     localStorage.setItem("projectId", project._id);
-    const projectDetails = projects.find(
-      (p) => `${p._id}` === `${project._id}`
-    );
-    if (!projectDetails) {
-      localStorage.removeItem("projectId");
-    }
-    setSelectedProject(projectDetails);
+    setSelectedProject(project);
   };
 
   const createNewProject = async (newP) => {
-    // create a new project
     const createdProject = await createProject(newP);
     if (!createdProject) return null;
-    if (createdProject.acknowledged === false) return null;
-    newP["_id"] = createdProject.insertedId;
-    setProjects([...projects, newP]);
-    return createdProject.acknowledged;
+    setProjects([...projects, createdProject]);
+    return createdProject;
   };
 
   return (
