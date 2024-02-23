@@ -2,7 +2,7 @@ import BackButton from "../ui/backButton";
 
 const PageNav = () => {
   return (
-    <div className="absolute left-2 top-12">
+    <div className="fixed left-4">
       <div className="p-2 flex gap-2">
         <BackButton></BackButton>
         {/* Not sure if the forward is needed */}

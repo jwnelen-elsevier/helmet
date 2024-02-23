@@ -15,7 +15,7 @@ const NagivationBar = () => {
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
-      <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2">
+      <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2 gap-4">
         <a href="/" className="space-x-3 rtl:space-x-reverse">
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
             LLM XAI Platform
@@ -23,7 +23,7 @@ const NagivationBar = () => {
         </a>
         <SelectProjectModal />
 
-        <div className="flex items-center">
+        <div className="flex items-center flex-grow">
           {" "}
           Status: <StatusIndicator></StatusIndicator>
         </div>

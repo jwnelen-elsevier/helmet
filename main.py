@@ -2,14 +2,14 @@ from datasets import load_dataset
 
 import llmex
 from llmex.utils.typing import ContextInput
-checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
-# checkpoint = "soleimanian/financial-roberta-large-sentiment"
+# checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
+checkpoint = "soleimanian/financial-roberta-large-sentiment"
 # checkpoint = "openai-community/gpt2"
 
 device = "cpu"
 config = {
     "platform_url": "http://localhost:4000",
-    "project_id": "65d75a890a3bd7bd80aa9d4d",
+    "project_id": "65d8d1ffeadbc9aed7b3f9b6",
     "model_type": "enc",
     # "embeddings": "transformer.wte"
     "embeddings": "roberta.embeddings.word_embeddings",
