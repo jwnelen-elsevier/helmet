@@ -12,8 +12,11 @@ import {
   Input,
 } from "@nextui-org/react";
 import TaskSelector from "@/app/_components/project/taskSelector";
+import { useSelectedProject } from "@/providers/project";
 
-export default function CreateProjectModal({ createProjectFunc }) {
+export default function CreateProjectModal() {
+  const { createNewProject } = useSelectedProject();
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [formData, setForData] = React.useState({
     projectName: "",
@@ -38,7 +41,7 @@ export default function CreateProjectModal({ createProjectFunc }) {
           {(onClose) => {
             const createProject = async () => {
               const data = formData;
-              await createProjectFunc(data);
+              await createNewProject(data);
               onClose();
             };
             return (

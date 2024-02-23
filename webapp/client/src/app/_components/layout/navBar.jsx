@@ -1,4 +1,5 @@
 "use client"; // This is needede because of the use of usePathName
+import React from "react";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import Link from "next/link";
@@ -18,8 +19,8 @@ const NagivationBar = () => {
   const { selectedProject, setSelectedProject } = useContext(
     SelectedProjectContext
   );
+  const [showModal, setShowModal] = React.useState(false);
 
-  console.log("pathName", pathName);
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
       <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2">
@@ -28,8 +29,14 @@ const NagivationBar = () => {
             LLM XAI Platform
           </span>
         </a>
-        <Button color="default" variant="bordered" endContent={<DownIcon />}>
-          {selectedProject?.name || "No Project Selected"}
+        <Button
+          onClick={() => setShowModal(!showModal)}
+          color="default"
+          variant="bordered"
+          endContent={<DownIcon />}
+        >
+          {selectedProject?.name || "No Project Selected"},{" "}
+          {showModal ? "show" : "hide"}
         </Button>
         <div className="flex items-center">
           {" "}

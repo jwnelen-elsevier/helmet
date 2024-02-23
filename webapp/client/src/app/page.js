@@ -1,23 +1,14 @@
-import { createProject } from "@/api/projects";
+"use client"; // This is needed to find the useSelectedProject hook
 import DisplayProjects from "@/app/_components/project/projects";
-import { fetchProjects } from "@/api/projects";
+import { useSelectedProject } from "@/providers/project";
 
 export default async function Page() {
-  const projects = await fetchProjects();
-
-  const createP = async (p) => {
-    "use server";
-    const newP = await createProject(p);
-    if (newP.acknowledged) {
-      return newP.insertedId;
-    }
-    return null;
-  };
+  const { projects } = useSelectedProject();
 
   return (
     <div className="container text-center mx-auto">
       <h1>Welcom to the XAI Platform of LLMEX</h1>
-      <DisplayProjects projectsIn={projects} createNewProject={createP} />
+      <DisplayProjects projects={projects} />
     </div>
   );
 }
