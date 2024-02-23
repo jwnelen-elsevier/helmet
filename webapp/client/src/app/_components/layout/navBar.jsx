@@ -3,10 +3,14 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import Link from "next/link";
-import { SelectedProjectContext } from "@/providers/project";
+import {
+  SelectedProjectContext,
+  useSelectedProject,
+} from "@/providers/project";
 import StatusIndicator from "@/app/_components/ui/Status";
 import { MenuIcon, DownIcon } from "@/app/_components/ui/icons";
 import { Button } from "@nextui-org/react";
+import SelectProjectModal from "@/app/_components/project/selectProjectModal";
 
 const links = [
   { label: "All runs", href: "/runs" },
@@ -16,9 +20,7 @@ const links = [
 const NagivationBar = () => {
   const pathName = usePathname();
 
-  const { selectedProject, setSelectedProject } = useContext(
-    SelectedProjectContext
-  );
+  const { selectedProject } = useSelectedProject();
   const [showModal, setShowModal] = React.useState(false);
 
   return (
@@ -29,15 +31,8 @@ const NagivationBar = () => {
             LLM XAI Platform
           </span>
         </a>
-        <Button
-          onClick={() => setShowModal(!showModal)}
-          color="default"
-          variant="bordered"
-          endContent={<DownIcon />}
-        >
-          {selectedProject?.name || "No Project Selected"},{" "}
-          {showModal ? "show" : "hide"}
-        </Button>
+        <SelectProjectModal />
+
         <div className="flex items-center">
           {" "}
           Status: <StatusIndicator></StatusIndicator>

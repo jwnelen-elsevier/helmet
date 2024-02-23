@@ -1,37 +1,39 @@
 from datasets import load_dataset
 
 import llmex
-
-# checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
+from llmex.utils.typing import ContextInput
+checkpoint = "cardiffnlp/twitter-roberta-base-sentiment"
 # checkpoint = "soleimanian/financial-roberta-large-sentiment"
-checkpoint = "openai-community/gpt2"
+# checkpoint = "openai-community/gpt2"
 
 device = "cpu"
 config = {
     "platform_url": "http://localhost:4000",
-    "model_type": "dec",
-    "embeddings": "transformer.wte"
-    # "embeddings": "roberta.embeddings.word_embeddings",
+    "project_id": "65d75a890a3bd7bd80aa9d4d",
+    "model_type": "enc",
+    # "embeddings": "transformer.wte"
+    "embeddings": "roberta.embeddings.word_embeddings",
     # "special_tokens_mask": true, ?? adapted from Thermostat -> Only needed with Bert, not Roberta
 }
 
 model_args = {
-    # "num_labels": 3,
-    # "id2label": {0: "negative", 1: "neutral", 2: "positive"},
+    "num_labels": 3,
+    "id2label": {0: "negative", 1: "neutral", 2: "positive"},
     "output_attentions": True
 }
 
 model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
 
-prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
+# prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
-res = model.predict(prompt, explanation_type="gradient")
-print(res)
 
-# imdb = load_dataset("imdb")
+imdb = load_dataset("imdb")
 
-# amount_examples = 3
-# small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
+amount_examples = 3
+small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(range(amount_examples))])
+input = small_train_dataset[0]["text"]
+result = model.predict(input, ground_truth=small_train_dataset[0]["label"])
+print(result)
 
 # # # # # Number 4 gives an error because the text is too long
 # for i in range(amount_examples):
@@ -52,6 +54,4 @@ print(res)
 # model.why_not(id=_id, "negative")
 
 
-# squad = load_dataset("squad")
-# example = squad["train"][0]
-# result = model.predict(example['question'], example['context'])
+
