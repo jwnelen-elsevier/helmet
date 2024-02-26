@@ -62,8 +62,6 @@ const Runs = ({ runs, params }) => {
 
   useEffect(() => {
     if (!selectedProject) return;
-    debugger;
-
     const filteredRuns = runs.filter(
       (run) => `${run.project_id}` === `${selectedProject._id}`
     );
@@ -89,14 +87,13 @@ const Runs = ({ runs, params }) => {
   };
 
   const deleteAll = async () => {
-    deleteAllRuns().then((res) => {
+    deleteAllRuns(selectedProject._id).then((res) => {
       if (res.deletedCount > 0) {
         setRuns([]);
       } else {
         console.log("Failed to delete all runs");
       }
     });
-    console.log("delete all runs");
   };
 
   const getModelType = (type) => {
@@ -188,7 +185,7 @@ const Runs = ({ runs, params }) => {
           className="flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
         >
           <DeleteIcon />
-          Delete all
+          Delete all from this project
         </Button>
       )}
     </div>

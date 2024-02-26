@@ -6,9 +6,6 @@ const router = express.Router();
 
 // GET /runs
 router.get("/", async function (req, res) {
-  // if ("" in req.params) {
-  //   print(req.params);
-  // }
   let db = await getConnection();
   let collection = await db.collection("runs");
   let result = await collection.find({}).sort({ date: -1 }).toArray();
@@ -47,10 +44,19 @@ router.delete("/:id", async function (req, res) {
 
 // DELETE /runs
 router.delete("/", async function (req, res) {
+  console.log(req.query);
+
   let db = await getConnection();
   let collection = await db.collection("runs");
-  let result = await collection.deleteMany({});
-  res.send(result).status(200);
+  if (req.query.projectId) {
+    let result = await collection.deleteMany({
+      project_id: req.query.projectId,
+    });
+    res.send(result).status(200);
+  } else {
+    let result = await collection.deleteMany({});
+    res.send(result).status(200);
+  }
 });
 
 module.exports = router;
