@@ -3,6 +3,8 @@ import typing
 import numpy
 import json
 from datetime import datetime, date
+from llmex.utils.typing import Run
+from dacite import from_dict
 
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])
 floats: tuple =  tuple([numpy.float_, numpy.float16, numpy.float32, numpy.float64])
@@ -40,7 +42,7 @@ def update_app(url: str, route: str, body: dict[str, typing.Any]):
     
     print("updated app")
 
-def get_run(url: str, run_id: str) -> dict:
+def get_run(url: str, run_id: str) -> Run | None:
     """ Get the run from the platform """
     if url is None or run_id is None:
         raise ValueError(f"url cannot be None url: {url} run_id:{run_id}")
@@ -50,4 +52,15 @@ def get_run(url: str, run_id: str) -> dict:
     if r.status_code != 200:
         raise ValueError(f"Failed to get run. Status code: {r.status_code}")
     
-    return r.json()
+    # pare into the Run object
+    try:
+        d = r.json()
+        form = "%Y-%m-%dT%H:%M:%S.%fZ"
+        d["date"] = datetime.strptime(d["date"], form)
+        d["output"] = str(d["output"])
+        d["groundtruth"] = str(d["groundtruth"])
+        return from_dict(data_class=Run, data=d)
+
+    except Exception as e:
+        print(e)
+        return None

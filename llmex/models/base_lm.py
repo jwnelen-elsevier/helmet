@@ -48,7 +48,7 @@ class Base_LM(ABC):
         resp = get_run(self.platform_url, run_id)
         if resp is None:
             raise ValueError(f"Run with id {run_id} not found")
-        return Run(**resp)
+        return resp
 
     def normalize(self, attr):
         l2_norm = np.linalg.norm(attr)
