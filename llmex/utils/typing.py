@@ -22,11 +22,19 @@ class Explanation:
 class Input:
     """Generic Prompt Class"""
     prompt: str
+    def dict(self) -> dict:
+        return {
+            "prompt": self.prompt
+        }
 
 @dataclass
 class ContextInput(Input):
     """Prompt & Context"""
     context: str
+    def dict(self) -> dict:
+        d = super().dict()
+        d["context"] = self.context
+        return d
 
 @dataclass
 class Run:
@@ -51,7 +59,7 @@ class Run:
             "model": self.model,
             "tokenizer": self.tokenizer,
             "model_type": self.model_type,
-            "input": self.input,
+            "input": self.input.dict(),
             "input_tokens": self.input_tokens,
             "output": self.output,
             "explanation": self.explanation.dict(),

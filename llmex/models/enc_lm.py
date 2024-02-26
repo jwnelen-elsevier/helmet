@@ -57,7 +57,7 @@ class ENC_LM(Base_LM):
             "model": self.model.config.model_type,
             "tokenizer": self.tokenizer.name_or_path,
             "model_type": self.model_type,
-            "input": prompt,
+            "input": Input(prompt=prompt),
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
             "explanation": explanation,

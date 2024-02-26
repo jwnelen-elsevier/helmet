@@ -3,7 +3,7 @@ from datetime import datetime
 from operator import attrgetter
 
 from llmex.models import Base_LM
-from llmex.utils.typing import Explanation, Run
+from llmex.utils.typing import Explanation, Run, Input
 from llmex.explainers.perturbation import calculate_feature_ablation
 from llmex.explainers.gradients import compute_gradients_causal
 
@@ -66,7 +66,7 @@ class DEC_LM(Base_LM):
             "model": self.model.config.model_type,
             "tokenizer": self.tokenizer.name_or_path,
             "model_type": self.model_type,
-            "input": prompt,
+            "input": Input(prompt),
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
             "explanation": explanation,

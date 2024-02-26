@@ -30,10 +30,9 @@ small_train_dataset = imdb["train"].shuffle(seed=42).select([i for i in list(ran
 for i in range(amount_examples):
     example = small_train_dataset[i] # {text, label}
     result = model.predict(example["text"], ground_truth=example["label"])
-
     print("finished", i)
 
-# # id = "65cb2446eb042cc4f86cdcb0"
+# id = "65dc657194d42dc87c2c55a8"
 # res = model.predict_from_run(id, explanation_type="saliency")
 # print(res)
 

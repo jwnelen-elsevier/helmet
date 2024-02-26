@@ -135,7 +135,7 @@ const Runs = ({ runs, params }) => {
               >
                 <TableCell>
                   <CollapsibleText
-                    text={row.input}
+                    text={row?.input?.prompt || ""}
                     maxLength={maxLength}
                   ></CollapsibleText>
                 </TableCell>
