@@ -21,21 +21,24 @@ const defaultFormData = {
 
 export default function CreateProjectModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [formData, setForData] = useState(defaultFormData);
+  const [formData, setFormData] = useState(defaultFormData);
 
   const { createNewProject, selectProject } = useSelectedProject();
 
   const resetForm = () => {
-    setForData(defaultFormData);
+    setFormData(defaultFormData);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setForData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleTaskChange = (value) => {
-    setForData({ ...formData, task: value });
+    if (value === formData["task"] || !value) {
+      return;
+    }
+    setFormData({ ...formData, task: value });
   };
 
   return (

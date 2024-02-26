@@ -4,7 +4,10 @@ const options = [
   {
     label: "Q&A",
     value: "q_a",
-    description: "This is option 1",
+  },
+  {
+    label: "Classification",
+    value: "classification",
   },
   {
     label: "Other",
