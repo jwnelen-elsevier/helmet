@@ -6,6 +6,9 @@ const router = express.Router();
 
 // GET /runs
 router.get("/", async function (req, res) {
+  // if ("" in req.params) {
+  //   print(req.params);
+  // }
   let db = await getConnection();
   let collection = await db.collection("runs");
   let result = await collection.find({}).sort({ date: -1 }).toArray();

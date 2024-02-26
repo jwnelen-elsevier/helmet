@@ -3,6 +3,7 @@ import { deleteAllRuns, deleteRun } from "@/api/runs";
 import Modal from "@/app/_components/runs/modal";
 import CollapsibleText from "@/app/_components/ui/collapsibleText";
 import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
+import { useSelectedProject } from "@/providers/project";
 import { getDateString } from "@/utils/strings";
 import clsx from "clsx";
 import Link from "next/link";
@@ -57,6 +58,17 @@ const Runs = ({ runs, params }) => {
   const toDeleteId = params?.id;
 
   const [runState, setRuns] = useState(runs);
+  const { selectedProject } = useSelectedProject();
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    debugger;
+
+    const filteredRuns = runs.filter(
+      (run) => `${run.project_id}` === `${selectedProject._id}`
+    );
+    setRuns(filteredRuns);
+  }, [selectedProject]);
 
   // This forces a rerender when a run is deleted
   useEffect(() => {
