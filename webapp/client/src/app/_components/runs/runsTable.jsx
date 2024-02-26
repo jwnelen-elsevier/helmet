@@ -1,8 +1,8 @@
 "use client";
-import { deleteAllRuns, deleteRun } from "@/api/runs";
 import Modal from "@/app/_components/runs/modal";
 import CollapsibleText from "@/app/_components/ui/collapsibleText";
 import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
+import { deleteAllRuns, deleteRun } from "@/app/api/runs";
 import { useSelectedProject } from "@/providers/project";
 import { getDateString } from "@/utils/strings";
 import clsx from "clsx";

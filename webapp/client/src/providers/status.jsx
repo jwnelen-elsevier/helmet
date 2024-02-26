@@ -1,28 +1,28 @@
 "use client";
 
-import { fetchStatus } from "@/api/status";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const StatusContext = createContext({
   isConnected: true,
-  isLoading: true,
 });
 
 export const useStatus = () => useContext(StatusContext);
 
 export const StatusProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchStatus = async () => {
+    console.log("fetching status");
+    const res = await fetch("/api/status", { cache: "no-store" });
+    setIsConnected(res.ok);
+  };
 
   useEffect(() => {
-    fetchStatus().then((status) => {
-      setIsConnected(status);
-      setIsLoading(false);
-    });
+    fetchStatus();
   }, []);
 
   return (
-    <StatusContext.Provider value={{ isConnected, isLoading }}>
+    <StatusContext.Provider value={{ isConnected }}>
       {children}
     </StatusContext.Provider>
   );

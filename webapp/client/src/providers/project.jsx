@@ -1,5 +1,5 @@
 "use client";
-import { createProject, fetchProjects } from "@/api/projects";
+import { createProject, fetchProjects } from "@/app/api/projects";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export const ProjectsContext = createContext(null);

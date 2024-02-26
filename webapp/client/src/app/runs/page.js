@@ -1,5 +1,5 @@
-import { fetchRuns } from "@/api/runs";
 import Runs from "@/app/_components/runs/runsTable";
+import { fetchRuns } from "@/app/api/runs";
 
 export default async function Page({ searchParams }) {
   const runs = await fetchRuns();

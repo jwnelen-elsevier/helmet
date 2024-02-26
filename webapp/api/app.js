@@ -21,9 +21,18 @@ app.use(bodyParser.json());
 const State = require("./state");
 const s = new State();
 
+// Middleware
+const createLog = (req, res, next) => {
+  const { method, url } = req;
+
+  console.log(method, url);
+  next();
+};
+
+app.use(createLog);
+
 app.get("/status", (req, res) => {
-  console.log("polled");
-  res.send("OK");
+  res.status(200).send({ message: "OK" });
 });
 
 app.get("/model", (req, res) => {
