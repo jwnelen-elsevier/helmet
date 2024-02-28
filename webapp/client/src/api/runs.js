@@ -50,9 +50,12 @@ export const deleteRun = async (id) => {
   return [];
 };
 
-export const deleteAllRuns = async () => {
+export const deleteAllRuns = async (projectId) => {
+  const deleteUrl = projectId
+    ? `${url}/runs?projectId=${projectId}`
+    : `${url}/runs`;
   try {
-    const response = await fetch(`${url}/runs`, {
+    const response = await fetch(deleteUrl, {
       method: "DELETE",
       cache: "no-store",
       headers: {

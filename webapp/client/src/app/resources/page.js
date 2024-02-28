@@ -6,7 +6,7 @@ export default async function Page() {
     <div className="container mx-auto text-center">
       <h1 className="">Information</h1>
       {techniques.map((technique, index) => {
-        const { id, name, description, fullDescription } = technique;
+        const { name, description, fullDescription } = technique;
 
         return (
           <div key={index} className="p-4">

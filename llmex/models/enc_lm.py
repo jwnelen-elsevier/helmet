@@ -1,17 +1,17 @@
 import torch
-from transformers import AutoModelForSeq2SeqLM, PreTrainedTokenizer
+import transformers
 from operator import attrgetter
 from datetime import datetime
 from torch.nn import functional as F
 
-from llmex.utils.typing import Explanation, Run, ContextInput
 from llmex.explainers.gradients import compute_gradient
-from llmex.baseLM import BaseLM
+from llmex.models.base_lm import Base_LM
+from llmex.utils.typing import Explanation, Run, Input
 
-class ENC_DEC_LM(BaseLM):
-    def __init__(self, model_checkpoint: str, model: AutoModelForSeq2SeqLM, 
-                 tokenizer: PreTrainedTokenizer, url: str, model_config: dict = {}):
-        self.model_type = "enc-dec"
+class ENC_LM(Base_LM):
+    def __init__(self, model_checkpoint: str, model: transformers.AutoModelForSequenceClassification, 
+                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id, model_config: dict = {}):
+        self.model_type = "enc"
         self.config = model_config
 
         try:
@@ -23,17 +23,18 @@ class ENC_DEC_LM(BaseLM):
             print(e)
             raise KeyError("embeddings must be specified in model_config")
 
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, embeddings)
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
 
-    def _tokenize(self, input: ContextInput, **tokenizer_kwargs) -> dict:
-        tokens = self.tokenizer(input.prompt, input.context, return_tensors="pt", **tokenizer_kwargs)
-        return tokens
+    def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
+        print("enc tokenizing")
+        return self.tokenizer(prompt, return_tensors="pt", **tokenizer_kwargs)
 
     def forward(self, inputs):
-        return self.model(**inputs)
+        output = self.model(**inputs)
+        return F.softmax(output.logits, dim=1)
         
     def postprocess_result(self, output):
-        return self.tokenizer.decode(output[0], skip_special_tokens=True)
+        return torch.argmax(output).item()
         # start_idx, end_idx = output
         # r = input["input_ids"][0][start_idx:end_idx + 1]
         # predicted_tokens = self.tokenizer.convert_ids_to_tokens(r, skip_special_tokens=True)
@@ -56,33 +57,33 @@ class ENC_DEC_LM(BaseLM):
             "model": self.model.config.model_type,
             "tokenizer": self.tokenizer.name_or_path,
             "model_type": self.model_type,
-            "input": prompt,
+            "input": Input(prompt=prompt),
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
             "explanation": explanation,
+            "project_id": self.project_id,
             **kwargs
         })
 
     
     def predict_from_run(self, id: str, **kwargs):
         run = self.get_run(id)
-        return self.predict(str(run.input), ground_truth=str(run.groundtruth), **kwargs)
+        return self.predict(run.input.prompt, ground_truth=str(run.groundtruth), **kwargs)
 
-    # This is for abstactive QA
-    def predict(self, input: ContextInput, **kwargs):
-        inputs = self._tokenize(input)
+    # This is for extractive QA
+    def predict(self, prompt: str, **kwargs):
+        inputs = self._tokenize(prompt)
         output = self.forward(inputs)
         result = self.postprocess_result(output)
+        explanation_type = kwargs.get("explanation_type", "input_x_gradient")
+        print(explanation_type)
 
-        # explanation_type = kwargs.get("explanation_type", "input_x_gradient")
-        # print(explanation_type)
-
-        # explanation = self.explain(prompt, inputs, result, explanation_type)
-        # exp = self._format_explanation(explanation, explanation_type)
+        explanation = self.explain(prompt, inputs, result, explanation_type)
+        exp = self._format_explanation(explanation, explanation_type)
         
-        # gt = kwargs.get("ground_truth", None)
-        # r = self._format_run(prompt, result, exp, groundtruth=gt)
+        gt = kwargs.get("ground_truth", None)
+        r = self._format_run(prompt, result, exp, groundtruth=gt)
 
-        # self.update_run(r)
-        return result
+        self.update_run(r)
+        return result, explanation
         

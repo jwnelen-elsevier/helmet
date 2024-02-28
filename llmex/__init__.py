@@ -1,8 +1,7 @@
 import transformers
 from transformers import AutoTokenizer
 
-from llmex.enc_lm import ENC_LM
-from llmex.enc_dec_lm import ENC_DEC_LM
+from llmex.models import ENC_LM, ENC_DEC_LM, DEC_LM
 
 url = "http://localhost:4000"
 
@@ -15,7 +14,8 @@ model_type_to_class = {
 
 model_type_to_implementation = {
     "enc": ENC_LM,
-    "enc-dec": ENC_DEC_LM
+    "enc-dec": ENC_DEC_LM,
+    "dec": DEC_LM,
 }
 
 def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, device="cpu"):
@@ -23,8 +23,10 @@ def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, dev
     
     model_type = config.pop("model_type", None)
     platform_url = config.pop("platform_url", url)
-    
+    project_id = config.pop("project_id", None)
+
     assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
+    assert project_id is not None, AssertionError("project_id must be specified")
 
     model_cls = model_type_to_class[model_type]
 
@@ -34,5 +36,5 @@ def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, dev
     modelHelper = model_type_to_implementation[model_type]
     assert modelHelper is not None, AssertionError(f"model_type {model_type} not implemented")
 
-    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, config)
+    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, config)
     return model

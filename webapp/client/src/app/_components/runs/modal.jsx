@@ -5,7 +5,6 @@ export default function Modal({ func, backRef }) {
   const router = useRouter();
 
   const handler = async (event) => {
-    console.log("handling deletion");
     event.preventDefault();
     await func();
     router.push(backRef);

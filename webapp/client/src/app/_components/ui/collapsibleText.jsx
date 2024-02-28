@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const CollapsibleText = ({ text, maxLength }) => {
   const [showAll, setShowAll] = useState(false);
-  // const [showText, setShowText] = useState(text);
 
   const displayedText = () => {
     if (text.split("").length > maxLength) {

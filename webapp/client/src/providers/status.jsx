@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
 import { fetchStatus } from "@/api/status";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const StatusContext = createContext({
   isConnected: true,

@@ -1,21 +1,25 @@
-import DeleteIcon from "./delete";
-import DetailsIcon from "./details";
-import QuestionIcon from "./question";
-import MenuIcon from "./menu";
 import BackIcon from "./back";
-import NextIcon from "./next";
+import CheckIcon from "./check";
 import CopyIcon from "./copy";
 import CopySucceedIcon from "./copySucceed";
+import DeleteIcon from "./delete";
+import DetailsIcon from "./details";
+import DownIcon from "./down";
 import HorizontalDotsIcon from "./horizontalDots";
+import MenuIcon from "./menu";
+import NextIcon from "./next";
+import QuestionIcon from "./question";
 
 export {
-  DeleteIcon,
-  DetailsIcon,
-  QuestionIcon,
-  MenuIcon,
   BackIcon,
-  NextIcon,
+  CheckIcon,
   CopyIcon,
   CopySucceedIcon,
+  DeleteIcon,
+  DetailsIcon,
+  DownIcon,
   HorizontalDotsIcon,
+  MenuIcon,
+  NextIcon,
+  QuestionIcon,
 };

@@ -1,11 +1,10 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
-import TextHighlighter from "@/app/_components/textHighlighter";
+import TextHighlighter from "@/app/_components/run/textHighlighter";
+import CopyableText from "@/app/_components/ui/copyableText";
 import { QuestionIcon } from "@/app/_components/ui/icons";
-import { CopyIcon, CopySucceedIcon } from "./ui/icons";
-import clsx from "clsx";
 import { Button, Tooltip } from "@nextui-org/react";
 
 const DetailDisplayer = ({ props }) => {
@@ -21,13 +20,6 @@ const DetailDisplayer = ({ props }) => {
   } = props;
   const { input_attribution, explanation_method } = explanation;
   const [showAttributions, s] = useState(false);
-
-  const [isCopied, setCopied] = useState(false);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-  };
 
   return (
     <div className="flex flex-col items-center">
@@ -59,23 +51,7 @@ const DetailDisplayer = ({ props }) => {
           {showAttributions ? "Hide attributions" : "Show attributions"}
         </Button>
       </div>
-      <div className="flex flex-row items-center group">
-        {_id}
-        <Tooltip
-          showArrow={true}
-          content={isCopied ? "Copied to clipboard!" : "Copy to clipboard"}
-        >
-          <button
-            onClick={() => copyToClipboard(_id)}
-            className={clsx(
-              " cursor-pointer text-black",
-              isCopied ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-            )}
-          >
-            {isCopied ? <CopySucceedIcon /> : <CopyIcon />}
-          </button>
-        </Tooltip>
-      </div>
+      <CopyableText text={_id} />
     </div>
   );
 };

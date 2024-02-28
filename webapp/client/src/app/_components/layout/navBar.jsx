@@ -1,13 +1,12 @@
 "use client"; // This is needede because of the use of usePathName
-import { usePathname } from "next/navigation";
-
-import Link from "next/link";
+import SelectProjectModal from "@/app/_components/project/selectProjectModal";
 import StatusIndicator from "@/app/_components/ui/Status";
 import { MenuIcon } from "@/app/_components/ui/icons";
-import BackButton from "./ui/backButton";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const links = [
-  { label: "All runs", href: "/runs" },
+  { label: "Runs", href: "/runs" },
   { label: "Resources", href: "/resources" },
 ];
 
@@ -16,13 +15,15 @@ const NagivationBar = () => {
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
-      <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2">
+      <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2 gap-4">
         <a href="/" className="space-x-3 rtl:space-x-reverse">
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
             LLM XAI Platform
           </span>
         </a>
-        <div className="flex items-center">
+        <SelectProjectModal />
+
+        <div className="flex items-center flex-grow">
           {" "}
           Status: <StatusIndicator></StatusIndicator>
         </div>
@@ -57,7 +58,6 @@ const NagivationBar = () => {
           })}
         </ul>
       </div>
-      {/* </div> */}
     </nav>
   );
 };

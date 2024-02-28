@@ -1,21 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
-import { deleteRun, deleteAllRuns } from "@/api/runs";
-import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
-import Link from "next/link";
-import Modal from "@/app/_components/modal";
+import { deleteAllRuns, deleteRun } from "@/api/runs";
+import Modal from "@/app/_components/runs/modal";
 import CollapsibleText from "@/app/_components/ui/collapsibleText";
-import clsx from "clsx";
+import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
+import { useSelectedProject } from "@/providers/project";
 import { getDateString } from "@/utils/strings";
+import clsx from "clsx";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
   Tooltip,
 } from "@nextui-org/react";
 
@@ -57,6 +58,15 @@ const Runs = ({ runs, params }) => {
   const toDeleteId = params?.id;
 
   const [runState, setRuns] = useState(runs);
+  const { selectedProject } = useSelectedProject();
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    const filteredRuns = runs.filter(
+      (run) => `${run.project_id}` === `${selectedProject._id}`
+    );
+    setRuns(filteredRuns);
+  }, [selectedProject]);
 
   // This forces a rerender when a run is deleted
   useEffect(() => {
@@ -77,14 +87,13 @@ const Runs = ({ runs, params }) => {
   };
 
   const deleteAll = async () => {
-    deleteAllRuns().then((res) => {
+    deleteAllRuns(selectedProject._id).then((res) => {
       if (res.deletedCount > 0) {
         setRuns([]);
       } else {
         console.log("Failed to delete all runs");
       }
     });
-    console.log("delete all runs");
   };
 
   const getModelType = (type) => {
@@ -126,7 +135,7 @@ const Runs = ({ runs, params }) => {
               >
                 <TableCell>
                   <CollapsibleText
-                    text={row.input}
+                    text={row?.input?.prompt || ""}
                     maxLength={maxLength}
                   ></CollapsibleText>
                 </TableCell>
@@ -176,7 +185,7 @@ const Runs = ({ runs, params }) => {
           className="flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
         >
           <DeleteIcon />
-          Delete all
+          Delete all from this project
         </Button>
       )}
     </div>

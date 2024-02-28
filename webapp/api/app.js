@@ -6,6 +6,8 @@ require("dotenv").config();
 
 // import routes
 const runs = require("./routes/runs");
+const project = require("./routes/project");
+
 // define the port
 const port = process.env.PORT || 4000;
 
@@ -30,7 +32,6 @@ app.get("/model", (req, res) => {
 });
 
 app.post("/update_model", (req, res) => {
-  console.log(req.body);
   s.setModel(req.body);
   res.status(200).send("Updated!");
 });
@@ -40,6 +41,7 @@ app.post("/update_model", (req, res) => {
 // });
 
 app.use("/runs", runs);
+app.use("/project", project);
 
 // Global error handling
 app.use((err, _req, res, next) => {

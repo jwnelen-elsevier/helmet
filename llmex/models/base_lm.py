@@ -1,16 +1,19 @@
-from llmex.updater import update_app, get_run
-from abc import ABC, abstractmethod
-from typing import Any
-from llmex.utils.typing import Run
 import torch
-import numpy as np 
-class BaseLM(ABC):    
+import numpy as np
+
+from abc import ABC, abstractmethod
+
+from llmex.updater import update_app, get_run
+from llmex.utils.typing import Run
+ 
+class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
-                 tokenizer, model_type: str, url: str, embeddings):
+                 tokenizer, model_type: str, url: str, project_id:str, embeddings):
         self.model = model
         self.model_checkpoint = model_checkpoint
         self.tokenizer = tokenizer
         self.platform_url = url
+        self.project_id = project_id
         self.model_type = model_type
         self.embeddings = embeddings
         self.__post_init__()
@@ -41,11 +44,11 @@ class BaseLM(ABC):
     def _get_input_embeds_from_ids(self, ids) -> torch.Tensor:
         return self.model.get_input_embeddings()(ids)
 
-    def get_run(self, run_id: str) -> Run | None:
+    def get_run(self, run_id: str) -> Run:
         resp = get_run(self.platform_url, run_id)
         if resp is None:
-            return None
-        return Run(**resp)
+            raise ValueError(f"Run with id {run_id} not found")
+        return resp
 
     def normalize(self, attr):
         l2_norm = np.linalg.norm(attr)
