@@ -16,6 +16,8 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
     forward_func = partial(model_forward, model=wrapper.model, extra_forward_args={"attention_mask": attention_mask})
 
     if gradient_type == "input_x_gradient":
+        # According to Luo and Specia (2024), inputxgradient has a lot of overhead because they also compute the gradients
+        # of the input based on a reference input.
         lig = InputXGradient(forward_func)
     else:
         lig = Saliency(forward_func)
