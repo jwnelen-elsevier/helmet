@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const fetchRuns = async () => {
@@ -104,7 +102,6 @@ export const createProject = async (project) => {
       body: JSON.stringify(project),
     });
 
-    revalidatePath("/");
     return response.json();
   } catch (error) {
     console.log(error);

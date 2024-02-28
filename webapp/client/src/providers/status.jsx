@@ -3,18 +3,21 @@
 import { fetchStatus } from "@/app/actions/actions";
 import { createContext, useContext, useEffect, useState } from "react";
 
-const StatusContext = createContext({
-  isConnected: true,
-});
+const StatusContext = createContext();
 
 export const useStatus = () => useContext(StatusContext);
 
 export const StatusProvider = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState();
 
   useEffect(() => {
-    const r = fetchStatus();
-    setIsConnected(r);
+    const check = async () => {
+      const r = await fetchStatus();
+      setIsConnected(r);
+    };
+
+    if (!!isConnected) return;
+    check();
   }, []);
 
   return (
