@@ -2,6 +2,7 @@
 import SelectProjectModal from "@/app/_components/project/selectProjectModal";
 import StatusIndicator from "@/app/_components/ui/Status";
 import { MenuIcon } from "@/app/_components/ui/icons";
+import ReloadButton from "@/app/_components/ui/reloadButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,10 +25,9 @@ const NagivationBar = () => {
         <SelectProjectModal />
 
         <div className="flex items-center flex-grow">
-          <span>
-            {" "}
-            Status: <StatusIndicator></StatusIndicator>
-          </span>
+          <span> Status:</span>
+          <StatusIndicator></StatusIndicator>
+          <ReloadButton />
         </div>
         <button
           data-collapse-toggle="navbar-dropdown"
