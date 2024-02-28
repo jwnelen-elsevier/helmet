@@ -1,5 +1,6 @@
 "use client";
 
+import { fetchStatus } from "@/app/actions/actions";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const StatusContext = createContext({
@@ -11,14 +12,9 @@ export const useStatus = () => useContext(StatusContext);
 export const StatusProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
 
-  const fetchStatus = async () => {
-    console.log("fetching status");
-    const res = await fetch("/api/status", { cache: "no-store" });
-    setIsConnected(res.ok);
-  };
-
   useEffect(() => {
-    fetchStatus();
+    const r = fetchStatus();
+    setIsConnected(r);
   }, []);
 
   return (

@@ -1,25 +1,10 @@
 "use client";
 
-// import { useStatus } from "@/providers/status";
+import { useStatus } from "@/providers/status";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
 
 export const StatusIndicator = () => {
-  // const { isConnected } = useStatus();
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    console.log("useEffect, fetching status");
-    fetchStatus();
-  }, []);
-
-  async function fetchStatus() {
-    console.log("fetching status");
-    const res = await fetch("/api/status", {
-      cache: "no-store",
-    });
-    setIsConnected(res.ok);
-  }
+  const { isConnected } = useStatus();
 
   return (
     <span
