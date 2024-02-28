@@ -4,11 +4,7 @@ import { useStatus } from "@/providers/status";
 import clsx from "clsx";
 
 export const StatusIndicator = () => {
-  const { isConnected, isLoading } = useStatus();
-
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
+  const { isConnected } = useStatus();
 
   return (
     <span

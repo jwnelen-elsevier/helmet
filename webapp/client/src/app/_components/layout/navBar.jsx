@@ -2,6 +2,7 @@
 import SelectProjectModal from "@/app/_components/project/selectProjectModal";
 import StatusIndicator from "@/app/_components/ui/Status";
 import { MenuIcon } from "@/app/_components/ui/icons";
+import ReloadButton from "@/app/_components/ui/reloadButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,8 +25,9 @@ const NagivationBar = () => {
         <SelectProjectModal />
 
         <div className="flex items-center flex-grow">
-          {" "}
-          Status: <StatusIndicator></StatusIndicator>
+          <span> Status:</span>
+          <StatusIndicator></StatusIndicator>
+          <ReloadButton />
         </div>
         <button
           data-collapse-toggle="navbar-dropdown"
@@ -38,7 +40,6 @@ const NagivationBar = () => {
           <MenuIcon />
         </button>
 
-        {/* <div className=""> */}
         <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
           {links.map(({ label, href }) => {
             const isActive = href === pathName;

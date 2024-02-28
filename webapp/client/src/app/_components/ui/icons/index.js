@@ -9,6 +9,7 @@ import HorizontalDotsIcon from "./horizontalDots";
 import MenuIcon from "./menu";
 import NextIcon from "./next";
 import QuestionIcon from "./question";
+import RefreshIcon from "./refresh";
 
 export {
   BackIcon,
@@ -22,4 +23,5 @@ export {
   MenuIcon,
   NextIcon,
   QuestionIcon,
+  RefreshIcon,
 };

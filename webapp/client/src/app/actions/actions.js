@@ -1,6 +1,6 @@
 "use server";
 
-const url = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:4000";
+const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const fetchRuns = async () => {
   try {
@@ -67,4 +67,44 @@ export const deleteAllRuns = async (projectId) => {
     console.log(error);
   }
   return [];
+};
+
+export async function fetchStatus() {
+  const res = await fetch(`${url}/status`, { cache: "no-store" });
+  console.log("fetchStatus: ", res.ok);
+  return res.ok;
+}
+
+export const fetchProjects = async () => {
+  try {
+    const response = await fetch(`${url}/project`, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
+};
+
+export const createProject = async (project) => {
+  try {
+    const response = await fetch(`${url}/project`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(project),
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
 };
