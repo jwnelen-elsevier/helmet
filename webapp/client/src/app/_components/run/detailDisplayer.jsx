@@ -9,7 +9,6 @@ import { Button, Tooltip } from "@nextui-org/react";
 
 const DetailDisplayer = ({ props }) => {
   const {
-    date,
     output,
     groundtruth,
     input,
@@ -23,11 +22,11 @@ const DetailDisplayer = ({ props }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <h2 className="font-bold">Model: {model_checkpoint}</h2>
-      <p className="px-2">Classified: {output}</p>
-      {groundtruth !== null && (
-        <p className="px-2">Ground truth: {groundtruth}</p>
-      )}
+      <p className="font-bold">Model: {model_checkpoint}</p>
+      <p className="px-2">Output: {output}</p>
+      {/* Watch out that we should display groundtruth if the output is 0 */}
+      {groundtruth !== null ||
+        ("" && <p className="px-2">Ground truth: {groundtruth}</p>)}
       <span className="flex gap-2 items-center">
         {`Attribution method: ${explanation_method}`}
         <Tooltip showArrow={true} content={"Info about explainability methods"}>

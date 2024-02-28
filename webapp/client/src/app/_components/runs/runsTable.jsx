@@ -56,7 +56,7 @@ const columns = [
 const Runs = ({ runs, params }) => {
   const show = params?.show;
   const toDeleteId = params?.id;
-
+  
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
 
@@ -122,16 +122,18 @@ const Runs = ({ runs, params }) => {
         <TableBody items={runState} emptyContent={"No rows to display."}>
           {(row) => {
             const isToBeDeleted = toDeleteId === row._id;
-            const isCorrect = `${row.output}` === `${row.groundtruth}`;
-
+            const existGroundTruth = !!row.groundtruth;
+            const isCorrect = `${row.output}` === `${row?.groundtruth}`;
             return (
               <TableRow
                 key={row._id}
                 className={clsx(
-                  isToBeDeleted ? "bg-red-400" : "",
-                  isCorrect
-                    ? "bg-green-100 hover:bg-green-200"
-                    : "bg-red-100 hover:bg-red-200"
+                  existGroundTruth
+                    ? isCorrect
+                      ? "bg-green-100 hover:bg-green-200"
+                      : "bg-red-100 hover:bg-red-200"
+                    : "bg-gray-100 hover:bg-gray-200",
+                  isToBeDeleted ? "bg-red-400" : ""
                 )}
               >
                 <TableCell>
