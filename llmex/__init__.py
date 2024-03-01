@@ -3,6 +3,7 @@ from transformers import AutoTokenizer
 
 import torch
 from llmex.models import ENC_LM, ENC_DEC_LM, DEC_LM
+from llmex.updater import get_or_create_project
 
 url = "http://localhost:4000"
 
@@ -44,3 +45,6 @@ def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, dev
 
     model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, config)
     return model
+
+
+__all__ = ["from_pretrained", "get_or_create_project"]

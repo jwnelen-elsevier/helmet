@@ -26,6 +26,8 @@ def serialize(obj) -> dict:
     """ Serialize the object to a dictionary """
     return json.loads(json.dumps(obj, cls=NumpyEncoder))
 
+
+
 def update_app(url: str, route: str, body: dict[str, typing.Any]):
     """ Update the app with the new model and tokenizer. 
     args: 
