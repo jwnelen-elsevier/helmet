@@ -23,6 +23,6 @@ services:
     depends_on:
       - api
     environment:
-      - SERVER_URL=http://api:4000
+      - NEXT_PUBLIC_SERVER_URL=http://api:4000
     networks:
       - my-network
