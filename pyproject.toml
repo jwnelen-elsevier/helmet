@@ -6,7 +6,7 @@ authors = ["Jeroen"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 torch = "^2.1.1"
 langchain = "^0.0.347"
 bs4 = "^0.0.1"
@@ -17,6 +17,7 @@ accelerate = "^0.25.0"
 trulens = "^0.13.4"
 fastapi = "^0.109.0"
 uvicorn = "^0.26.0"
+bitsandbytes = "^0.42.0"
 
 
 [tool.poetry.group.dev.dependencies]
