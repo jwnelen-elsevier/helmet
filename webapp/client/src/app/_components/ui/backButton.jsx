@@ -1,6 +1,6 @@
 "use client";
-import { BackIcon } from "@/app/_components/ui/icons";
 import { Button } from "@nextui-org/react";
+import { BackIcon } from "app/_components/ui/icons";
 import { useRouter } from "next/navigation";
 
 export default function BackButton() {

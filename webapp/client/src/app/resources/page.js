@@ -1,5 +1,5 @@
 "use client";
-import techniques from "@/data/techniques";
+import techniques from "data/techniques";
 
 export default async function Page() {
   return (

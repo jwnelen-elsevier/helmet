@@ -1,13 +1,13 @@
 "use client";
-import Modal from "@/app/_components/runs/modal";
-import CollapsibleText from "@/app/_components/ui/collapsibleText";
-import { DeleteIcon, DetailsIcon } from "@/app/_components/ui/icons";
-import { deleteAllRuns, deleteRun } from "@/app/actions/actions";
-import { useSelectedProject } from "@/providers/project";
-import { getDateString } from "@/utils/strings";
+import Modal from "app/_components/runs/modal";
+import CollapsibleText from "app/_components/ui/collapsibleText";
+import { DeleteIcon, DetailsIcon } from "app/_components/ui/icons";
+import { deleteAllRuns, deleteRun } from "app/actions/actions";
 import clsx from "clsx";
 import Link from "next/link";
+import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
+import { getDateString } from "utils/strings";
 
 import {
   Button,
@@ -56,7 +56,7 @@ const columns = [
 const Runs = ({ runs, params }) => {
   const show = params?.show;
   const toDeleteId = params?.id;
-  
+
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
 
@@ -66,13 +66,13 @@ const Runs = ({ runs, params }) => {
       (run) => `${run.project_id}` === `${selectedProject._id}`
     );
     setRuns(filteredRuns);
-  }, [selectedProject]);
+  }, [selectedProject, runs]);
 
   // This forces a rerender when a run is deleted
   useEffect(() => {
     if (!toDeleteId) return;
     setRuns(runs);
-  }, [toDeleteId]);
+  }, [toDeleteId, runs]);
 
   const maxLength = 200;
 

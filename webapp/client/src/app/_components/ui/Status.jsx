@@ -1,7 +1,7 @@
 "use client";
 
-import { useStatus } from "@/providers/status";
 import clsx from "clsx";
+import { useStatus } from "providers/status";
 
 export const StatusIndicator = () => {
   const { isConnected } = useStatus();

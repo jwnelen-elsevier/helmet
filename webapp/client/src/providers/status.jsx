@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchStatus } from "@/app/actions/actions";
+import { fetchStatus } from "app/actions/actions";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const StatusContext = createContext();

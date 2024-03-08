@@ -1,4 +1,4 @@
-import BackButton from "../ui/backButton";
+import BackButton from "app/_components/ui/backButton";
 
 const PageNav = () => {
   return (

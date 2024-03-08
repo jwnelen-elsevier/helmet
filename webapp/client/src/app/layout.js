@@ -1,10 +1,10 @@
-import FooterComponent from "@/app/_components/layout/footer";
-import NavigationBar from "@/app/_components/layout/navBar";
-import PageNav from "@/app/_components/layout/pageNav";
-import { Providers } from "@/providers/nextUI";
-import { ProjectsProvider } from "@/providers/project";
-import { StatusProvider } from "@/providers/status";
-import "@/styles/globals.css";
+import FooterComponent from "app/_components/layout/Footer";
+import PageNav from "app/_components/layout/PageNav";
+import NavigationBar from "app/_components/layout/navBar";
+import { Providers } from "providers/nextUI";
+import { ProjectsProvider } from "providers/project";
+import { StatusProvider } from "providers/status";
+import "styles/globals.css";
 
 export default function RootLayout({ children }) {
   return (

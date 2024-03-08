@@ -1,6 +1,6 @@
 "use client";
-import CreateProjectModal from "@/app/_components/project/newProjectModal";
-import { useSelectedProject } from "@/providers/project";
+import CreateProjectModal from "app/_components/project/newProjectModal";
+import { useSelectedProject } from "providers/project";
 
 const DisplayProjects = () => {
   const { projects } = useSelectedProject();

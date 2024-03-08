@@ -1,8 +1,5 @@
 "use client"; // This is needed for the useDisclosure hook to work
 
-import SelectProjectList from "@/app/_components/project/selectProjectList";
-import { DownIcon } from "@/app/_components/ui/icons";
-import { useSelectedProject } from "@/providers/project";
 import {
   Button,
   Modal,
@@ -12,6 +9,10 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+
+import SelectProjectList from "app/_components/project/selectProjectList";
+import { DownIcon } from "app/_components/ui/icons";
+import { useSelectedProject } from "providers/project";
 
 export default function SelectProjectModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

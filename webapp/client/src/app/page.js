@@ -1,4 +1,4 @@
-import DisplayProjects from "@/app/_components/project/projects";
+import DisplayProjects from "app/_components/project/projects";
 
 export default async function Page() {
   return (
