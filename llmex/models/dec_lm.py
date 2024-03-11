@@ -74,6 +74,11 @@ class DEC_LM(Base_LM):
             **kwargs
         })
     
+    def predict_from_run(self, id: str, **kwargs):
+        run = self.get_run(id)
+        return self.predict(run.input.prompt, **kwargs)
+
+    
     def predict(self, prompt, *args, **kwargs):
         eos_token = True
         input = self._tokenize(prompt, eos_token=eos_token)

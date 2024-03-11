@@ -58,7 +58,8 @@ def get_run(url: str, run_id: str) -> Run | None:
         form = "%Y-%m-%dT%H:%M:%S.%fZ"
         d["date"] = datetime.strptime(d["date"], form)
         d["output"] = str(d["output"])
-        d["groundtruth"] = str(d["groundtruth"])
+        if d.get("groundtruth", None) is not None:
+            d["groundtruth"] = str(d["groundtruth"])
         return from_dict(data_class=Run, data=d)
 
     except Exception as e:

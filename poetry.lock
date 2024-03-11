@@ -597,6 +597,19 @@ docs = ["ipython", "matplotlib", "numpydoc", "sphinx"]
 tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
+name = "dacite"
+version = "1.8.1"
+description = "Simple creation of data classes from dictionaries."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dacite-1.8.1-py3-none-any.whl", hash = "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"},
+]
+
+[package.extras]
+dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "pytest-benchmark", "pytest-cov"]
+
+[[package]]
 name = "dataclasses-json"
 version = "0.6.4"
 description = "Easily serialize dataclasses to and from JSON."
@@ -3447,4 +3460,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "64132923cda7d54c4a6a6c63a6ae8383695ecead171875eddf4feb164b7d4537"
+content-hash = "55f8643bb2a499c902e3ebccee75f27a17254217a21260ed6fd34745e0b17745"
