@@ -48,7 +48,7 @@ class Run:
     input: Input
     input_tokens: list[str]
     output: str | list[str]
-    explanation: Explanation
+    explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
     
@@ -62,7 +62,7 @@ class Run:
             "input": self.input.dict(),
             "input_tokens": self.input_tokens,
             "output": self.output,
-            "explanation": self.explanation.dict(),
+            "explanation": self.explanation.dict() if self.explanation is not None else None,
             "project_id": self.project_id,
         }
         if self._id is not None:
