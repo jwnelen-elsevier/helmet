@@ -1,6 +1,7 @@
 import transformers
 from transformers import AutoTokenizer
 
+import torch
 from llmex.models import ENC_LM, ENC_DEC_LM, DEC_LM
 
 url = "http://localhost:4000"
@@ -25,12 +26,17 @@ def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, dev
     platform_url = config.pop("platform_url", url)
     project_id = config.pop("project_id", None)
 
+    assert device in ["cpu", "cuda:0"], AssertionError("device must be either 'cpu' or 'cuda:0'")
+    if device == "cuda:0":
+        torch.device(device)
+        assert torch.cuda.is_available(), AssertionError("cuda is not available")
+
     assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
     assert project_id is not None, AssertionError("project_id must be specified")
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, **model_args)
+    hfModel = model_cls.from_pretrained(model_checkpoint, **model_args).to(device)
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]

@@ -59,7 +59,7 @@ class DEC_LM(Base_LM):
             "explanation_method": gradient_type
         })
     
-    def _format_run(self, prompt, result, explanation, **kwargs) -> Run:
+    def _format_run(self, prompt, result, explanation) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -71,7 +71,6 @@ class DEC_LM(Base_LM):
             "output": result,
             "explanation": explanation,
             "project_id": self.project_id,
-            **kwargs
         })
     
     def predict_from_run(self, id: str, **kwargs):
@@ -79,16 +78,17 @@ class DEC_LM(Base_LM):
         return self.predict(run.input.prompt, **kwargs)
 
     
-    def predict(self, prompt, *args, **kwargs):
+    def predict(self, prompt, generate_explanations=True, *args, **kwargs):
         eos_token = True
         input = self._tokenize(prompt, eos_token=eos_token)
         output = self.forward(input)
         result = self.postprocess_result(output)
-
-        explanation_type = kwargs.get("explanation_type", "feature_ablation")
-        explanation = self.explain(prompt, result, explanation_type)
-
-        formatted_expl = self._format_explanation(explanation, explanation_type)
+        formatted_expl = None
+        if generate_explanations:
+            explanation_type = kwargs.get("explanation_type", "feature_ablation")
+            explanation = self.explain(prompt, result, explanation_type)
+            formatted_expl = self._format_explanation(explanation, explanation_type)
+    
         formatted_run = self._format_run(prompt, result, formatted_expl)
 
         self.update_run(formatted_run)

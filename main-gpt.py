@@ -8,10 +8,11 @@ import llmex
 
 checkpoint = "openai-community/gpt2"  # embeddings are "transformer.wte"
 p_id = "65df5715dbfd389a9619eabb"
+url = "http://localhost:4000"
 
 device = "cpu"
 config = {
-    "platform_url": "http://localhost:4000",
+    "platform_url": url,
     "project_id": p_id,
     "model_type": "dec",
     "embeddings": "transformer.wte"
@@ -24,8 +25,9 @@ model_args = {
 model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
 # prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
-# result = model.predict(prompt)
+prompt = "Quote: Imagination is more"
+result = model.predict(prompt, generate_explanations=False)
 
-id = "65ef23fa86ecb9f08ae1d447"
-res = model.predict_from_run(id, explanation_type="saliency")
+# id = "65ef23fa86ecb9f08ae1d447"
+# res = model.predict_from_run(id, explanation_type="saliency")
 # print(res)
