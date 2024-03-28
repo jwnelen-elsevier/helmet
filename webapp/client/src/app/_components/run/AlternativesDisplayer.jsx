@@ -9,7 +9,7 @@ const AlternativesDisplayer = ({ output_alternatives }) => {
         const token = removeSpecialChars(alternative?.token);
         return (
           <div key={index}>
-            <p>
+            <p className={index === 0 ? "font-bold" : ""}>
               {token} <span className="text-xs">({score})</span>
             </p>
           </div>

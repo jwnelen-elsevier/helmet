@@ -37,6 +37,13 @@ const DetailDisplayer = ({ props }) => {
 
     return (
       <div>
+        <div className="flex flex-row space-y-2 py-2">
+          <TextHighlighter
+            tokens={input_tokens}
+            attributions={input_attribution}
+            showAttributions={showAttributions}
+          ></TextHighlighter>
+        </div>
         <span className="flex gap-2 items-center">
           <>
             {`Attribution method: ${explanation_method}`}
@@ -50,41 +57,42 @@ const DetailDisplayer = ({ props }) => {
             </Tooltip>
           </>
         </span>
-        <div className="flex flex-row py-2 ">
-          <TextHighlighter
-            tokens={input_tokens}
-            attributions={input_attribution}
-            showAttributions={showAttributions}
-          ></TextHighlighter>
-        </div>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <p className="font-bold">Model: {model_checkpoint}</p>
-      <p className="font-bold">
-        <span>ID: </span>
-        <CopyableText text={_id} />{" "}
-      </p>
-      <p className="px-2">
-        <span className="font-bold">Output: </span>
-        {output}
-      </p>
-      <div className="flex flex-row gap-2 border p-10">
+    <div className="flex flex-col space-y-2 items-center">
+      <div className="border rounded p-5">
+        <p className="font-bold">Model: {model_checkpoint}</p>
+        <p className="font-bold">
+          <span>ID: </span>
+          <CopyableText text={_id} />{" "}
+        </p>
+      </div>
+      <div className="border rounded p-5">
+        <p className="font-bold">
+          Input: <span className="font-normal">{input.prompt}</span>
+        </p>
+        <p className="font-bold">
+          Output: <span className="font-normal">{output}</span>
+        </p>
+      </div>
+      <div className="border rounded p-5">
         <p>Alternatives</p>
-        {output_alternatives.map((alternative, index) => (
-          <AlternativesDisplayer
-            key={index}
-            output_alternatives={alternative}
-          ></AlternativesDisplayer>
-        ))}
+        <div className="flex flex-row space-x-4">
+          {output_alternatives.map((alternative, index) => (
+            <AlternativesDisplayer
+              key={index}
+              output_alternatives={alternative}
+            ></AlternativesDisplayer>
+          ))}
+        </div>
       </div>
       {/* Watch out that we should display groundtruth if the output is 0 */}
       {groundtruth !== null ||
         ("" && <p className="px-2">Ground truth: {groundtruth}</p>)}
-      {expanationDetailsHighlights()}
+      <div className="border rounded p-5">{expanationDetailsHighlights()}</div>
       <div className="flex flex-row gap-2">
         <Button
           onClick={() => s(!showAttributions)}
