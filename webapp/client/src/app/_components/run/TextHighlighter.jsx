@@ -1,5 +1,6 @@
 // Create a component that will highlight text
 import clsx from "clsx";
+import { removeSpecialChars } from "utils/strings";
 
 const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
   const lowest = -1;
@@ -30,7 +31,7 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
 
   const marginStyle = (word) => {
     const addSpace = isNewWord(word);
-    let trimmedWord = word.replace(/#/g, "").replace(/Ġ/g, "");
+    let trimmedWord = removeSpecialChars(word);
     return { trimmedWord, addSpace };
   };
 

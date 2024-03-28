@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button, Tooltip } from "@nextui-org/react";
+import AlternativesDisplayer from "app/_components/run/AlternativesDisplayer";
 import TextHighlighter from "app/_components/run/textHighlighter";
 import CopyableText from "app/_components/ui/copyableText";
 import { QuestionIcon } from "app/_components/ui/icons";
@@ -15,6 +16,7 @@ const DetailDisplayer = ({ props }) => {
     explanation,
     input_tokens,
     _id,
+    output_alternatives,
     model_checkpoint,
   } = props;
 
@@ -70,6 +72,15 @@ const DetailDisplayer = ({ props }) => {
         <span className="font-bold">Output: </span>
         {output}
       </p>
+      <div className="flex flex-row gap-2 border p-10">
+        <p>Alternatives</p>
+        {output_alternatives.map((alternative, index) => (
+          <AlternativesDisplayer
+            key={index}
+            output_alternatives={alternative}
+          ></AlternativesDisplayer>
+        ))}
+      </div>
       {/* Watch out that we should display groundtruth if the output is 0 */}
       {groundtruth !== null ||
         ("" && <p className="px-2">Ground truth: {groundtruth}</p>)}
