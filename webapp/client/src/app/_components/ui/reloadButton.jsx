@@ -1,6 +1,6 @@
 "use client";
-import { RefreshIcon } from "@/app/_components/ui/icons";
 import { Button, Tooltip } from "@nextui-org/react";
+import { RefreshIcon } from "app/_components/ui/icons";
 
 const ReloadButton = () => {
   return (

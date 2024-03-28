@@ -13,7 +13,7 @@ const CopyableText = ({ text }) => {
   };
 
   return (
-    <span className="flex flex-row items-center group">
+    <span className="inline-flex group">
       {text}
       <Tooltip
         showArrow={true}

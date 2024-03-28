@@ -1,8 +1,6 @@
 "use client"; // This is needed for the useDisclosure hook to work
 import { useState } from "react";
 
-import TaskSelector from "@/app/_components/project/taskSelector";
-import { useSelectedProject } from "@/providers/project";
 import {
   Button,
   Input,
@@ -13,6 +11,8 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+import TaskSelector from "app/_components/project/taskSelector";
+import { useSelectedProject } from "providers/project";
 
 const defaultFormData = {
   projectName: "",

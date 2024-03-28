@@ -26,6 +26,8 @@ def serialize(obj) -> dict:
     """ Serialize the object to a dictionary """
     return json.loads(json.dumps(obj, cls=NumpyEncoder))
 
+
+
 def update_app(url: str, route: str, body: dict[str, typing.Any]):
     """ Update the app with the new model and tokenizer. 
     args: 
@@ -58,9 +60,34 @@ def get_run(url: str, run_id: str) -> Run | None:
         form = "%Y-%m-%dT%H:%M:%S.%fZ"
         d["date"] = datetime.strptime(d["date"], form)
         d["output"] = str(d["output"])
-        d["groundtruth"] = str(d["groundtruth"])
+        if d.get("groundtruth", None) is not None:
+            d["groundtruth"] = str(d["groundtruth"])
         return from_dict(data_class=Run, data=d)
 
     except Exception as e:
         print(e)
         return None
+    
+def get_or_create_project(url: str, project_name: str, task: str) -> str:
+    """ Get or create the project """
+    if url is None or project_name is None or task is None:
+        raise ValueError(f"url cannot be None url: {url} project_name:{project_name} description:{task}")
+    final_url = f"{url}/project"
+    r = requests.get(final_url)
+    if r.status_code != 200:
+        raise ValueError(f"Failed to get projects. Status code: {r.status_code}")
+    
+    projects = r.json()
+    for project in projects:
+        if project["projectName"] == project_name:
+            print("found project with the same name. Using the same project.")
+            return project["_id"].__str__()
+    
+
+    print("creating new project")
+    # create the project
+    r = requests.post(final_url, json={"projectName": project_name, "task": task})
+    if r.status_code != 200:
+        raise ValueError(f"Failed to create project. Status code: {r.status_code}")
+    
+    return r.json()["_id"]

@@ -1,5 +1,5 @@
 "use client";
-import { createProject, fetchProjects } from "@/app/actions/actions";
+import { createProject, fetchProjects } from "app/actions/actions";
 import { createContext, useContext, useEffect, useState } from "react";
 
 export const ProjectsContext = createContext(null);
@@ -19,7 +19,7 @@ export const ProjectsProvider = ({ children }) => {
   useEffect(() => {
     const projectId = localStorage.getItem("projectId");
 
-    if (projectId && projects.length > 0) {
+    if (projectId && projects?.length > 0) {
       const projectDetails = projects.find(
         (p) => `${p._id}` === `${projectId}`
       );

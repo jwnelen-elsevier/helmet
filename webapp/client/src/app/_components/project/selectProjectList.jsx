@@ -7,9 +7,9 @@ import {
   TableRow,
 } from "@nextui-org/react";
 
-import CopyableText from "@/app/_components/ui/copyableText";
-import { getDateString } from "@/utils/strings";
-import { CheckIcon } from "../ui/icons";
+import CopyableText from "app/_components/ui/copyableText";
+import { CheckIcon } from "app/_components/ui/icons";
+import { getDateString } from "utils/strings";
 
 const columns = [
   {
@@ -30,7 +30,7 @@ const columns = [
   },
 ];
 
-export default function ({ selectProject, projects, selectedProject }) {
+function selectProjectList({ selectProject, projects, selectedProject }) {
   const isSelectedProject = (p) => {
     return `${selectedProject?._id}` === `${p._id}`;
   };
@@ -60,3 +60,5 @@ export default function ({ selectProject, projects, selectedProject }) {
     </Table>
   );
 }
+
+export default selectProjectList;
