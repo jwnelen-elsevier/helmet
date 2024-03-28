@@ -34,14 +34,28 @@ class DEC_LM(Base_LM):
         input_len = len(inputs["input_ids"])
         max_new_tokens = 5
         max_length = input_len + max_new_tokens
+        amount_potentials = 5
 
-        return self.model.generate(
+        output = self.model.generate(
             input_ids=inputs["input_ids"], 
             attention_mask=inputs["attention_mask"],
             use_cache=True, 
-            max_new_tokens=max_new_tokens
-            # max_length=max_length,
-        )[0]
+            max_new_tokens=max_new_tokens,
+            return_dict_in_generate=True, 
+            output_scores=True # this gets the scores, while logits are unprocessed.
+        )
+        alternatives_per_token = []
+        for i in range(len(output.scores)):
+            scores = output.scores[i]
+            top_k = scores.topk(amount_potentials, dim=1)
+            top_k_scores = top_k.values.detach().flatten().tolist()
+            top_k_indices = top_k.indices
+
+            tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
+            res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
+            alternatives_per_token.append(res)
+        
+        return output.sequences[0], alternatives_per_token
     
     def postprocess_result(self, output):
         # Return back the string
@@ -81,7 +95,7 @@ class DEC_LM(Base_LM):
     def predict(self, prompt, generate_explanations=True, *args, **kwargs):
         eos_token = True
         input = self._tokenize(prompt, eos_token=eos_token)
-        output = self.forward(input)
+        output, alternatives = self.forward(input)
         result = self.postprocess_result(output)
         formatted_expl = None
         if generate_explanations:

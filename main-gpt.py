@@ -14,8 +14,6 @@ url = "http://localhost:4000"
 
 device = "cpu"
 
-url = "http://localhost:4000"
-
 project_setup = {
     "url": url,
     "project_name": "GPT-2 generation",
@@ -24,7 +22,6 @@ project_setup = {
 
 id = llmex.get_or_create_project(**project_setup)
 
-device = "cuda:0"
 config = {
     "platform_url": url,
     "project_id": id,
@@ -39,10 +36,10 @@ model_args = {
 }
 
 model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
-# prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
+prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
-prompt = "Quote: Imagination is more"
-result = model.predict(prompt, generate_explanations=False)
+# prompt = "Quote: Imagination is more"
+result = model.predict(prompt, generate_explanations=True)
 
 # id = "65ef23fa86ecb9f08ae1d447"
 # res = model.predict_from_run(id, explanation_type="saliency")
