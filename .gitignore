@@ -167,3 +167,5 @@ package-lock.json
 .env
 .DS_Store
 llmex-env/*
+.virtual_documents/llmex_genai.ipynb
+.virtual_documents/examples/notebooks/llmex_genai.ipynb
