@@ -73,7 +73,7 @@ class DEC_LM(Base_LM):
             "explanation_method": gradient_type
         })
     
-    def _format_run(self, prompt, result, explanation) -> Run:
+    def _format_run(self, prompt, result, alternatives, explanation) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -83,6 +83,7 @@ class DEC_LM(Base_LM):
             "input": Input(prompt),
             "input_tokens": self.tokenizer.tokenize(prompt),
             "output": result,
+            "output_alternatives": alternatives,
             "explanation": explanation,
             "project_id": self.project_id,
         })
@@ -103,7 +104,7 @@ class DEC_LM(Base_LM):
             explanation = self.explain(prompt, result, explanation_type)
             formatted_expl = self._format_explanation(explanation, explanation_type)
     
-        formatted_run = self._format_run(prompt, result, formatted_expl)
+        formatted_run = self._format_run(prompt, result, alternatives, formatted_expl)
 
         self.update_run(formatted_run)
 

@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
+
 @dataclass
 class Explanation:
     """Generic explanation dataclass"""
@@ -37,6 +38,14 @@ class ContextInput(Input):
         return d
 
 @dataclass
+class Output:
+    """Generic output dataclass"""
+    sequences: list[str]
+    def dict(self) -> dict:
+        return {
+            "sequences": self.sequences
+        }
+@dataclass
 class Run:
     """Generic run dataclass"""
     project_id: str
@@ -48,6 +57,7 @@ class Run:
     input: Input
     input_tokens: list[str]
     output: str | list[str]
+    output_alternatives: list[list[dict[str, float]]] = field(default_factory=list)
     explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
@@ -62,6 +72,7 @@ class Run:
             "input": self.input.dict(),
             "input_tokens": self.input_tokens,
             "output": self.output,
+            "output_alternatives": self.output_alternatives,
             "explanation": self.explanation.dict() if self.explanation is not None else None,
             "project_id": self.project_id,
         }
