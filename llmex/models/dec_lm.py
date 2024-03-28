@@ -31,8 +31,8 @@ class DEC_LM(Base_LM):
         return self.tokenizer(prompt, return_tensors="pt")
 
     def forward(self, inputs, **kwargs):
-        input_len = len(inputs["input_ids"])
-        max_new_tokens = 5
+        input_len = len(inputs["input_ids"][0])
+        max_new_tokens = 10
         max_length = input_len + max_new_tokens
         amount_potentials = 5
 
@@ -55,7 +55,8 @@ class DEC_LM(Base_LM):
             res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
             alternatives_per_token.append(res)
         
-        return output.sequences[0], alternatives_per_token
+        o = output.sequences[0][input_len:]
+        return o, alternatives_per_token
     
     def postprocess_result(self, output):
         # Return back the string
