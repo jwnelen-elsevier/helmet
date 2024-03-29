@@ -54,7 +54,7 @@ def get_run(url: str, run_id: str) -> Run | None:
     if r.status_code != 200:
         raise ValueError(f"Failed to get run. Status code: {r.status_code}")
     
-    # pare into the Run object
+    # parse into the Run object
     try:
         d = r.json()
         form = "%Y-%m-%dT%H:%M:%S.%fZ"

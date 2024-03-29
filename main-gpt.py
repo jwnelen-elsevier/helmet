@@ -9,7 +9,7 @@ from transformers import BitsAndBytesConfig
 # model = AutoModelForCausalLM.from_pretrained("microsoft/phi-1_5", trust_remote_code=True)
 
 checkpoint = "openai-community/gpt2"  # embeddings are "transformer.wte"
-p_id = "65df5715dbfd389a9619eabb"
+# p_id = "65df5715dbfd389a9619eabb"
 url = "http://localhost:4000"
 
 device = "cpu"
@@ -41,6 +41,5 @@ prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests i
 # prompt = "Quote: Imagination is more"
 result = model.predict(prompt, generate_explanations=True)
 
-# id = "65ef23fa86ecb9f08ae1d447"
-# res = model.predict_from_run(id, explanation_type="saliency")
-# print(res)
+id = "66069e516455702029922429"
+res = model.predict_from_run(id, explanation_type="saliency")
