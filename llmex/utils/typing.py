@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict
 
 @dataclass
 class Explanation:
@@ -57,7 +57,7 @@ class Run:
     input: Input
     input_tokens: list[str]
     output: str | list[str]
-    output_alternatives: list[list[dict[str, float]]] = field(default_factory=list)
+    output_alternatives: List[List[Dict[str, float]]] | list
     explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
