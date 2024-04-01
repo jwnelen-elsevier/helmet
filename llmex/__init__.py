@@ -20,12 +20,29 @@ model_type_to_implementation = {
     "dec": DEC_LM,
 }
 
-def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, device="cpu"):
+project_setup = [
+    "project_id",
+    "url",
+]
+
+model_setup_args = [
+    "checkpoint",
+    "model_type",
+    "embeddings",
+]
+
+run_config_args = [
+    "device"
+]
+
+def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}):
     print("setting up model")
+    platform_url = project_setup.pop("platform_url", url)
+    project_id = project_setup.pop("project_id", None)
     
-    model_type = config.pop("model_type", None)
-    platform_url = config.pop("platform_url", url)
-    project_id = config.pop("project_id", None)
+    model_type = model_setup.pop("model_type", None)
+    device = run_config.pop("device", "cpu")
+    model_checkpoint = model_setup.pop("checkpoint", None)
 
     assert device in ["cpu", "cuda:0"], AssertionError("device must be either 'cpu' or 'cuda:0'")
     if device == "cuda:0":
@@ -37,13 +54,13 @@ def from_pretrained(model_checkpoint, config:dict = {}, model_args: dict={}, dev
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, **model_args).to(device)
+    hfModel = model_cls.from_pretrained(model_checkpoint).to(device)
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]
     assert modelHelper is not None, AssertionError(f"model_type {model_type} not implemented")
 
-    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, config)
+    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, model_setup)
     return model
 
 

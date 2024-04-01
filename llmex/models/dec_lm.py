@@ -11,7 +11,7 @@ class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
                  tokenizer: transformers.PreTrainedTokenizer, url: str, project_id: str, model_config: dict = {}):
         self.model_type = "dec"
-        self.config = model_config
+        self.model_config = model_config
 
         try:
             assert "embeddings" in model_config, AssertionError("embeddings must be specified in model_config")
@@ -32,8 +32,7 @@ class DEC_LM(Base_LM):
 
     def forward(self, inputs, **kwargs):
         input_len = len(inputs["input_ids"][0])
-        max_new_tokens = 10
-        max_length = input_len + max_new_tokens
+        max_new_tokens = kwargs.get("max_new_tokens", 10)
         amount_potentials = 5
 
         output = self.model.generate(
