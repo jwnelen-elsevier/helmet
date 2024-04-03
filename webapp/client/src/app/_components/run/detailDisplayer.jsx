@@ -78,9 +78,9 @@ const DetailDisplayer = ({ props }) => {
           Output: <span className="font-normal">{output}</span>
         </p>
       </div>
-      <div className="border rounded p-5">
+      <div className="border rounded p-5 max-w-full">
         <p>Alternatives</p>
-        <div className="flex flex-row space-x-4">
+        <div className="flex flex-row space-x-4 max-w-full overflow-x-scroll">
           {output_alternatives.map((alternative, index) => (
             <AlternativesDisplayer
               key={index}
