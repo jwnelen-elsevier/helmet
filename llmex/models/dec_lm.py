@@ -30,11 +30,11 @@ class DEC_LM(Base_LM):
             self.tokenizer.pad_token = self.tokenizer.eos_token
         return self.tokenizer(prompt, return_tensors="pt")
 
-    def forward(self, inputs, **kwargs):
+    def forward(self, inputs, max_new_tokens, **kwargs):
         input_len = len(inputs["input_ids"][0])
-        max_new_tokens = kwargs.get("max_new_tokens", 10)
         amount_potentials = 5
-
+        print(max_new_tokens)
+        
         output = self.model.generate(
             input_ids=inputs["input_ids"], 
             attention_mask=inputs["attention_mask"],
@@ -95,8 +95,9 @@ class DEC_LM(Base_LM):
     
     def predict(self, prompt, generate_explanations=True, *args, **kwargs):
         eos_token = True
+        max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._tokenize(prompt, eos_token=eos_token)
-        output, alternatives = self.forward(input)
+        output, alternatives = self.forward(input, max_new_tokens=max_tokens)
         result = self.postprocess_result(output)
         formatted_expl = None
         if generate_explanations:
