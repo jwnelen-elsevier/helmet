@@ -1,5 +1,5 @@
-# LLMEX
-
+# helmet HELMET 
+(Human cEntered large Language Model Explainability Tool)
 To activate a Python virtual environment in Visual Studio Code's terminal, you can use the following command:
 
 activate
