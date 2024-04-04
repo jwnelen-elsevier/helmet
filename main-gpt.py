@@ -5,13 +5,13 @@ project_setup = {
     "project_id": "660ab0b7c4368d2cd7e713eb"
 }
 
-checkpoint = "openai-community/gpt2"  # embeddings are "transformer.wte"
+checkpoint = "M4-ai/tau-0.5B" # here embeddings are at model.embed_tokens
 device = "cpu"
 
 model_setup = {
     "checkpoint": checkpoint,
     "model_type": "dec",
-    "embeddings": "transformer.wte"
+    "embeddings": "model.embed_tokens"
 }
 
 run_config = {
@@ -22,11 +22,12 @@ model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_set
 prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
 
 predict_config = {
-    "generate_explanations": True,
+    "max_new_tokens": 50,
+    "generate_explanations": False,
 }
 
-# prompt = "Quote: Imagination is more"
+# # prompt = "Quote: Imagination is more"
 result = model.predict(prompt, **predict_config)
 
-id = "66069e516455702029922429"
-res = model.predict_from_run(id, explanation_type="saliency")
+# id = "66069e516455702029922429"
+# res = model.predict_from_run(id, explanation_type="saliency")

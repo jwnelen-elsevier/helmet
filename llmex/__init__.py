@@ -54,7 +54,7 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint).to(device)
+    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True).to(device)
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]
