@@ -1,5 +1,7 @@
-# helmet HELMET 
-(Human cEntered large Language Model Explainability Tool)
+# HELMET ⛑️ (Human Evaluated large Language Model Explainability Tool)
+
+## Tool
+
 To activate a Python virtual environment in Visual Studio Code's terminal, you can use the following command:
 
 activate
@@ -11,7 +13,7 @@ After activating the environment, you can install the packages listed in your re
 txt
 Please ensure that your requirements.txt file is in the same directory where you're running this command. If it's in a different directory, provide the full path to the file.
 
-#### MongoDB
+## MongoDB
 
 Starting a dev server;
 
