@@ -9,6 +9,7 @@ import {
 
 import CopyableText from "app/_components/ui/copyableText";
 import { CheckIcon } from "app/_components/ui/icons";
+import clsx from "clsx";
 import { getDateString } from "utils/strings";
 
 const columns = [
@@ -46,7 +47,10 @@ function selectProjectList({ selectProject, projects, selectedProject }) {
             <TableCell>{isSelectedProject(project) && <CheckIcon />}</TableCell>
             <TableCell
               onClick={() => selectProject(project)}
-              className="cursor-pointer underline w-min-content hover:bg-slate-100"
+              className={clsx(
+                `cursor-pointer underline w-min-content hover:bg-slate-100`,
+                isSelectedProject(project) && `font-bold`
+              )}
             >
               {project.projectName}
             </TableCell>
