@@ -61,6 +61,7 @@ class Run:
     explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
+    execution_time_in_sec: Optional[int] = None
     
     def dict(self) -> dict:
         d = {
@@ -75,6 +76,7 @@ class Run:
             "output_alternatives": self.output_alternatives,
             "explanation": self.explanation.dict() if self.explanation is not None else None,
             "project_id": self.project_id,
+            "execution_time_in_sec": self.execution_time_in_sec
         }
         if self._id is not None:
             d["_id"] = self._id

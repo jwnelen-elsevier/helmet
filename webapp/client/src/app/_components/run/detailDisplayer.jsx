@@ -18,6 +18,7 @@ const DetailDisplayer = ({ props }) => {
     _id,
     output_alternatives,
     model_checkpoint,
+    execution_time_in_sec,
   } = props;
 
   const [showAttributions, s] = useState(false);
@@ -66,6 +67,10 @@ const DetailDisplayer = ({ props }) => {
         <p>
           <span className="font-bold">Run id: </span>
           <CopyableText text={_id} />{" "}
+        </p>
+        <p>
+          <span className="font-bold">Execution time: </span>
+          {execution_time_in_sec} sec
         </p>
       </div>
       <p className="border rounded p-5 font-bold">

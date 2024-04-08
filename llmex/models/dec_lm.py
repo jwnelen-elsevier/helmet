@@ -1,6 +1,7 @@
 import transformers
 from datetime import datetime
 from operator import attrgetter
+import time
 
 from llmex.models import Base_LM
 from llmex.utils.typing import Explanation, Run, Input
@@ -33,7 +34,6 @@ class DEC_LM(Base_LM):
     def forward(self, inputs, max_new_tokens, **kwargs):
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
-        print(max_new_tokens)
         
         output = self.model.generate(
             input_ids=inputs["input_ids"], 
@@ -61,10 +61,10 @@ class DEC_LM(Base_LM):
         # Return back the string
         return self.tokenizer.decode(output, skip_special_tokens=True)
     
-    def explain(self, prompt, output, type: str = "feature_ablation"):
-        if type == "gradient":
-            return compute_gradients_causal(self, prompt, output)
-        return calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
+    def explain(self, prompt, output, type: str = "gradient"):
+        if type == "perturbation":
+            calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
+        return compute_gradients_causal(self, prompt, output)
     
     def _format_explanation(self, attr, gradient_type: str) -> Explanation:
         attributions = attr.tolist()
@@ -73,7 +73,7 @@ class DEC_LM(Base_LM):
             "explanation_method": gradient_type
         })
     
-    def _format_run(self, prompt, result, alternatives, explanation) -> Run:
+    def _format_run(self, prompt, result, alternatives, explanation, execution_time_in_sec) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -86,6 +86,7 @@ class DEC_LM(Base_LM):
             "output_alternatives": alternatives,
             "explanation": explanation,
             "project_id": self.project_id,
+            "execution_time_in_sec": execution_time_in_sec,
         })
     
     def predict_from_run(self, id: str, **kwargs):
@@ -94,6 +95,8 @@ class DEC_LM(Base_LM):
 
     
     def predict(self, prompt, generate_explanations=True, *args, **kwargs):
+        # record start time
+        start = time.time()
         eos_token = True
         max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._tokenize(prompt, eos_token=eos_token)
@@ -105,7 +108,10 @@ class DEC_LM(Base_LM):
             explanation = self.explain(prompt, result, explanation_type)
             formatted_expl = self._format_explanation(explanation, explanation_type)
     
-        formatted_run = self._format_run(prompt, result, alternatives, formatted_expl)
+        # record end time
+        end = time.time()
+        execution_time = end - start
+        formatted_run = self._format_run(prompt, result, alternatives, formatted_expl, execution_time_in_sec=execution_time)
 
         self.update_run(formatted_run)
 
