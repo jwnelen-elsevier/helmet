@@ -31,7 +31,7 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
 
 # For decoder models, only Layered Integrated Gradients is supported
 def compute_gradients_causal(wrapper, prompt, output):
-    # LayerIntegratedGradients is only supported for decoder models
+    # LayerIntegratedGradients is the? only supported for decoder models
     ig = LayerIntegratedGradients(forward_func=wrapper.model, layer=wrapper.model.get_output_embeddings())
 
     # LLM attribution
@@ -46,3 +46,27 @@ def compute_gradients_causal(wrapper, prompt, output):
     
     res = llm_attr.attribute(input, target=output)
     return res.seq_attr.detach().cpu().numpy()
+
+
+def analyze_token(wrapper, input, target):
+    print("Analyzing token", input, target)
+    # Get the token embeddings
+    # input_embeds = wrapper.get_input_embeddings(input)
+    # attention_mask = input["attention_mask"]
+
+    # # Define the forward function
+    # def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
+    #     output = model(inputs_embeds=inp, **extra_forward_args)
+    #     return F.softmax(output.logits, dim=1)
+
+    # forward_func = partial(model_forward, model=wrapper.model, extra_forward_args={"attention_mask": attention_mask})
+
+    # # Define the attribution method
+    # lig = Saliency(forward_func)
+    # attributions = lig.attribute(inputs=input_embeds, target=target)
+    # attributions = attributions.detach().cpu().numpy()
+    # r = attributions[0, :, :]
+    # attr = r.sum(axis=1)
+    # attr = wrapper.normalize(attr)
+
+    # return attr

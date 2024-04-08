@@ -1,4 +1,5 @@
 import transformers
+import torch
 from datetime import datetime
 from operator import attrgetter
 import time
@@ -6,7 +7,7 @@ import time
 from llmex.models import Base_LM
 from llmex.utils.typing import Explanation, Run, Input
 from llmex.explainers.perturbation import calculate_feature_ablation
-from llmex.explainers.gradients import compute_gradients_causal
+from llmex.explainers.gradients import compute_gradients_causal, analyze_token
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
@@ -61,10 +62,24 @@ class DEC_LM(Base_LM):
         # Return back the string
         return self.tokenizer.decode(output, skip_special_tokens=True)
     
-    def explain(self, prompt, output, type: str = "gradient"):
-        if type == "perturbation":
-            calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
-        return compute_gradients_causal(self, prompt, output)
+    def explain(self, input, output, type: str = "gradient"):
+        # For each produced token, we produce an explanation
+        input_ids = input["input_ids"].flatten()
+        output_ids = output.flatten()
+
+        merged = torch.cat((input_ids, output_ids), 0)
+        start_index = len(input_ids)
+        total_length = len(merged)
+
+        # TODO: Do we need the attention mask here? 
+        for t, idx in enumerate(range(start_index, total_length)):
+            curr_input = merged[:idx]
+            produced_token = merged[idx]
+            analyze_token(self.model, curr_input, produced_token)
+
+        # if type == "perturbation":
+        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
+        # return compute_gradients_causal(self, prompt, output)
     
     def _format_explanation(self, attr, gradient_type: str) -> Explanation:
         attributions = attr.tolist()
@@ -93,6 +108,19 @@ class DEC_LM(Base_LM):
         run = self.get_run(id)
         return self.predict(run.input.prompt, **kwargs)
 
+    # def explain_from_run(self, id: str, explanation_type="gradient", **kwargs):
+    #     start = time.time()
+    #     run = self.get_run(id)
+    #     explanation = self.explain(run.input.prompt, run.output, explanation_type)
+    #     formatted_expl = self._format_explanation(explanation, explanation_type)
+
+    #      # record end time
+    #     end = time.time()
+    #     execution_time = end - start
+
+    #     formatted_run = self._format_run(prompt, result, alternatives, formatted_expl, execution_time_in_sec=execution_time)
+    #     self.update_run(formatted_run)
+    #     print("Explanation generated and saved successfully!")
     
     def predict(self, prompt, generate_explanations=True, *args, **kwargs):
         # record start time
@@ -101,13 +129,13 @@ class DEC_LM(Base_LM):
         max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._tokenize(prompt, eos_token=eos_token)
         output, alternatives = self.forward(input, max_new_tokens=max_tokens)
-        result = self.postprocess_result(output)
         formatted_expl = None
         if generate_explanations:
-            explanation_type = kwargs.get("explanation_type", "feature_ablation")
-            explanation = self.explain(prompt, result, explanation_type)
+            explanation_type = kwargs.get("explanation_type", "gradient")
+            explanation = self.explain(input, output, explanation_type)
             formatted_expl = self._format_explanation(explanation, explanation_type)
     
+        result = self.postprocess_result(output)
         # record end time
         end = time.time()
         execution_time = end - start

@@ -19,8 +19,8 @@ class Base_LM(ABC):
         self.__post_init__()
     
     def __post_init__(self):
-        print("post init")
         self.reset_model()
+        print("model loaded")
         # self.update_explainer_model()
     
     def _tokenize(self, text: str, **kwargs):
@@ -68,7 +68,6 @@ class Base_LM(ABC):
         update_app(self.platform_url, "/update_model", b)
 
     def reset_model(self):
-        print('model reset')
         self.model.eval()
         self.model.zero_grad()
 
