@@ -22,16 +22,11 @@ const DetailDisplayer = ({ props }) => {
 
   const [showAttributions, s] = useState(false);
 
+  const hasExplanation = explanation !== null;
+
   const expanationDetailsHighlights = () => {
-    if (explanation === null) {
-      return (
-        <div>
-          <p className="italic">No explanation provided</p>
-          <div className="flex flex-row py-2 ">
-            <p>{input.prompt}</p>
-          </div>
-        </div>
-      );
+    if (!hasExplanation) {
+      return <p className="italic">No explanations available</p>;
     }
     const { input_attribution, explanation_method } = explanation;
 
@@ -64,20 +59,21 @@ const DetailDisplayer = ({ props }) => {
   return (
     <div className="flex flex-col space-y-2 items-center">
       <div className="border rounded p-5">
-        <p className="font-bold">Model: {model_checkpoint}</p>
-        <p className="font-bold">
-          <span>ID: </span>
+        <p>
+          <span className="font-bold">Model: </span>
+          {model_checkpoint}
+        </p>
+        <p>
+          <span className="font-bold">Run id: </span>
           <CopyableText text={_id} />{" "}
         </p>
       </div>
-      <div className="border rounded p-5">
-        <p className="font-bold">
-          Input: <span className="font-normal">{input.prompt}</span>
-        </p>
-        <p className="font-bold">
-          Output: <span className="font-normal">{output}</span>
-        </p>
-      </div>
+      <p className="border rounded p-5 font-bold">
+        Input: <span className="font-normal">{input.prompt}</span>
+      </p>
+      <p className="border rounded p-5 font-bold">
+        Output: <span className="font-normal">{output}</span>
+      </p>
       <div className="border rounded p-5 max-w-full">
         <p>Alternatives</p>
         <div className="flex flex-row space-x-4 max-w-full overflow-x-scroll">
@@ -93,14 +89,16 @@ const DetailDisplayer = ({ props }) => {
       {groundtruth !== null ||
         ("" && <p className="px-2">Ground truth: {groundtruth}</p>)}
       <div className="border rounded p-5">{expanationDetailsHighlights()}</div>
-      <div className="flex flex-row gap-2">
-        <Button
-          onClick={() => s(!showAttributions)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          {showAttributions ? "Hide attributions" : "Show attributions"}
-        </Button>
-      </div>
+      {hasExplanation && (
+        <div className="flex flex-row gap-2">
+          <Button
+            onClick={() => s(!showAttributions)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {showAttributions ? "Hide attributions" : "Show attributions"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
