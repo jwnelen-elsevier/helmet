@@ -7,7 +7,7 @@ import time
 from llmex.models import Base_LM
 from llmex.utils.typing import Explanation, Run, Input
 from llmex.explainers.perturbation import calculate_feature_ablation
-from llmex.explainers.gradients import compute_gradients_causal, analyze_token
+from llmex.explainers.gradients import analyze_token
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
@@ -24,7 +24,7 @@ class DEC_LM(Base_LM):
             print(e)
             raise KeyError("embeddings must be specified in model_config")
 
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, None)
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
 
     def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
         has_eos_token = tokenizer_kwargs.get("eos_token", False)
@@ -64,18 +64,34 @@ class DEC_LM(Base_LM):
     
     def explain(self, input, output, type: str = "gradient"):
         # For each produced token, we produce an explanation
-        input_ids = input["input_ids"].flatten()
-        output_ids = output.flatten()
+        input_ids = input["input_ids"].flatten().detach().numpy()
+        attention_mask = input["attention_mask"].flatten().detach().numpy()
+        # this should also be a inputs_ids tensor
+        output_id = output.flatten()[0]
 
-        merged = torch.cat((input_ids, output_ids), 0)
-        start_index = len(input_ids)
-        total_length = len(merged)
+        base_saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id)
+        return base_saliency_matrix, base_embd_matrix
 
-        # TODO: Do we need the attention mask here? 
-        for t, idx in enumerate(range(start_index, total_length)):
-            curr_input = merged[:idx]
-            produced_token = merged[idx]
-            analyze_token(self.model, curr_input, produced_token)
+        # output_ids = output.flatten()
+
+        # merged = torch.cat((input_ids, output_ids), 0)
+        # start_index = len(input_ids)
+        # total_length = len(merged)
+
+        # # TODO: Do we need the attention mask here? 
+        # for t, idx in enumerate(range(start_index, total_length)):
+        #     curr_input_ids = merged[:idx]
+        #     am = attention_mask[:idx] 
+        #     # attention_mask = torch.cat((attention_mask, torch.tensor([1])), 0)
+        #     # inputs = {
+        #     #     "input_ids": curr_input_ids.unsqueeze(0),
+        #     #     "attention_mask": am.unsqueeze(0)
+        #     # }
+
+        #     text = self.postprocess_result(curr_input_ids)
+        #     output = self.postprocess_result(merged[idx:])
+        #     produced_token = merged[idx]
+        #     analyze_token(self, text, idx - 1)
 
         # if type == "perturbation":
         #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
