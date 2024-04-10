@@ -63,53 +63,34 @@ class DEC_LM(Base_LM):
         return self.tokenizer.decode(output, skip_special_tokens=True)
     
     def explain(self, input, output, type: str = "gradient"):
-        # For each produced token, we produce an explanation
-        input_ids = input["input_ids"].flatten().detach().numpy()
-        attention_mask = input["attention_mask"].flatten().detach().numpy()
-        # this should also be a inputs_ids tensor
+        input_ids = input["input_ids"][0]
+        attention_mask = input["attention_mask"]
         
-        output_id = output.flatten()[0]
+        # For each produced token, we produce an explanation
+        merged = torch.cat((input_ids, output), 0)
+        start_index = len(input_ids)
+        total_length = len(merged)
 
-        # base_saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id)
-        # FOIL_ID = tokenizer(" "+ foil)['input_ids'][0] # this is the contrasting token
+        result = []
+        for idx in range(start_index, total_length):
+            curr_input_ids = merged[:idx]
+            output_id = merged[idx]
+            base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, attention_mask, correct=output_id)
+            gradients = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
+            result.append(gradients)
+            print("finished token", idx, "of", total_length - start_index - 1)
 
-        base_saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id)
-        # saliency_matrix, embd_matrix = analyze_token(self, input_ids, attention_mask, foil=output_id)
-
-        # Input x gradient
-        base_explanation = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
-
-        return base_explanation
-
-        # output_ids = output.flatten()
-
-        # merged = torch.cat((input_ids, output_ids), 0)
-        # start_index = len(input_ids)
-        # total_length = len(merged)
-
-        # # TODO: Do we need the attention mask here? 
-        # for t, idx in enumerate(range(start_index, total_length)):
-        #     curr_input_ids = merged[:idx]
-        #     am = attention_mask[:idx] 
-        #     # attention_mask = torch.cat((attention_mask, torch.tensor([1])), 0)
-        #     # inputs = {
-        #     #     "input_ids": curr_input_ids.unsqueeze(0),
-        #     #     "attention_mask": am.unsqueeze(0)
-        #     # }
-
-        #     text = self.postprocess_result(curr_input_ids)
-        #     output = self.postprocess_result(merged[idx:])
-        #     produced_token = merged[idx]
-        #     analyze_token(self, text, idx - 1)
+        return result
 
         # if type == "perturbation":
         #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
         # return compute_gradients_causal(self, prompt, output)
     
     def _format_explanation(self, attr, gradient_type: str) -> Explanation:
-        attributions = attr.tolist()
+        # attributions = attr.tolist()
+        # attributions = attr./
         return Explanation(**{
-            "input_attribution": attributions,
+            "input_attribution": attr,
             "explanation_method": gradient_type
         })
     
