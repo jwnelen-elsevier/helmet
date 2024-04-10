@@ -1,5 +1,5 @@
 import torch
-
+import numpy as np
 from captum.attr import (
     InputXGradient, Saliency, LayerIntegratedGradients, 
     LLMGradientAttribution, TextTokenInput, LLMAttribution, IntegratedGradients
@@ -47,7 +47,7 @@ def register_embedding_gradient_hooks(model, embeddings_gradients):
     def hook_layers(module, grad_in, grad_out):
         embeddings_gradients.append(grad_out[0].detach().cpu().numpy())
     embedding_layer = model.transformer.wte
-    hook = embedding_layer.register_backward_hook(hook_layers)
+    hook = embedding_layer.register_full_backward_hook(hook_layers)
     return hook
 
 def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=None):
@@ -62,8 +62,8 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
 
     if correct is None:
         correct = input_ids[-1]
-    input_ids = input_ids[:-1]
-    input_mask = input_mask[:-1]
+        input_ids = input_ids[:-1]
+        input_mask = input_mask[:-1]
     input_ids = torch.tensor(input_ids, dtype=torch.long)
     input_mask = torch.tensor(input_mask, dtype=torch.long)
 
@@ -73,12 +73,22 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     if foil is not None and correct != foil:
         (A.logits[-1][correct]-A.logits[-1][foil]).backward()
     else:
-        (A.logits[-1][correct]).backward()
+        p = A.logits[-1][correct]
+        p.backward()
     handle.remove()
     hook.remove()
 
     import numpy as np
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
+
+def input_x_gradient(grads, embds, normalize=False):
+    input_grad = np.sum(grads * embds, axis=-1).squeeze()
+
+    if normalize:
+        norm = np.linalg.norm(input_grad, ord=1)
+        input_grad /= norm
+        
+    return input_grad
 
 # def analyze_token(wrapper, prompt, target):
 #     ig = Saliency(forward_func=wrapper.model)

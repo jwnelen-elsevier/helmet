@@ -7,7 +7,7 @@ import time
 from llmex.models import Base_LM
 from llmex.utils.typing import Explanation, Run, Input
 from llmex.explainers.perturbation import calculate_feature_ablation
-from llmex.explainers.gradients import analyze_token
+from llmex.explainers.gradients import analyze_token, input_x_gradient
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
@@ -67,10 +67,19 @@ class DEC_LM(Base_LM):
         input_ids = input["input_ids"].flatten().detach().numpy()
         attention_mask = input["attention_mask"].flatten().detach().numpy()
         # this should also be a inputs_ids tensor
+        
         output_id = output.flatten()[0]
 
+        # base_saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id)
+        # FOIL_ID = tokenizer(" "+ foil)['input_ids'][0] # this is the contrasting token
+
         base_saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id)
-        return base_saliency_matrix, base_embd_matrix
+        # saliency_matrix, embd_matrix = analyze_token(self, input_ids, attention_mask, foil=output_id)
+
+        # Input x gradient
+        base_explanation = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
+
+        return base_explanation
 
         # output_ids = output.flatten()
 

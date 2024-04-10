@@ -6,7 +6,7 @@ project_setup = {
 }
 
 # checkpoint = "microsoft/phi-1_5" # here embeddings are at model.embed_tokens
-checkpoint = "gpt2" # here embeddings are at model.transformer.wte
+checkpoint = "openai-community/gpt2-xl" # here embeddings are at model.transformer.wte
 device = "cpu"
 
 model_setup = {
@@ -64,7 +64,7 @@ predict_config = {
     "generate_explanations": True,
 }
 
-prompt = "Quote: Imagination is more"
+prompt = "Can you stop the dog from"
 result = model.predict(prompt, **predict_config)
 
 # id = "66069e516455702029922429"

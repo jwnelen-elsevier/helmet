@@ -19,10 +19,10 @@ export default function SelectProjectModal() {
   const { projects, selectedProject, selectProject } = useSelectedProject();
 
   return (
-    <div>
+    <div className="">
       <Button
         onPress={onOpen}
-        color="default"
+        color="white"
         variant="bordered"
         endContent={<DownIcon />}
       >
@@ -32,7 +32,6 @@ export default function SelectProjectModal() {
         <ModalContent>
           {(onClose) => {
             const selectP = (p) => {
-              console.log("Selecting project", p);
               selectProject(p);
               onClose();
             };
