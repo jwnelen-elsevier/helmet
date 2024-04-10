@@ -14,7 +14,6 @@ const DetailDisplayer = ({ props }) => {
     groundtruth,
     input,
     explanation,
-    input_tokens,
     _id,
     output_alternatives,
     model_checkpoint,
@@ -22,6 +21,15 @@ const DetailDisplayer = ({ props }) => {
   } = props;
 
   const [showAttributions, s] = useState(false);
+  const [hoveredToken, setHoveredToken] = useState(null);
+
+  const setHoveredIndex = (index) => {
+    console.log(index);
+    // TODO: This should be fixed. Currently showing it from the start.
+    // Should be from the end, so that the last token is attributed,
+    // not when hovering over the first
+    setHoveredToken(index);
+  };
 
   const hasExplanation = explanation !== null;
 
@@ -30,15 +38,21 @@ const DetailDisplayer = ({ props }) => {
       return <p className="italic">No explanations available</p>;
     }
     const { input_attribution, explanation_method } = explanation;
+    const { input_tokens } = input;
+    const { tokens: output_tokens } = output;
+    const attributions = hoveredToken ? input_attribution[hoveredToken] : null;
 
     return (
       <div>
         <div className="flex flex-row space-y-2 py-2">
-          <TextHighlighter
-            tokens={input_tokens}
-            attributions={input_attribution}
-            showAttributions={showAttributions}
-          ></TextHighlighter>
+          <div>
+            <TextHighlighter
+              tokens={input_tokens.concat(output_tokens)}
+              attributions={attributions}
+              setHoveredIndex={setHoveredIndex}
+              showAttributions={showAttributions}
+            ></TextHighlighter>
+          </div>
         </div>
         <span className="flex gap-2 items-center">
           <>
@@ -77,7 +91,7 @@ const DetailDisplayer = ({ props }) => {
         Input: <span className="font-normal">{input.prompt}</span>
       </p>
       <p className="border rounded p-5 font-bold">
-        Output: <span className="font-normal">{output}</span>
+        Output: <span className="font-normal">{output.output_str}</span>
       </p>
       <div className="border rounded p-5 max-w-full">
         <p>Alternatives</p>

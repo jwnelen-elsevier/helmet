@@ -5,7 +5,7 @@ from operator import attrgetter
 import time
 
 from llmex.models import Base_LM
-from llmex.utils.typing import Explanation, Run, Input
+from llmex.utils.typing import Explanation, Run, Input, Output
 from llmex.explainers.perturbation import calculate_feature_ablation
 from llmex.explainers.gradients import analyze_token, input_x_gradient
 
@@ -78,7 +78,7 @@ class DEC_LM(Base_LM):
             base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, attention_mask, correct=output_id)
             gradients = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
             result.append(gradients)
-            print("finished token", idx, "of", total_length - start_index - 1)
+            print("finished token", start_index - 1 + idx, "of", total_length - start_index - 1)
 
         return result
 
@@ -101,9 +101,8 @@ class DEC_LM(Base_LM):
             "model": self.model.config.model_type,
             "tokenizer": self.tokenizer.name_or_path,
             "model_type": self.model_type,
-            "input": Input(prompt),
-            "input_tokens": self.tokenizer.tokenize(prompt),
-            "output": result,
+            "input": Input(prompt, self.tokenizer.tokenize(prompt)),
+            "output": Output(result, self.tokenizer.tokenize(result)),
             "output_alternatives": alternatives,
             "explanation": explanation,
             "project_id": self.project_id,

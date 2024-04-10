@@ -2,9 +2,16 @@
 import clsx from "clsx";
 import { removeSpecialChars } from "utils/strings";
 
-const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
+const TextHighlighter = ({
+  tokens,
+  attributions,
+  setHoveredIndex,
+  showAttributions = true,
+}) => {
   const lowest = -1;
   const highest = 1;
+
+  console.log(tokens, attributions);
 
   const color = (value) => {
     // Map to new range of 0 to 1000 with interval of 50
@@ -24,12 +31,20 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
     return `bg-${colorHue}-${colorSaturation}`;
   };
 
-  const isNewWord = (word) =>
-    !word.includes("##") ||
-    word.includes("Ġ") ||
-    !word.includes([",", "!", "."]);
+  const isNewWord = (word) => {
+    console.log("word", word);
+    return (
+      !word.includes("##") ||
+      word.includes("Ġ") || 
+      !word.includes([",", "!", "."])
+    );
+  };
 
   const marginStyle = (word) => {
+    if (!word) {
+      return { trimmedWord: "", addSpace: false };
+    }
+
     const addSpace = isNewWord(word);
     let trimmedWord = removeSpecialChars(word);
     return { trimmedWord, addSpace };
@@ -38,8 +53,12 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
   return (
     <div className={`flex justify-center flex-wrap items-center content-start`}>
       {tokens?.map((word, i) => {
-        let score = attributions[i] ? attributions[i] : 0;
-        const f = score.toFixed(2) || 0;
+        const attributionIndex = tokens.length - i - 1
+        const attrExists =
+          attributions && attributions.length > 0 && attributions[i] !== null;
+
+        let score = attrExists ? attributions[i] : 0;
+        const f = score?.toFixed(2) || 0;
         const { trimmedWord, addSpace } = marginStyle(word);
 
         return (
@@ -47,7 +66,11 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
               <span
-                className={clsx(`rounded-sm whitespace-pre-line`, color(f))}
+                className={clsx(
+                  `rounded-sm whitespace-pre-line hover:bg-slate-500`,
+                  color(f)
+                )}
+                onMouseEnter={() => setHoveredIndex(i)}
               >
                 {trimmedWord}
               </span>

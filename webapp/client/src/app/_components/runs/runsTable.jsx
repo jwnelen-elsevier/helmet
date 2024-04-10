@@ -123,7 +123,8 @@ const Runs = ({ runs, params }) => {
           {(row) => {
             const isToBeDeleted = toDeleteId === row._id;
             const existGroundTruth = !!row.groundtruth;
-            const isCorrect = `${row.output}` === `${row?.groundtruth}`;
+            const isCorrect =
+              `${row.output.output_str}` === `${row?.groundtruth}`;
             return (
               <TableRow
                 key={row._id}
@@ -142,7 +143,7 @@ const Runs = ({ runs, params }) => {
                     maxLength={maxLength}
                   ></CollapsibleText>
                 </TableCell>
-                <TableCell>{row.output}</TableCell>
+                <TableCell>{row.output.output_str}</TableCell>
                 <TableCell>{row.groundtruth}</TableCell>
                 <TableCell>
                   <span className="font-mono text-xs">
