@@ -1,6 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict
+
 @dataclass
 class Explanation:
     """Generic explanation dataclass"""
@@ -17,24 +18,49 @@ class Explanation:
             "explanation_method": self.explanation_method,
             "input_attribution": self.input_attribution
         }
+    
+@dataclass
+class ContrastiveExplanation(Explanation):
+    """Contrastive Explanation dataclass"""
+    contrastive_input: str
+
+    def dict(self) -> dict:
+        d = super().dict()
+        d["contrastive_input"] = self.contrastive_input
+        return d
 
 @dataclass  
 class Input:
     """Generic Prompt Class"""
     prompt: str
+    input_tokens: list[str]
     def dict(self) -> dict:
         return {
-            "prompt": self.prompt
+            "prompt": self.prompt,
+            "input_tokens": self.input_tokens
         }
 
 @dataclass
 class ContextInput(Input):
     """Prompt & Context"""
     context: str
+    context_tokens: list[str]
     def dict(self) -> dict:
         d = super().dict()
         d["context"] = self.context
+        d["context_tokens"] = self.context_tokens
         return d
+
+@dataclass
+class Output:
+    """Generic output dataclass"""
+    output_str: str
+    tokens: list[str]
+    def dict(self) -> dict:
+        return {
+            "output_str": self.output_str,
+            "tokens": self.tokens
+        }
 
 @dataclass
 class Run:
@@ -46,11 +72,13 @@ class Run:
     tokenizer: str
     model_type: str
     input: Input
-    input_tokens: list[str]
-    output: str | list[str]
+    output: Output
+
+    output_alternatives: List[List[Dict[str, float]]] | list
     explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
+    execution_time_in_sec: Optional[float] = None
     
     def dict(self) -> dict:
         d = {
@@ -60,10 +88,11 @@ class Run:
             "tokenizer": self.tokenizer,
             "model_type": self.model_type,
             "input": self.input.dict(),
-            "input_tokens": self.input_tokens,
-            "output": self.output,
+            "output": self.output.dict(),
+            "output_alternatives": self.output_alternatives,
             "explanation": self.explanation.dict() if self.explanation is not None else None,
             "project_id": self.project_id,
+            "execution_time_in_sec": self.execution_time_in_sec
         }
         if self._id is not None:
             d["_id"] = self._id

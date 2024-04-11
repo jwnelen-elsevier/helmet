@@ -37,10 +37,12 @@ def update_app(url: str, route: str, body: dict[str, typing.Any]):
     
     if url is None or route is None:
         raise ValueError(f"url cannot be None url: {url} route:{route}")
-    
-    r = requests.post(f"{url}{route}", json=serialize(body))
-    if r.status_code != 200:
-        raise ValueError(f"Failed to update app. Status code: {r.status_code}")
+    try :
+        r = requests.post(f"{url}{route}", json=serialize(body))
+        r.raise_for_status()
+    except Exception as e:
+        print(e)
+        raise ValueError(f"Failed to get app. Is it running? url: {url} route: {route}")
     
     print("updated app")
 
@@ -49,17 +51,20 @@ def get_run(url: str, run_id: str) -> Run | None:
     if url is None or run_id is None:
         raise ValueError(f"url cannot be None url: {url} run_id:{run_id}")
     final_url = f"{url}/runs/{run_id}"
-    # TODO: wrap this in a try statement, so the program can still run after this.
-    r = requests.get(final_url)
-    if r.status_code != 200:
-        raise ValueError(f"Failed to get run. Status code: {r.status_code}")
+
+    try:
+        r = requests.get(final_url)
+        r.raise_for_status()
+    except Exception as e:
+        print(e)
+        raise ValueError(f"Failed to get run. Is the platform running? url: {final_url}")
     
-    # pare into the Run object
+    # parse into the Run object
     try:
         d = r.json()
         form = "%Y-%m-%dT%H:%M:%S.%fZ"
         d["date"] = datetime.strptime(d["date"], form)
-        d["output"] = str(d["output"])
+        # d["output"] = str(d["output"])
         if d.get("groundtruth", None) is not None:
             d["groundtruth"] = str(d["groundtruth"])
         return from_dict(data_class=Run, data=d)
@@ -73,9 +78,13 @@ def get_or_create_project(url: str, project_name: str, task: str) -> str:
     if url is None or project_name is None or task is None:
         raise ValueError(f"url cannot be None url: {url} project_name:{project_name} description:{task}")
     final_url = f"{url}/project"
-    r = requests.get(final_url)
-    if r.status_code != 200:
-        raise ValueError(f"Failed to get projects. Status code: {r.status_code}")
+
+    try:
+        r = requests.get(final_url)
+        r.raise_for_status()
+    except Exception as e:
+        print(e)
+        raise ValueError(f"Failed to get projects. Is the platform running? url: {final_url}")
     
     projects = r.json()
     for project in projects:
@@ -86,6 +95,7 @@ def get_or_create_project(url: str, project_name: str, task: str) -> str:
 
     print("creating new project")
     # create the project
+    
     r = requests.post(final_url, json={"projectName": project_name, "task": task})
     if r.status_code != 200:
         raise ValueError(f"Failed to create project. Status code: {r.status_code}")

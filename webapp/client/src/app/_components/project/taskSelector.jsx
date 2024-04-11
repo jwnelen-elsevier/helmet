@@ -10,6 +10,10 @@ const options = [
     value: "classification",
   },
   {
+    label: "Text Generation",
+    value: "text_generation",
+  },
+  {
     label: "Other",
     value: "other",
   },

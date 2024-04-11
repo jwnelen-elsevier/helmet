@@ -1,8 +1,8 @@
 "use client"; // This is needede because of the use of usePathName
 import SelectProjectModal from "app/_components/project/selectProjectModal";
-import StatusIndicator from "app/_components/ui/Status";
 import { MenuIcon } from "app/_components/ui/icons";
 import ReloadButton from "app/_components/ui/reloadButton";
+import StatusIndicator from "app/_components/ui/status";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,7 +15,7 @@ const NagivationBar = () => {
   const pathName = usePathname();
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0">
+    <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 dark:text-white sticky top-0">
       <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2 gap-4">
         <a href="/" className="space-x-3 rtl:space-x-reverse">
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">

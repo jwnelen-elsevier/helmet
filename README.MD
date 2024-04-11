@@ -2,27 +2,45 @@
 
 ## Tool
 
-To activate a Python virtual environment in Visual Studio Code's terminal, you can use the following command:
+### Use LLMEX in examples
 
-activate
-Replace venv with the name of your virtual environment. If you're using Windows, the command would be:
+To use llmex in one of the examples perform the following steps:
 
-activate
-After activating the environment, you can install the packages listed in your requirements.txt file using pip:
+1. Create venv with `python -m venv .venv`
+2. Activate the venv with `source venv/bin/activate`
+3. Install LLMEX from source (from git, when located in the home folder of llmex `pip install -e .`
+4. Install jupyter notebook `pip install jupyterlab`
+5. Create a jupyter kernel based on the venv `python -m ipykernel install --user --name venv`
+6. Open Jupyter notebook `jupyter lab`
 
-txt
-Please ensure that your requirements.txt file is in the same directory where you're running this command. If it's in a different directory, provide the full path to the file.
+To remove:
+
+1. `deactivate`
+2. `jupyter-kernelspec uninstall venv`
+3. `rm -r venv`
+
+<!-- To activate a Python virtual environmen    t in Visual Studio Code's terminal, you can use the following command: -->
+
+# Platform
+
+### Backend
+
+```
+cd webapp/api
+npx nodemon server.js
+```
+
+### Frontend
+
+```
+cd webapp/client
+npm run dev
+```
 
 ## MongoDB
 
 Starting a dev server;
-
-```
-brew services start mongodb-community@7.0
-```
+`brew services start mongodb-community@7.0`
 
 To stop it again:
-
-```
-brew services stop mongodb-community@7.0
-```
+`brew services stop mongodb-community@7.0`

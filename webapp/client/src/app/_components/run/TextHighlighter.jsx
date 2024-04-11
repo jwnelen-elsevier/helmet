@@ -1,7 +1,14 @@
 // Create a component that will highlight text
 import clsx from "clsx";
+import { removeSpecialChars } from "utils/strings";
 
-const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
+const TextHighlighter = ({
+  tokens,
+  attributions,
+  hoveredIndex,
+  setHoveredIndex,
+  showAttributions = true,
+}) => {
   const lowest = -1;
   const highest = 1;
 
@@ -23,30 +30,42 @@ const TextHighlighter = ({ tokens, attributions, showAttributions = true }) => {
     return `bg-${colorHue}-${colorSaturation}`;
   };
 
-  const isNewWord = (word) =>
-    !word.includes("##") ||
-    word.includes("Ġ") ||
-    !word.includes([",", "!", "."]);
+  const isNewWord = (word) => {
+    return (
+      !word.includes("##") ||
+      word.includes("Ġ") ||
+      !word.includes([",", "!", "."])
+    );
+  };
 
   const marginStyle = (word) => {
+    if (!word) {
+      return { trimmedWord: "", addSpace: false };
+    }
+
     const addSpace = isNewWord(word);
-    let trimmedWord = word.replace(/#/g, "").replace(/Ġ/g, "");
+    let trimmedWord = removeSpecialChars(word);
     return { trimmedWord, addSpace };
   };
 
   return (
     <div className={`flex justify-center flex-wrap items-center content-start`}>
       {tokens?.map((word, i) => {
-        let score = attributions ? attributions[i] : 0;
-        const f = score.toFixed(2) || 0;
-        const { trimmedWord, addSpace } = marginStyle(word);
+        const attrExists =
+          attributions && attributions.length > 0 && attributions[i] !== null;
 
+        let score = attrExists ? attributions[i] : 0;
+        const f = score?.toFixed(2) || 0;
+        const { trimmedWord, addSpace } = marginStyle(word);
         return (
           <div className="flex flex-col text-center" key={i}>
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
               <span
-                className={clsx(`rounded-sm whitespace-pre-line`, color(f))}
+                className={clsx(`rounded-sm whitespace-pre-line`, color(f), {
+                  "bg-slate-400": i === hoveredIndex,
+                })}
+                onMouseEnter={() => setHoveredIndex(i)}
               >
                 {trimmedWord}
               </span>

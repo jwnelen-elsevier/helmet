@@ -1,46 +1,82 @@
 import llmex
-import torch
-from transformers import BitsAndBytesConfig
-
-# Load model directly
-# from transformers import AutoTokenizer, AutoModelForCausalLM
-
-# tokenizer = AutoTokenizer.from_pretrained("", trust_remote_code=True)
-# model = AutoModelForCausalLM.from_pretrained("microsoft/phi-1_5", trust_remote_code=True)
-
-checkpoint = "openai-community/gpt2"  # embeddings are "transformer.wte"
-p_id = "65df5715dbfd389a9619eabb"
-url = "http://localhost:4000"
-
-device = "cpu"
 
 project_setup = {
-    "url": url,
-    "project_name": "GPT-2 generation",
-    "task": "other",
+    "url": "http://localhost:4000",
+    "project_id": "660ab0b7c4368d2cd7e713eb"
 }
 
-id = llmex.get_or_create_project(**project_setup)
+# checkpoint = "microsoft/phi-1_5" # here embeddings are at model.embed_tokens
+checkpoint = "openai-community/gpt2" # here embeddings are at model.transformer.wte
+device = "cpu"
 
-config = {
-    "platform_url": url,
-    "project_id": id,
+model_setup = {
+    "checkpoint": checkpoint,
     "model_type": "dec",
     "embeddings": "transformer.wte"
-    # "embeddings": "base_model.embed_tokens.weight"
 }
 
-model_args = {
-    "output_attentions": True, # does not work for Gemma
-    # "quantization_config": bnb_config
+run_config = {
+    "device": device,
 }
 
-model = llmex.from_pretrained(checkpoint, config=config, model_args=model_args, device=device)
-prompt = "Dave lives in Palm Coast, FL and is a lawyer. His personal interests include"
+model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_setup, run_config=run_config)
 
-# prompt = "Quote: Imagination is more"
-result = model.predict(prompt, generate_explanations=True)
+predict_config = {
+    "max_new_tokens": 4,
+    "generate_explanations": True,
+}
 
-# id = "65ef23fa86ecb9f08ae1d447"
+# prompt = "Can you stop the dog from"
+# result = model.predict(prompt, **predict_config)
+
+id = "6617f83e8626cc78be716cc0"
+res = model.contrastive_explainer(id, "crying")
+
+# TODO: Should be something like this
+# project = llmex.Project(project_setup)
+# model = llmex.from_pretrained(model_setup=model_setup, run_config=run_config)
+
+# project.load_model(model)
+
+# model.predict()
+
+# id = "66069e516455702029922429"
 # res = model.predict_from_run(id, explanation_type="saliency")
-# print(res)
+
+# from datasets import load_dataset
+
+# dataset = load_dataset("truthful_qa", 'multiple_choice')
+# dataset["validation"][1]
+
+# options = ["A", "B", "C", "D", "E"]
+# def prompter(question, choices):
+#     return f"""Please give the correct answer to the following multiple choice question: {question}
+#     The choices are: {choices}
+#     Just give A, B, C, D, E or a combination of these as the answer.
+#     Answer: """
+
+# def choices_to_anwers(choices, labels):
+#     answers = []
+#     for choice, label in zip(choices, labels):
+#         if (label == 1):
+#             answers.append(choice)
+
+#     return ",".join(answers) 
+    
+# def choices_to_options(choices):
+#     return " ".join([f"{options[i]}: {choice}" for i, choice in enumerate(choices)])
+
+# def datapoint_to_prompt(point):
+#     question = point.get("question")
+#     targets = point.get("mc1_targets")
+#     target_choices = targets.get("choices")
+#     labels = targets.get("labels")
+
+#     choices = choices_to_options(target_choices)
+    
+#     prompt = prompter(question, choices)
+#     answers = choices_to_anwers(target_choices, labels)
+    
+#     return prompt, answers
+    
+# prompt, answer = datapoint_to_prompt(dataset["validation"][1])
