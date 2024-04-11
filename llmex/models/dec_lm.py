@@ -5,7 +5,7 @@ from operator import attrgetter
 import time
 
 from llmex.models import Base_LM
-from llmex.utils.typing import Explanation, Run, Input, Output
+from llmex.utils.typing import Explanation, Run, Input, Output, ContrastiveExplanation
 from llmex.explainers.perturbation import calculate_feature_ablation
 from llmex.explainers.gradients import analyze_token, input_x_gradient
 
@@ -98,13 +98,11 @@ class DEC_LM(Base_LM):
         #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
         # return compute_gradients_causal(self, prompt, output)
     
-    def _format_explanation(self, attr, gradient_type: str) -> Explanation:
-        # attributions = attr.tolist()
-        # attributions = attr./
-        return Explanation(**{
-            "input_attribution": attr,
-            "explanation_method": gradient_type
-        })
+    def _format_explanation(self, explanation_method: str, **kwargs) -> Explanation:
+        if explanation_method == "contrastive":
+            return ContrastiveExplanation(explanation_method, **kwargs)
+        else:
+            return Explanation(explanation_method, **kwargs)
     
     def _format_run(self, prompt, result, alternatives, explanation, execution_time_in_sec=None) -> Run:
         return Run(**{
@@ -139,16 +137,16 @@ class DEC_LM(Base_LM):
     #     self.update_run(formatted_run)
     #     print("Explanation generated and saved successfully!")
     
-    def contrastive_explainer(self, id: str, alternative, **kwargs):
+    def contrastive_explainer(self, id: str, alternative_str: str, **kwargs):
         run = self.get_run(id)
         explanation_type="contrastive"
         input = self._tokenize(run.input.prompt)
         output = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
         alternatives = run.output_alternatives
-        alternative = self._tokenize(alternative)
+        alternative_token = self._tokenize(alternative_str)
 
-        explanation = self.explain(input, output, alternative, explanation_type)
-        formatted_expl = self._format_explanation(explanation, explanation_type)
+        explanation = self.explain(input, output, alternative_token, explanation_type)
+        formatted_expl = self._format_explanation(explanation_type, input_attribution=explanation, contrastive_input=alternative_str)
         result = self.postprocess_result(output)
         formatted_run = self._format_run(run.input.prompt, result, alternatives, formatted_expl)
 
@@ -166,7 +164,7 @@ class DEC_LM(Base_LM):
         if generate_explanations:
             explanation_type = kwargs.get("explanation_type", "gradient")
             explanation = self.explain(input, output, explanation_type)
-            formatted_expl = self._format_explanation(explanation, explanation_type)
+            formatted_expl = self._format_explanation(explanation_type, input_attribution=explanation)
     
         result = self.postprocess_result(output)
         # record end time

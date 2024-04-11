@@ -18,6 +18,16 @@ class Explanation:
             "explanation_method": self.explanation_method,
             "input_attribution": self.input_attribution
         }
+    
+@dataclass
+class ContrastiveExplanation(Explanation):
+    """Contrastive Explanation dataclass"""
+    contrastive_input: str
+
+    def dict(self) -> dict:
+        d = super().dict()
+        d["contrastive_input"] = self.contrastive_input
+        return d
 
 @dataclass  
 class Input:

@@ -47,7 +47,7 @@ const DetailDisplayer = ({ props }) => {
         ? input_attribution[hoveredTokenIndex - inputLength]
         : null;
     }
-    debugger;
+
     return (
       <div>
         <div className="flex flex-row space-y-2 py-2">
