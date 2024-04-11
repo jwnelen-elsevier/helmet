@@ -47,11 +47,14 @@ const DetailDisplayer = ({ props }) => {
         ? input_attribution[hoveredTokenIndex - inputLength]
         : null;
     }
-
+    debugger;
     return (
       <div>
         <div className="flex flex-row space-y-2 py-2">
           <div>
+            {explanation_method === "contrastive" && (
+              <p className="font-bold">{explanation.contrastive_input}</p>
+            )}
             <TextHighlighter
               tokens={input_tokens.concat(output_tokens)}
               attributions={attributions}
