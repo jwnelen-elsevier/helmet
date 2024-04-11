@@ -11,8 +11,6 @@ const TextHighlighter = ({
   const lowest = -1;
   const highest = 1;
 
-  console.log(tokens, attributions);
-
   const color = (value) => {
     // Map to new range of 0 to 1000 with interval of 50
     const newRange = 500;
@@ -32,10 +30,9 @@ const TextHighlighter = ({
   };
 
   const isNewWord = (word) => {
-    console.log("word", word);
     return (
       !word.includes("##") ||
-      word.includes("Ġ") || 
+      word.includes("Ġ") ||
       !word.includes([",", "!", "."])
     );
   };
@@ -53,7 +50,7 @@ const TextHighlighter = ({
   return (
     <div className={`flex justify-center flex-wrap items-center content-start`}>
       {tokens?.map((word, i) => {
-        const attributionIndex = tokens.length - i - 1
+        const attributionIndex = tokens.length - i - 1;
         const attrExists =
           attributions && attributions.length > 0 && attributions[i] !== null;
 

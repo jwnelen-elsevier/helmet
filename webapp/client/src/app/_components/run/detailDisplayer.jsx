@@ -21,13 +21,9 @@ const DetailDisplayer = ({ props }) => {
   } = props;
 
   const [showAttributions, s] = useState(false);
-  const [hoveredToken, setHoveredToken] = useState(null);
+  const [hoveredTokenIndex, setHoveredToken] = useState(null);
 
   const setHoveredIndex = (index) => {
-    console.log(index);
-    // TODO: This should be fixed. Currently showing it from the start.
-    // Should be from the end, so that the last token is attributed,
-    // not when hovering over the first
     setHoveredToken(index);
   };
 
@@ -40,7 +36,13 @@ const DetailDisplayer = ({ props }) => {
     const { input_attribution, explanation_method } = explanation;
     const { input_tokens } = input;
     const { tokens: output_tokens } = output;
-    const attributions = hoveredToken ? input_attribution[hoveredToken] : null;
+
+    const inputLength = input_tokens.length || 0;
+    const hoverOverOutput = hoveredTokenIndex >= inputLength;
+
+    const attributions = hoverOverOutput
+      ? input_attribution[hoveredTokenIndex - inputLength]
+      : null;
 
     return (
       <div>
