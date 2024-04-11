@@ -5,6 +5,7 @@ import { removeSpecialChars } from "utils/strings";
 const TextHighlighter = ({
   tokens,
   attributions,
+  hoveredIndex,
   setHoveredIndex,
   showAttributions = true,
 }) => {
@@ -50,23 +51,20 @@ const TextHighlighter = ({
   return (
     <div className={`flex justify-center flex-wrap items-center content-start`}>
       {tokens?.map((word, i) => {
-        const attributionIndex = tokens.length - i - 1;
         const attrExists =
           attributions && attributions.length > 0 && attributions[i] !== null;
 
         let score = attrExists ? attributions[i] : 0;
         const f = score?.toFixed(2) || 0;
         const { trimmedWord, addSpace } = marginStyle(word);
-
         return (
           <div className="flex flex-col text-center" key={i}>
             <div>
               {addSpace && <span className="whitespace-pre-line">&nbsp;</span>}
               <span
-                className={clsx(
-                  `rounded-sm whitespace-pre-line hover:bg-slate-500`,
-                  color(f)
-                )}
+                className={clsx(`rounded-sm whitespace-pre-line`, color(f), {
+                  "bg-slate-400": i === hoveredIndex,
+                })}
                 onMouseEnter={() => setHoveredIndex(i)}
               >
                 {trimmedWord}

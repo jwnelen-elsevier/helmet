@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button, Tooltip } from "@nextui-org/react";
-import AlternativesDisplayer from "app/_components/run/AlternativesDisplayer";
+import AlternativesDisplayer from "app/_components/run/alternativesDisplayer";
 import TextHighlighter from "app/_components/run/textHighlighter";
 import CopyableText from "app/_components/ui/copyableText";
 import { QuestionIcon } from "app/_components/ui/icons";
@@ -51,6 +51,7 @@ const DetailDisplayer = ({ props }) => {
             <TextHighlighter
               tokens={input_tokens.concat(output_tokens)}
               attributions={attributions}
+              hoveredIndex={hoveredTokenIndex}
               setHoveredIndex={setHoveredIndex}
               showAttributions={showAttributions}
             ></TextHighlighter>
