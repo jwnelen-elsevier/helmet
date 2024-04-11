@@ -62,10 +62,22 @@ class DEC_LM(Base_LM):
         # Return back the string
         return self.tokenizer.decode(output, skip_special_tokens=True)
     
-    def explain(self, input, output, type: str = "gradient"):
+    def explain(self, input, output, alternative = None, type: str = "gradient"):
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
         
+        # TODO: Implement contrastive explanation
+        # For this, we need to get the alternative output
+        # Currently this is just only 1 token.
+        if type == "contrastive":
+            assert alternative is not None, AssertionError("alternative must be specified for contrastive explanation")
+            output_id = output[0]
+            alternative_id = alternative["input_ids"][0][0] # not sure why we need this
+            saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
+            gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
+
+            return gradients
+
         # For each produced token, we produce an explanation
         merged = torch.cat((input_ids, output), 0)
         start_index = len(input_ids)
@@ -94,7 +106,7 @@ class DEC_LM(Base_LM):
             "explanation_method": gradient_type
         })
     
-    def _format_run(self, prompt, result, alternatives, explanation, execution_time_in_sec) -> Run:
+    def _format_run(self, prompt, result, alternatives, explanation, execution_time_in_sec=None) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -108,7 +120,7 @@ class DEC_LM(Base_LM):
             "project_id": self.project_id,
             "execution_time_in_sec": execution_time_in_sec,
         })
-    
+
     def predict_from_run(self, id: str, **kwargs):
         run = self.get_run(id)
         return self.predict(run.input.prompt, **kwargs)
@@ -127,6 +139,22 @@ class DEC_LM(Base_LM):
     #     self.update_run(formatted_run)
     #     print("Explanation generated and saved successfully!")
     
+    def contrastive_explainer(self, id: str, alternative, **kwargs):
+        run = self.get_run(id)
+        explanation_type="contrastive"
+        input = self._tokenize(run.input.prompt)
+        output = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+        alternatives = run.output_alternatives
+        alternative = self._tokenize(alternative)
+
+        explanation = self.explain(input, output, alternative, explanation_type)
+        formatted_expl = self._format_explanation(explanation, explanation_type)
+        result = self.postprocess_result(output)
+        formatted_run = self._format_run(run.input.prompt, result, alternatives, formatted_expl)
+
+        self.update_run(formatted_run)
+        return formatted_expl
+
     def predict(self, prompt, generate_explanations=True, *args, **kwargs):
         # record start time
         start = time.time()

@@ -39,11 +39,15 @@ const DetailDisplayer = ({ props }) => {
 
     const inputLength = input_tokens.length || 0;
     const hoverOverOutput = hoveredTokenIndex >= inputLength;
-
-    const attributions = hoverOverOutput
-      ? input_attribution[hoveredTokenIndex - inputLength]
-      : null;
-
+    const multiDimensionalExplanation = explanation_method !== "contrastive";
+    // debugger;
+    let attributions = input_attribution;
+    if (multiDimensionalExplanation) {
+      attributions = hoverOverOutput
+        ? input_attribution[hoveredTokenIndex - inputLength]
+        : null;
+    }
+    debugger;
     return (
       <div>
         <div className="flex flex-row space-y-2 py-2">

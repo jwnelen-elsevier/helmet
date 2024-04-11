@@ -68,7 +68,7 @@ class Run:
     explanation: Explanation | None = None
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
-    execution_time_in_sec: Optional[int] = None
+    execution_time_in_sec: Optional[float] = None
     
     def dict(self) -> dict:
         d = {

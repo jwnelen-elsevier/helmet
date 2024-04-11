@@ -6,7 +6,7 @@ project_setup = {
 }
 
 # checkpoint = "microsoft/phi-1_5" # here embeddings are at model.embed_tokens
-checkpoint = "openai-community/gpt2-xl" # here embeddings are at model.transformer.wte
+checkpoint = "openai-community/gpt2" # here embeddings are at model.transformer.wte
 device = "cpu"
 
 model_setup = {
@@ -20,6 +20,28 @@ run_config = {
 }
 
 model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_setup, run_config=run_config)
+
+predict_config = {
+    "max_new_tokens": 4,
+    "generate_explanations": True,
+}
+
+# prompt = "Can you stop the dog from"
+# result = model.predict(prompt, **predict_config)
+
+id = "6617f83e8626cc78be716cc0"
+res = model.contrastive_explainer(id, "crying")
+
+# TODO: Should be something like this
+# project = llmex.Project(project_setup)
+# model = llmex.from_pretrained(model_setup=model_setup, run_config=run_config)
+
+# project.load_model(model)
+
+# model.predict()
+
+# id = "66069e516455702029922429"
+# res = model.predict_from_run(id, explanation_type="saliency")
 
 # from datasets import load_dataset
 
@@ -58,14 +80,3 @@ model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_set
 #     return prompt, answers
     
 # prompt, answer = datapoint_to_prompt(dataset["validation"][1])
-
-predict_config = {
-    "max_new_tokens": 4,
-    "generate_explanations": True,
-}
-
-prompt = "Can you stop the dog from"
-result = model.predict(prompt, **predict_config)
-
-# id = "66069e516455702029922429"
-# res = model.predict_from_run(id, explanation_type="saliency")
