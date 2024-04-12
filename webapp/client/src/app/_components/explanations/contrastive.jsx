@@ -1,7 +1,7 @@
-const ContrastiveExplainer = () => {
+const ContrastiveExplainer = (explanation) => {
   return (
     <div>
-      <h3>Contrastive Explanations</h3>
+      <p>Contrastive explainer will be implemented here</p>
     </div>
   );
 };
