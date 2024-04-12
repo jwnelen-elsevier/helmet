@@ -2,9 +2,12 @@
 import clsx from "clsx";
 import { removeSpecialChars } from "utils/strings";
 
-const TextHighlighter = (explanation) => {
-  const { tokens, attributions, hoveredIndex, setHoveredIndex } = explanation;
-  debugger;
+const TextHighlighter = ({
+  tokens,
+  attributions,
+  hoveredIndex = -1,
+  setHoveredIndex = () => {},
+}) => {
   const showAttributions = false;
   const lowest = -1;
   const highest = 1;
