@@ -1,4 +1,4 @@
-import DetailDisplayer from "app/_components/run/detailDisplayer";
+import DetailDisplayer from "app/_components/details/detailDisplayer";
 import { fetchRun } from "app/actions/actions";
 
 export default async function Page({ params }) {

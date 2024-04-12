@@ -16,5 +16,5 @@ export const maxDecimals = (number, maxDecimals) => {
 };
 
 export const removeSpecialChars = (word) => {
-  return word.replace(/#/g, "").replace(/Ġ/g, "");
-}
+  return word.replaceAll(/#/g, "").replaceAll(/Ġ/g, "").replaceAll("Ċ", " ");
+};
