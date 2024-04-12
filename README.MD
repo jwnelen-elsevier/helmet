@@ -1,3 +1,7 @@
+<h2 align="center">
+<img width="50%" src="https://github.com/jwnelen-elsevier/llmex/blob/main/helmet_logo.png?raw=true" />
+</h2>
+
 # HELMET ⛑️ (Human Evaluated large Language Model Explainability Tool)
 
 ## Tool
