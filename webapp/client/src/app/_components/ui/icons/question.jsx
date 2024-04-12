@@ -16,3 +16,5 @@ const QuestionIcon = () => {
 };
 
 export default QuestionIcon;
+
+// tailwind css make circle is done with: rounded

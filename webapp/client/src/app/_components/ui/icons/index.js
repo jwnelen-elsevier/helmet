@@ -6,6 +6,7 @@ import DeleteIcon from "./delete";
 import DetailsIcon from "./details";
 import DownIcon from "./down";
 import HorizontalDotsIcon from "./horizontalDots";
+import InfoIcon from "./info";
 import MenuIcon from "./menu";
 import NextIcon from "./next";
 import QuestionIcon from "./question";
@@ -20,6 +21,7 @@ export {
   DetailsIcon,
   DownIcon,
   HorizontalDotsIcon,
+  InfoIcon,
   MenuIcon,
   NextIcon,
   QuestionIcon,
