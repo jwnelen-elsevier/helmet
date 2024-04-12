@@ -9,8 +9,8 @@ const TextHighlighter = ({
   setHoveredIndex = () => {},
 }) => {
   const showAttributions = false;
-  const lowest = -1;
-  const highest = 1;
+  const lowest = -0.5;
+  const highest = 0.5;
 
   const color = (value) => {
     // Map to new range of 0 to 1000 with interval of 50
@@ -19,7 +19,7 @@ const TextHighlighter = ({
     const newValue = ((value - lowest) * newRange) / oldRange;
     const newInterval = 100;
     const colorSaturation = Math.floor(newValue / newInterval) * newInterval;
-    let colorHue = value < 0 ? "red" : "green";
+    let colorHue = value < 0 ? "red" : "blue";
     // Kind of threshold for when we are highlighting
     colorHue = Math.abs(value) < 0.05 ? "white" : colorHue;
 

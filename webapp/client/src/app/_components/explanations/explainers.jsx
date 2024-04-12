@@ -2,7 +2,7 @@ import { Tooltip } from "@nextui-org/react";
 import AlternativesDisplayer from "app/_components/explanations/alternativesDisplayer";
 import ContrastiveExplainer from "app/_components/explanations/contrastive";
 import FeatureImportance from "app/_components/explanations/featureImportance";
-import { QuestionIcon } from "app/_components/ui/icons";
+import { InfoIcon } from "app/_components/ui/icons";
 import Link from "next/link";
 
 const ExplanationTitle = ({ explanationMethod }) => {
@@ -11,7 +11,7 @@ const ExplanationTitle = ({ explanationMethod }) => {
       {explanationMethod}{" "}
       <Tooltip showArrow={true} content={"Info about explainability methods"}>
         <Link href={"/resources#gradientxinput"}>
-          <QuestionIcon />
+          <InfoIcon />
         </Link>
       </Tooltip>{" "}
     </h3>
@@ -34,22 +34,19 @@ const tokenWiseFeatureImportance = (explanation, input, output) => {
 const alternativesRenderer = (output_alternatives) => (
   <>
     <ExplanationTitle explanationMethod="Alternatives" />
-    <div className="flex flex-row space-x-4 max-w-full overflow-x-scroll">
-      {output_alternatives?.map((alternative, index) => (
-        <AlternativesDisplayer
-          key={index}
-          output_alternatives={alternative}
-        ></AlternativesDisplayer>
-      ))}
-    </div>
+    <AlternativesDisplayer output_alternatives={output_alternatives} />
   </>
 );
 
-const contrastiveRenderer = (explanation) => {
+const contrastiveRenderer = (explanation, input, output) => {
   return (
     <>
       <ExplanationTitle explanationMethod="Alternatives" />
-      <ContrastiveExplainer explanation={explanation} />
+      <ContrastiveExplainer
+        explanation={explanation}
+        input={input}
+        output={output}
+      />
     </>
   );
 };
@@ -58,7 +55,7 @@ const ExplainerRenderer = (explanation, input, output) => {
   const { explanation_method } = explanation;
   switch (explanation_method) {
     case "contrastive":
-      return contrastiveRenderer(explanation);
+      return contrastiveRenderer(explanation, input, output);
     case "gradient":
       return tokenWiseFeatureImportance(explanation, input, output);
     case "alternatives":
