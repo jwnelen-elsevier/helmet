@@ -1,18 +1,25 @@
 "use client";
 import { maxDecimals, removeSpecialChars } from "utils/strings";
 
-const AlternativesList = ({ key, alternatives }) =>
-  alternatives.map((alternative, index) => {
-    const score = maxDecimals(alternative?.score, 2);
-    const token = removeSpecialChars(alternative?.token);
-    return (
-      <div>
-        <p className={index === 0 ? "font-bold" : ""}>
-          {token} <span className="text-xs">({score})</span>
-        </p>
-      </div>
-    );
-  });
+const Alternative = ({ index, alternative }) => {
+  const score = maxDecimals(alternative?.score, 2);
+  const token = removeSpecialChars(alternative?.token);
+  return (
+    <p className={index === 0 ? "font-bold" : ""}>
+      {token} <span className="text-xs">({score})</span>
+    </p>
+  );
+};
+
+const AlternativesList = ({ key, alternatives }) => {
+  return (
+    <div className="flex flex-col">
+      {alternatives?.map((alternative, index) => (
+        <Alternative index={index} alternative={alternative} />
+      ))}
+    </div>
+  );
+};
 
 const AlternativesDisplayer = ({ output_alternatives }) => {
   return (
