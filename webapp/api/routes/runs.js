@@ -19,7 +19,12 @@ router.post("/", async function (req, res) {
   const newRun = req.body;
   // Parsing the date string to a date object
   newRun.date = new Date(newRun.date);
-  let result = await collection.insertOne(newRun);
+  let result = await collection.replaceOne(
+    { _id: new ObjectId(newRun._id) },
+    newRun,
+    { upsert: true }
+  );
+  // let result = await collection.insertOne(newRun);
   res.send(result).status(200);
 });
 

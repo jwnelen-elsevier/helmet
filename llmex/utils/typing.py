@@ -29,6 +29,22 @@ class ContrastiveExplanation(Explanation):
         d["contrastive_input"] = self.contrastive_input
         return d
 
+@dataclass
+class Explanations():
+    """Explanations dataclass"""
+    explanations: List[Explanation] = field(default_factory=list[Explanation])
+    # Size
+    def __len__(self) -> int:
+        return len(self.explanations)
+    def dict(self) -> dict:
+        if len(self.explanations) == 0:
+            return {
+                "explanations": []
+            }
+        return {
+            "explanations": [e.dict() for e in self.explanations]
+        }
+
 @dataclass  
 class Input:
     """Generic Prompt Class"""
@@ -75,7 +91,7 @@ class Run:
     output: Output
 
     output_alternatives: List[List[Dict[str, float]]] | list
-    explanation: Explanation | None = None
+    explanations: Explanations
     _id: Optional[str] = None
     groundtruth: Optional[str | list[str]] = None
     execution_time_in_sec: Optional[float] = None
@@ -90,7 +106,7 @@ class Run:
             "input": self.input.dict(),
             "output": self.output.dict(),
             "output_alternatives": self.output_alternatives,
-            "explanation": self.explanation.dict() if self.explanation is not None else None,
+            "explanations": self.explanations.dict() if len(self.explanations) > 0 else [],
             "project_id": self.project_id,
             "execution_time_in_sec": self.execution_time_in_sec
         }

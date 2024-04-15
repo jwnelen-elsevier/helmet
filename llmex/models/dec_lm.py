@@ -104,7 +104,7 @@ class DEC_LM(Base_LM):
         else:
             return Explanation(explanation_method, **kwargs)
     
-    def _format_run(self, prompt, result, alternatives, explanation, execution_time_in_sec=None) -> Run:
+    def _format_run(self, prompt, result, alternatives, explanations, execution_time_in_sec=None) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -114,7 +114,7 @@ class DEC_LM(Base_LM):
             "input": Input(prompt, self.tokenizer.tokenize(prompt)),
             "output": Output(result, self.tokenizer.tokenize(result)),
             "output_alternatives": alternatives,
-            "explanation": explanation,
+            "explanations": explanations,
             "project_id": self.project_id,
             "execution_time_in_sec": execution_time_in_sec,
         })
@@ -160,12 +160,13 @@ class DEC_LM(Base_LM):
         max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._tokenize(prompt, eos_token=eos_token)
         output, alternatives = self.forward(input, max_new_tokens=max_tokens)
-        formatted_expl = None
+        formatted_expl = []
         if generate_explanations:
             explanation_type = kwargs.get("explanation_type", "gradient")
             explanation = self.explain(input, output, explanation_type)
-            formatted_expl = self._format_explanation(explanation_type, input_attribution=explanation)
-    
+            expl = self._format_explanation(explanation_type, input_attribution=explanation)
+            formatted_expl.append(expl)
+        
         result = self.postprocess_result(output)
         # record end time
         end = time.time()
