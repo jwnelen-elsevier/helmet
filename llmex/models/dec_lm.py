@@ -104,7 +104,7 @@ class DEC_LM(Base_LM):
         else:
             return Explanation(explanation_method, **kwargs)
     
-    def _format_run(self, prompt, result, alternatives, explanations, execution_time_in_sec=None) -> Run:
+    def _format_run(self, prompt, result, alternatives, explanations: list[Explanation], execution_time_in_sec=None, **kwargs) -> Run:
         return Run(**{
             "date": datetime.now(),
             "model_checkpoint": self.model_checkpoint,
@@ -117,6 +117,7 @@ class DEC_LM(Base_LM):
             "explanations": explanations,
             "project_id": self.project_id,
             "execution_time_in_sec": execution_time_in_sec,
+            **kwargs # e.g. _id or groundtruth
         })
 
     def predict_from_run(self, id: str, **kwargs):
@@ -148,7 +149,7 @@ class DEC_LM(Base_LM):
         explanation = self.explain(input, output, alternative_token, explanation_type)
         formatted_expl = self._format_explanation(explanation_type, input_attribution=explanation, contrastive_input=alternative_str)
         result = self.postprocess_result(output)
-        formatted_run = self._format_run(run.input.prompt, result, alternatives, formatted_expl)
+        formatted_run = self._format_run(run.input.prompt, result, alternatives, [formatted_expl], _id=id)
 
         self.update_run(formatted_run)
         return formatted_expl

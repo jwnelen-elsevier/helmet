@@ -40,11 +40,12 @@ def update_app(url: str, route: str, body: dict[str, typing.Any]):
     try :
         r = requests.post(f"{url}{route}", json=serialize(body))
         r.raise_for_status()
+        print("updated app, result: ", r.json())
+        
     except Exception as e:
         print(e)
         raise ValueError(f"Failed to get app. Is it running? url: {url} route: {route}")
     
-    print("updated app")
 
 def get_run(url: str, run_id: str) -> Run | None:
     """ Get the run from the platform """

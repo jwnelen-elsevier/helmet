@@ -17,14 +17,20 @@ router.post("/", async function (req, res) {
   let db = await getConnection();
   let collection = await db.collection("runs");
   const newRun = req.body;
-  // Parsing the date string to a date object
   newRun.date = new Date(newRun.date);
-  let result = await collection.replaceOne(
-    { _id: new ObjectId(newRun._id) },
-    newRun,
-    { upsert: true }
-  );
-  // let result = await collection.insertOne(newRun);
+  let existingId = newRun?._id;
+  let result;
+  if (existingId) {
+    console.log("existingId", existingId);
+    const existingIdObj = new ObjectId(existingId);
+    delete newRun._id;
+    result = await collection.replaceOne({ _id: existingIdObj }, newRun, {
+      upsert: false,
+    });
+  } else {
+    result = await collection.insertOne(newRun);
+  }
+
   res.send(result).status(200);
 });
 
