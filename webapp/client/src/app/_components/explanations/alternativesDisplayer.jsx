@@ -15,7 +15,11 @@ const AlternativesList = ({ key, alternatives }) => {
   return (
     <div className="flex flex-col">
       {alternatives?.map((alternative, index) => (
-        <Alternative index={index} alternative={alternative} />
+        <Alternative
+          index={index}
+          key={`alternative-${index}`}
+          alternative={alternative}
+        />
       ))}
     </div>
   );

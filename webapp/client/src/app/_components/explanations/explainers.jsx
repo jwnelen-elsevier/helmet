@@ -33,7 +33,7 @@ const tokenWiseFeatureImportance = (explanation, input, output) => {
 
 const alternativesRenderer = (output_alternatives) => (
   <>
-    <ExplanationTitle explanationMethod="Alternatives" />
+    <ExplanationTitle explanationMethod="Alternatives Tokens" />
     <AlternativesDisplayer output_alternatives={output_alternatives} />
   </>
 );
@@ -41,7 +41,7 @@ const alternativesRenderer = (output_alternatives) => (
 const contrastiveRenderer = (explanation, input, output) => {
   return (
     <>
-      <ExplanationTitle explanationMethod="Alternatives" />
+      <ExplanationTitle explanationMethod="Contrastive explainer " />
       <ContrastiveExplainer
         explanation={explanation}
         input={input}
