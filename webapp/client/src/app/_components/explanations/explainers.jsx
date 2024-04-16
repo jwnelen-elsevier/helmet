@@ -59,7 +59,7 @@ const ExplainerRenderer = (explanation, input, output) => {
     case "gradient":
       return tokenWiseFeatureImportance(explanation, input, output);
     case "alternatives":
-      const output_alternatives = explanation.alternatives;
+      const output_alternatives = explanation.output_alternatives;
       return alternativesRenderer(output_alternatives);
     default:
       return (
