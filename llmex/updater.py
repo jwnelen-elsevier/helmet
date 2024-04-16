@@ -3,7 +3,7 @@ import typing
 import numpy
 import json
 from datetime import datetime, date
-from llmex.utils.typing import Run
+from llmex.utils.typing import Run, Explanation
 from dacite import from_dict
 
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])
@@ -20,6 +20,8 @@ class NumpyEncoder(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj,(numpy.ndarray,)):
             return obj.tolist()
+        elif isinstance(obj, Explanation):
+            return obj.dict()
         return json.JSONEncoder.default(self, obj)
 
 def serialize(obj) -> dict:
