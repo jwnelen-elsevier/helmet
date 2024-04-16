@@ -1,9 +1,7 @@
 "use client";
-import Modal from "app/_components/runs/modal";
 import CollapsibleText from "app/_components/ui/collapsibleText";
-import { DeleteIcon, DetailsIcon } from "app/_components/ui/icons";
+import { CompareIcon, DeleteIcon, DetailsIcon } from "app/_components/ui/icons";
 import { deleteAllRuns, deleteRun } from "app/actions/actions";
-import clsx from "clsx";
 import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
@@ -36,10 +34,6 @@ const columns = [
     uid: "output",
   },
   {
-    name: "GT",
-    uid: "gt",
-  },
-  {
     name: "Model",
     uid: "model",
   },
@@ -53,10 +47,7 @@ const columns = [
   },
 ];
 
-const Runs = ({ runs, params }) => {
-  const show = params?.show;
-  const toDeleteId = params?.id;
-
+const Runs = ({ runs }) => {
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
 
@@ -69,10 +60,10 @@ const Runs = ({ runs, params }) => {
   }, [selectedProject, runs]);
 
   // This forces a rerender when a run is deleted
-  useEffect(() => {
-    if (!toDeleteId) return;
-    setRuns(runs);
-  }, [toDeleteId, runs]);
+  // useEffect(() => {
+  //   if (!toDeleteId) return;
+  //   setRuns(runs);
+  // }, [toDeleteId, runs]);
 
   const maxLength = 200;
 
@@ -107,8 +98,6 @@ const Runs = ({ runs, params }) => {
 
   const [selectedKeys, setSelectedKeys] = useState(new Set());
 
-  console.log([...selectedKeys]);
-
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <h2 className="">Runs ({runState.length})</h2>
@@ -128,22 +117,8 @@ const Runs = ({ runs, params }) => {
         </TableHeader>
         <TableBody items={runState} emptyContent={"No rows to display."}>
           {(row) => {
-            const isToBeDeleted = toDeleteId === row._id;
-            const existGroundTruth = !!row.groundtruth;
-            const isCorrect =
-              `${row.output.output_str}` === `${row?.groundtruth}`;
             return (
-              <TableRow
-                key={row._id}
-                className={clsx(
-                  existGroundTruth
-                    ? isCorrect
-                      ? "bg-green-100 hover:bg-green-200"
-                      : "bg-red-100 hover:bg-red-200"
-                    : "bg-gray-100 hover:bg-gray-200",
-                  isToBeDeleted ? "bg-red-400" : ""
-                )}
-              >
+              <TableRow key={row._id}>
                 <TableCell>
                   <CollapsibleText
                     text={row?.input?.prompt || ""}
@@ -151,7 +126,6 @@ const Runs = ({ runs, params }) => {
                   ></CollapsibleText>
                 </TableCell>
                 <TableCell>{row.output.output_str}</TableCell>
-                <TableCell>{row.groundtruth}</TableCell>
                 <TableCell>
                   <span className="font-mono text-xs">
                     {row.model_checkpoint} ({getModelType(row.model_type)})
@@ -187,18 +161,6 @@ const Runs = ({ runs, params }) => {
           }}
         </TableBody>
       </Table>
-      {show && (
-        <Modal func={() => deleteR(toDeleteId)} backRef={"/runs"}></Modal>
-      )}
-      {runState.length > 0 && (
-        <Button
-          onClick={() => deleteAll()}
-          className="flex bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
-        >
-          <DeleteIcon />
-          Delete all from this project
-        </Button>
-      )}
 
       {selectedKeys.size == 2 && (
         <Button
@@ -208,6 +170,7 @@ const Runs = ({ runs, params }) => {
             window.location.href = `/compare/${a}/${b}`;
           }}
         >
+          <CompareIcon />
           Compare selected
         </Button>
       )}
