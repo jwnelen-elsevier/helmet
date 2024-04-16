@@ -15,7 +15,7 @@ const DetailDisplayer = ({ props }) => {
   } = props;
 
   return (
-    <div className="flex flex-col space-y-2 items-center">
+    <div className="flex flex-col space-y-2 items-center px-2">
       <div className="border rounded p-5">
         <p>
           <span className="font-bold">Model: </span>
