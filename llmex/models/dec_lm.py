@@ -1,12 +1,11 @@
 from typing import Tuple
 import transformers
 import torch
-from datetime import datetime
 from operator import attrgetter
 import time
 
 from llmex.models import Base_LM
-from llmex.utils.types import AlternativesExplanation, Explanation, Run, Input, Output, ContrastiveExplanation, SaliencyExplanation
+from llmex.utils.types import *
 from llmex.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
 from llmex.explainers.gradients import analyze_token, input_x_gradient
 
@@ -27,16 +26,13 @@ class DEC_LM(Base_LM):
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
 
+    # Overwrite the _tokenize method to handle eos_token
     def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
         has_eos_token = tokenizer_kwargs.get("eos_token", False)
         if has_eos_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
         return self.tokenizer(prompt, return_tensors="pt")
     
-    def token_ids_to_string(self, output) -> str:
-        # Return back the string
-        return self.tokenizer.decode(output, skip_special_tokens=True)
-
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
@@ -63,7 +59,6 @@ class DEC_LM(Base_LM):
         output_token_ids = output.sequences[0][input_len:]
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
 
-    
     def explain(self, input, output_token_ids, alternative_output = None, type: str = "gradient") -> Explanation:
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
@@ -98,19 +93,9 @@ class DEC_LM(Base_LM):
 
         return SaliencyExplanation(result)
     
-    def _format_run(self, prompt, output_str, explanations: list[Explanation], execution_time_in_sec=None, **kwargs) -> Run:
-        return Run(**{
-            "date": datetime.now(),
-            "model_checkpoint": self.model_checkpoint,
-            "tokenizer": self.tokenizer.name_or_path,
-            "model_type": self.model_type,
-            "input": Input(prompt, self.tokenizer.tokenize(prompt)),
-            "output": Output(output_str, self.tokenizer.tokenize(output_str)),
-            "explanations": explanations,
-            "project_id": self.project_id,
-            "execution_time_in_sec": execution_time_in_sec,
-            **kwargs # e.g. _id or groundtruth
-        })
+            # if type == "perturbation":
+        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
+        # return compute_gradients_causal(self, prompt, output)
     
     def saliency_explainer(self, id: str, **kwargs) -> Explanation:
         run: Run = self.get_run(id)
@@ -167,15 +152,9 @@ class DEC_LM(Base_LM):
         self.update_run(formatted_run)
 
         return output_str
-    
-#     def predict_from_run(self, id: str, **kwargs):
-        # run = self.get_run(id)
-        # return self.predict(run.input.prompt, **kwargs)
 
 
-        # if type == "perturbation":
-        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
-        # return compute_gradients_causal(self, prompt, output)
+
 
     # def explain_from_run(self, id: str, explanation_type="gradient", **kwargs):
     #     start = time.time()

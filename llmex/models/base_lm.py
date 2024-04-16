@@ -1,10 +1,11 @@
 import torch
 import numpy as np
+from datetime import datetime
 
 from abc import ABC, abstractmethod
 
 from llmex.updater import update_app, get_run
-from llmex.utils.types import Run
+from llmex.utils.types import Explanation, Input, Output, Run
  
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
@@ -21,11 +22,13 @@ class Base_LM(ABC):
     def __post_init__(self):
         self.reset_model()
         print("model loaded")
-        # self.update_explainer_model()
     
     def _tokenize(self, text: str, **kwargs):
-        print('base tokinizer')
         return self.tokenizer(text, return_tensors="pt", **kwargs)
+
+    def token_ids_to_string(self, output) -> str:
+        # Return back the string
+        return self.tokenizer.decode(output, skip_special_tokens=True)
 
     def get_tokens(self, text: str):
         return self.tokenizer.get_tokens(text)
@@ -47,8 +50,22 @@ class Base_LM(ABC):
     def get_run(self, run_id: str) -> Run:
         resp = get_run(self.platform_url, run_id)
         if resp is None:
-            raise ValueError(f"Run with id {run_id} not found")
+            raise ValueError(f"Run with id {run_id} not found") 
         return resp
+
+    def _format_run(self, prompt, output_str, explanations: list[Explanation], execution_time_in_sec=None, **kwargs) -> Run:
+        return Run(**{
+            "date": datetime.now(),
+            "model_checkpoint": self.model_checkpoint,
+            "tokenizer": self.tokenizer.name_or_path,
+            "model_type": self.model_type,
+            "input": Input(prompt, self.tokenizer.tokenize(prompt)),
+            "output": Output(output_str, self.tokenizer.tokenize(output_str)),
+            "explanations": explanations,
+            "project_id": self.project_id,
+            "execution_time_in_sec": execution_time_in_sec,
+            **kwargs # e.g. _id or groundtruth
+        })
 
     def normalize(self, attr):
         l2_norm = np.linalg.norm(attr)
