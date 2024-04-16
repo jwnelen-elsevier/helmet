@@ -57,7 +57,7 @@ const ExplainerRenderer = (explanation, input, output) => {
   switch (explanation_method) {
     case "contrastive":
       return contrastiveRenderer(explanation, input, output);
-    case "gradient":
+    case "saliency":
       return tokenWiseFeatureImportance(explanation, input, output);
     case "alternatives":
       const output_alternatives = explanation.output_alternatives;

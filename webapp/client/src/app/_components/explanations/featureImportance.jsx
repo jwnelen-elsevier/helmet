@@ -3,7 +3,7 @@ import { useState } from "react";
 import { removeSpecialChars } from "utils/strings";
 
 const FeatureImportance = ({ explanation, input, output }) => {
-  const { input_attribution } = explanation;
+  const { input_attributions } = explanation;
   const { input_tokens } = input;
   const inputLength = input_tokens.length || 0;
   const { tokens: output_tokens } = output;
@@ -13,7 +13,7 @@ const FeatureImportance = ({ explanation, input, output }) => {
   const hoverOverOutput = hoveredTokenIndex >= inputLength;
 
   const attributions = hoverOverOutput
-    ? input_attribution[hoveredTokenIndex - inputLength]
+    ? input_attributions[hoveredTokenIndex - inputLength]
     : null;
 
   const highlightedToken = hoverOverOutput

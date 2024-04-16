@@ -81,7 +81,8 @@ class DEC_LM(Base_LM):
             return ContrastiveExplanation(explanation_method="contrastive", contrastive_input=alternative_output_str, attributions=gradients)
 
         # For each produced token, we produce an explanation
-        merged = torch.cat((input_ids, output_token_ids), 0)
+        # expected Tensor as element 1 in argument 0, but got list
+        merged = torch.cat((input_ids, torch.tensor(output_token_ids)), 0)
         start_index = len(input_ids)
         total_length = len(merged)
 
@@ -109,6 +110,20 @@ class DEC_LM(Base_LM):
             "execution_time_in_sec": execution_time_in_sec,
             **kwargs # e.g. _id or groundtruth
         })
+    
+    def saliency_explainer(self, id: str, **kwargs) -> Explanation:
+        run: Run = self.get_run(id)
+        explanation_type="saliency"
+
+        input = self._tokenize(run.input.prompt)
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+        
+        explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
+        run.explanations.append(explanation)
+
+        self.update_run(run)
+
+        return explanation
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> Explanation:
         run: Run = self.get_run(id)
