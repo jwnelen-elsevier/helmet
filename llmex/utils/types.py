@@ -1,32 +1,49 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
+from llmex.utils.constants import SALIENCY, ALTERNATIVES, CONTRASTIVE
 
-@dataclass
-class Explanation:
-    """Generic explanation dataclass"""
-    explanation_method: str
-    
 @dataclass 
 class Attribution:
    """Attribution dataclass"""
    attribution: list[float] = field(default_factory=list)
 
 @dataclass
+class Explanation:
+    """Generic explanation dataclass"""
+    explanation_method: str
+
+@dataclass
 class SaliencyExplanation(Explanation):
     """Saliency Explanation dataclass"""
     input_attributions: Attribution | list[Attribution]
+    def __init__(self, input_attributions: Attribution | list[Attribution]):
+        self.input_attributions = input_attributions
+        super().__init__(SALIENCY)
     
 @dataclass
 class ContrastiveExplanation(Explanation):
     """Contrastive Explanation dataclass"""
     contrastive_input: str
     attributions: Attribution
+    def __init__(self, contrastive_input: str, attributions: Attribution):
+        self.contrastive_input = contrastive_input
+        self.attributions = attributions
+        super().__init__(CONTRASTIVE)
 
 @dataclass
 class AlternativesExplanation(Explanation):
     """Alternatives Explanation dataclass"""
     output_alternatives: list[list[dict[str, float]]]
+    def __init__(self, output_alternatives: list[list[dict[str, float]]]):
+        self.output_alternatives = output_alternatives
+        super().__init__(ALTERNATIVES)
+
+explanation_name_to_class = {
+    ALTERNATIVES: AlternativesExplanation,
+    CONTRASTIVE: ContrastiveExplanation,
+    SALIENCY: SaliencyExplanation
+}
 
 @dataclass  
 class Input:
@@ -92,3 +109,4 @@ class Run:
         if self._id is not None:
             d["_id"] = self._id
         return d
+    

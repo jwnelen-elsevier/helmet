@@ -4,7 +4,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 
 from llmex.updater import update_app, get_run
-from llmex.utils.typing import Run
+from llmex.utils.types import Run
  
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, 

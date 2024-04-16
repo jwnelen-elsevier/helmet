@@ -4,7 +4,7 @@ from operator import attrgetter
 from datetime import datetime
 from torch.nn import functional as F
 
-from llmex.utils.typing import Explanation, Run, ContextInput
+from llmex.utils.types import Explanation, Run, ContextInput
 from llmex.explainers.gradients import compute_gradient
 from llmex.models.base_lm import Base_LM
 

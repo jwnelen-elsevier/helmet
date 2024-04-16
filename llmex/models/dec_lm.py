@@ -6,7 +6,8 @@ from operator import attrgetter
 import time
 
 from llmex.models import Base_LM
-from llmex.utils.typing import AlternativesExplanation, Explanation, Run, Input, Output, ContrastiveExplanation, SaliencyExplanation
+from llmex.utils.types import AlternativesExplanation, Explanation, Run, Input, Output, ContrastiveExplanation, SaliencyExplanation
+from llmex.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
 from llmex.explainers.gradients import analyze_token, input_x_gradient
 
 class DEC_LM(Base_LM):
@@ -60,7 +61,7 @@ class DEC_LM(Base_LM):
             alternatives_per_token.append(res)
         
         output_token_ids = output.sequences[0][input_len:]
-        return output_token_ids, AlternativesExplanation("alternatives", alternatives_per_token)
+        return output_token_ids, AlternativesExplanation(alternatives_per_token)
 
     
     def explain(self, input, output_token_ids, alternative_output = None, type: str = "gradient") -> Explanation:
@@ -78,7 +79,7 @@ class DEC_LM(Base_LM):
             gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
             alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
-            return ContrastiveExplanation(explanation_method="contrastive", contrastive_input=alternative_output_str, attributions=gradients)
+            return ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
 
         # For each produced token, we produce an explanation
         # expected Tensor as element 1 in argument 0, but got list
@@ -95,7 +96,7 @@ class DEC_LM(Base_LM):
             result.append(gradients)
             print("finished token", start_index - 1 + idx, "of", total_length - start_index - 1)
 
-        return SaliencyExplanation("saliency", result)
+        return SaliencyExplanation(result)
     
     def _format_run(self, prompt, output_str, explanations: list[Explanation], execution_time_in_sec=None, **kwargs) -> Run:
         return Run(**{

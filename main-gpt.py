@@ -26,11 +26,14 @@ predict_config = {
     "generate_explanations": False,
 }
 
-# prompt = "Why are you not"
+# prompt = "Why are you not able to"
 # result = model.predict(prompt, **predict_config)
 
-id = "661e6d48a9825451082bdfdb"
-res = model.contrastive_explainer(id, "happy")
+# id = "661e766ea9825451082bdfdc"
+# res = model.contrastive_explainer(id, "sleep")
+
+id = "661e766ea9825451082bdfdc"
+res = model.saliency_explainer(id)
 
 # TODO: Should be something like this
 # project = llmex.Project(project_setup)
