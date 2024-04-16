@@ -105,6 +105,10 @@ const Runs = ({ runs, params }) => {
     return <div className="flex items-center gap-2"></div>;
   };
 
+  const [selectedKeys, setSelectedKeys] = useState(new Set());
+
+  console.log([...selectedKeys]);
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <h2 className="">Runs ({runState.length})</h2>
@@ -112,6 +116,9 @@ const Runs = ({ runs, params }) => {
       <Table
         className="text-left"
         removeWrapper
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        selectionMode="multiple"
         aria-label="Example static collection table"
       >
         <TableHeader columns={columns}>
@@ -190,6 +197,18 @@ const Runs = ({ runs, params }) => {
         >
           <DeleteIcon />
           Delete all from this project
+        </Button>
+      )}
+
+      {selectedKeys.size == 2 && (
+        <Button
+          className="flex bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+          onClick={() => {
+            const [a, b] = [...selectedKeys];
+            window.location.href = `/compare/${a}/${b}`;
+          }}
+        >
+          Compare selected
         </Button>
       )}
     </div>
