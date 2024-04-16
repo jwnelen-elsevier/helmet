@@ -60,7 +60,7 @@ class DEC_LM(Base_LM):
             alternatives_per_token.append(res)
         
         output_token_ids = output.sequences[0][input_len:]
-        return output_token_ids, AlternativesExplanation(alternatives_per_token)
+        return output_token_ids, AlternativesExplanation("alternatives", alternatives_per_token)
 
     
     def explain(self, input, output_token_ids, alternative_output = None, type: str = "gradient") -> Explanation:
@@ -77,7 +77,8 @@ class DEC_LM(Base_LM):
             saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
             gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
-            return ContrastiveExplanation(contrastive_input=alternative_output, attributions=gradients)
+            alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
+            return ContrastiveExplanation(explanation_method="contrastive", contrastive_input=alternative_output_str, attributions=gradients)
 
         # For each produced token, we produce an explanation
         merged = torch.cat((input_ids, output_token_ids), 0)
@@ -93,7 +94,7 @@ class DEC_LM(Base_LM):
             result.append(gradients)
             print("finished token", start_index - 1 + idx, "of", total_length - start_index - 1)
 
-        return SaliencyExplanation(result)
+        return SaliencyExplanation("saliency", result)
     
     def _format_run(self, prompt, output_str, explanations: list[Explanation], execution_time_in_sec=None, **kwargs) -> Run:
         return Run(**{
@@ -110,18 +111,17 @@ class DEC_LM(Base_LM):
         })
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> Explanation:
-        run = self.get_run(id)
+        run: Run = self.get_run(id)
         explanation_type="contrastive"
-        input = self._tokenize(run.input.prompt)
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
-        alts = [expl for expl in run.explanations if isinstance(expl, AlternativesExplanation)][0]
         alternative_token = self._tokenize(alternative_str)
 
+        input = self._tokenize(run.input.prompt)
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+        
         explanation: Explanation = self.explain(input, output_token_ids, alternative_token, explanation_type)
-        # result = self.postprocess_result(output)
-        # formatted_run = self._format_run(prompt, output_token_ids, explanations, execution_time)
-        formatted_run = self._format_run(run.input.prompt, output_token_ids, [alts, explanation], execution_time_in_sec=None, id=id)
-        self.update_run(formatted_run)
+        run.explanations.append(explanation)
+
+        self.update_run(run)
 
         return explanation
 

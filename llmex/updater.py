@@ -3,9 +3,9 @@ import typing
 import numpy
 import json
 from datetime import datetime, date
-from llmex.utils.typing import Run, Explanation
 from dacite import from_dict
-
+from llmex.utils.typing import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation
+from dataclasses import asdict
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])
 floats: tuple =  tuple([numpy.float_, numpy.float16, numpy.float32, numpy.float64])
 
@@ -21,7 +21,7 @@ class NumpyEncoder(json.JSONEncoder):
         elif isinstance(obj,(numpy.ndarray,)):
             return obj.tolist()
         elif isinstance(obj, Explanation):
-            return obj.dict()
+            return asdict(obj)
         return json.JSONEncoder.default(self, obj)
 
 def serialize(obj) -> dict:
@@ -62,14 +62,30 @@ def get_run(url: str, run_id: str) -> Run | None:
         print(e)
         raise ValueError(f"Failed to get run. Is the platform running? url: {final_url}")
     
-    # parse into the Run object
+    # from enum import Enum
+    # explanationsEnum = Enum(
+    #     value="Explanation",
+    #     names=[("alternatives", AlternativesExplanation), 
+    #            ("contrastive", ContrastiveExplanation), 
+    #            ("saliency", SaliencyExplanation)]
+    # )
+
     try:
         d = r.json()
         form = "%Y-%m-%dT%H:%M:%S.%fZ"
         d["date"] = datetime.strptime(d["date"], form)
-        # d["output"] = str(d["output"])
-        if d.get("groundtruth", None) is not None:
-            d["groundtruth"] = str(d["groundtruth"])
+
+        expls = []
+        for exp in d["explanations"]:
+            if exp["explanation_method"] == "alternatives":
+                expls.append(AlternativesExplanation(**exp))
+            elif exp["explanation_method"] == "contrastive":
+                expls.append(ContrastiveExplanation(**exp))
+            elif exp["explanation_method"] == "saliency":
+                expls.append(SaliencyExplanation(**exp))
+            else:
+                raise ValueError(f"Unknown explanation method: {exp['explanation_method']}")
+        d["explanations"] = expls
         return from_dict(data_class=Run, data=d)
 
     except Exception as e:
@@ -104,3 +120,10 @@ def get_or_create_project(url: str, project_name: str, task: str) -> str:
         raise ValueError(f"Failed to create project. Status code: {r.status_code}")
     
     return r.json()["_id"]
+
+#     def dataclass_from_dict(klass, d):
+        # try:
+        #     fieldtypes = {f.name:f.type for f in dataclasses.fields(klass)}
+        #     return klass(**{f:dataclass_from_dict(fieldtypes[f],d[f]) for f in d})
+        # except:
+        #     return d # Not a dataclass field

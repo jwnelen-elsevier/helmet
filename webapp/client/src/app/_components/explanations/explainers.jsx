@@ -53,6 +53,7 @@ const contrastiveRenderer = (explanation, input, output) => {
 
 const ExplainerRenderer = (explanation, input, output) => {
   const { explanation_method } = explanation;
+  // TODO: Refactor this
   switch (explanation_method) {
     case "contrastive":
       return contrastiveRenderer(explanation, input, output);

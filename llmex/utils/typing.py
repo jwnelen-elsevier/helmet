@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
@@ -6,49 +6,27 @@ from typing import Optional
 class Explanation:
     """Generic explanation dataclass"""
     explanation_method: str
-    def dict(self) -> dict:
-        return {
-            "explanation_method": self.explanation_method
-        }
     
 @dataclass 
 class Attribution:
    """Attribution dataclass"""
-   attribution: list[float]
-   def __init__(self, attribution: list[float]):
-        self.attribution = attribution
+   attribution: list[float] = field(default_factory=list)
 
 @dataclass
 class SaliencyExplanation(Explanation):
     """Saliency Explanation dataclass"""
     input_attributions: Attribution | list[Attribution]
-    def __init__(self, input_attribution: Attribution | list[Attribution]):
-        self.explanation_method = "saliency"
-        self.input_attribution = input_attribution
     
 @dataclass
 class ContrastiveExplanation(Explanation):
     """Contrastive Explanation dataclass"""
     contrastive_input: str
     attributions: Attribution
-    def __init__(self, contrastive_input: str, attributions: Attribution):
-        self.explanation_method = "contrastive"
-        self.contrastive_input = contrastive_input
-        self.attributions = attributions
-
 
 @dataclass
 class AlternativesExplanation(Explanation):
     """Alternatives Explanation dataclass"""
-    output_alternatives: list[list[dict[str, float]]] 
-    def __init__(self, output_alternatives: list[list[dict[str, float]]]):
-        self.explanation_method = "alternatives"
-        self.output_alternatives = output_alternatives
-    def dict(self) -> dict:
-        return {
-            "explanation_method": self.explanation_method,
-            "output_alternatives": self.output_alternatives
-        }
+    output_alternatives: list[list[dict[str, float]]]
 
 @dataclass  
 class Input:
