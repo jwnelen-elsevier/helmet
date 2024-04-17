@@ -1,4 +1,5 @@
 import DetailDisplayer from "app/_components/details/detailDisplayer";
+import PageNav from "app/_components/layout/pageNav";
 import { fetchRun } from "app/actions/actions";
 
 export default async function Page({ params: { runs: runs } }) {
@@ -15,7 +16,8 @@ export default async function Page({ params: { runs: runs } }) {
   }
 
   return (
-    <div className="mt-10">
+    <div>
+      <PageNav />
       <div className="flex divide-x-2 divide-solid justify-center">
         <DetailDisplayer props={run1} />
         <DetailDisplayer props={run2} />

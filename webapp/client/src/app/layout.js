@@ -1,6 +1,5 @@
 import Footer from "app/_components/layout/footer";
 import NavigationBar from "app/_components/layout/navBar";
-import PageNav from "app/_components/layout/pageNav";
 import { Providers } from "providers/nextUI";
 import { ProjectsProvider } from "providers/project";
 import { StatusProvider } from "providers/status";
@@ -14,7 +13,6 @@ export default function RootLayout({ children }) {
           <ProjectsProvider>
             <StatusProvider>
               <NavigationBar />
-              <PageNav />
               <div className="text-center">{children}</div>
               <Footer />
             </StatusProvider>

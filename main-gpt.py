@@ -59,19 +59,24 @@ def datapoint_to_prompt(point):
     
     return prompt, answers
     
-prompt, answer = datapoint_to_prompt(dataset["validation"][3])
+# prompt, answer = datapoint_to_prompt(dataset["validation"][3])
 
 predict_config = {
     "max_new_tokens": 10,
     "generate_explanations": False,
 }
 
+for i in range(4):
+    prompt, answer = datapoint_to_prompt(dataset["validation"][i])
+    result = model.predict(prompt, **predict_config)
+    print(result)
+
 # result = model.predict(prompt, **predict_config)
 # print(result)
 
-id = "661fc349bbd0ad0d55aea33d"
-res = model.contrastive_explainer(id, "B")
-res = model.saliency_explainer(id)
+# id = "661fc349bbd0ad0d55aea33d"
+# res = model.contrastive_explainer(id, "B")
+# res = model.saliency_explainer(id)
 
 # TODO: Should be something like this
 # project = llmex.Project(project_setup)
