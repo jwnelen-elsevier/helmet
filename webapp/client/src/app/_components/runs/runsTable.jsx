@@ -1,14 +1,7 @@
 "use client";
-import CollapsibleText from "app/_components/ui/collapsibleText";
-import { CompareIcon, DeleteIcon, DetailsIcon } from "app/_components/ui/icons";
-import { deleteAllRuns, deleteRun } from "app/actions/actions";
-import Link from "next/link";
-import { useSelectedProject } from "providers/project";
-import { useEffect, useState } from "react";
-import { getDateString } from "utils/strings";
-
 import {
   Button,
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +10,14 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
+import { deleteRun } from "app/actions/actions";
+import Link from "next/link";
+import { useSelectedProject } from "providers/project";
+import { useEffect, useState } from "react";
+import { getDateString } from "utils/strings";
+import CollapsibleText from "../ui/collapsibleText";
+import { CompareIcon, DeleteIcon, DetailsIcon } from "../ui/icons";
+import DeleteAllRunsModal from "./deleteAllModal";
 
 const model_types = {
   enc: "Encoder-only",
@@ -50,6 +51,7 @@ const columns = [
 const Runs = ({ runs }) => {
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -59,19 +61,17 @@ const Runs = ({ runs }) => {
     setRuns(filteredRuns);
   }, [selectedProject, runs]);
 
-  // This forces a rerender when a run is deleted
-  // useEffect(() => {
-  //   if (!toDeleteId) return;
-  //   setRuns(runs);
-  // }, [toDeleteId, runs]);
+  const [selectedKeys, setSelectedKeys] = useState(new Set());
+  const twoKeysSelected = selectedKeys.size === 2;
 
   const maxLength = 200;
 
   const deleteR = async (id) => {
     deleteRun(id).then((res) => {
       if (res.deletedCount === 1) {
-        const r = runState.filter((run) => run._id !== id);
-        setRuns(r);
+        setRuns((oldState) =>
+          oldState.filter((run) => `${run._id}` !== `${id}`)
+        );
       } else {
         console.log("Failed to delete run with id: ", id);
       }
@@ -96,12 +96,76 @@ const Runs = ({ runs }) => {
     return <div className="flex items-center gap-2"></div>;
   };
 
-  const [selectedKeys, setSelectedKeys] = useState(new Set());
-  const twoKeysSelected = selectedKeys.size === 2;
+  const handleOnClose = (decision) => {
+    if (decision) {
+      deleteAll();
+    }
+    setOpenDeleteModal(false);
+  };
+
+  function DeleteAllButton() {
+    return (
+      <Button
+        color="danger"
+        onClick={() => {
+          setOpenDeleteModal(true);
+        }}
+        startContent={<DeleteIcon />}
+      >
+        Delete All
+      </Button>
+    );
+  }
+
+  function DeleteButton({ id }) {
+    return (
+      <Tooltip content="Delete run">
+        <span
+          className=" text-red-400 cursor-pointer"
+          onClick={() => deleteR(id)}
+        >
+          <DeleteIcon />
+        </span>
+      </Tooltip>
+    );
+  }
+
+  function CompareButton() {
+    return (
+      <Button
+        color={twoKeysSelected ? "success" : "default"}
+        disabled={!twoKeysSelected}
+        onClick={() => {
+          const [a, b] = [...selectedKeys];
+          window.location.href = `/compare/${a}/${b}`;
+        }}
+        startContent={<CompareIcon />}
+      >
+        Compare
+      </Button>
+    );
+  }
+
+  const Actions = () => {
+    return (
+      <div className="flex w-full gap-4">
+        <div className="flex-grow">
+          <Input className="w-2/5" placeholder="search prompts"></Input>
+        </div>
+        <CompareButton />
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4">
+      <DeleteAllRunsModal
+        shouldBeOpen={openDeleteModal}
+        onCloseDecision={handleOnClose}
+      ></DeleteAllRunsModal>
       <h2 className="">Runs ({runState.length})</h2>
       <Filter></Filter>
+      <Actions />
       <Table
         className="text-left"
         removeWrapper
@@ -146,15 +210,7 @@ const Runs = ({ runs }) => {
                         <DetailsIcon />
                       </Link>
                     </Tooltip>
-                    <Tooltip showArrow={true} content="Delete run">
-                      <Link
-                        className="text-sm text-red-400 cursor-pointer"
-                        href={`/runs/?show=true&id=${row._id}`}
-                        scroll={false}
-                      >
-                        <DeleteIcon />
-                      </Link>
-                    </Tooltip>
+                    <DeleteButton id={row._id} />
                   </div>
                 </TableCell>
               </TableRow>
@@ -162,17 +218,7 @@ const Runs = ({ runs }) => {
           }}
         </TableBody>
       </Table>
-      <Button
-        className={`${twoKeysSelected ? "bg-green-500" : ""}`}
-        disabled={!twoKeysSelected}
-        onClick={() => {
-          const [a, b] = [...selectedKeys];
-          window.location.href = `/compare/${a}/${b}`;
-        }}
-      >
-        <CompareIcon />
-        {twoKeysSelected ? "Compare selected" : "Select two to compare"}
-      </Button>
+      <DeleteAllButton />
     </div>
   );
 };
