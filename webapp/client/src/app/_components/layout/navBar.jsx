@@ -19,7 +19,7 @@ const NagivationBar = () => {
       <div className="flex flex-wrap items-center justify-between mx-4 pt-2 pb-2 gap-4">
         <a href="/" className="space-x-3 rtl:space-x-reverse">
           <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-            LLM XAI Platform
+            HELMET⛑️ Platform
           </span>
         </a>
         <SelectProjectModal />

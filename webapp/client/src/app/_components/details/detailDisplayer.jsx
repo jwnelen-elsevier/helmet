@@ -2,6 +2,7 @@
 
 import ExplainerRenderer from "app/_components/explanations/explainers";
 import CopyableText from "app/_components/ui/copyableText";
+import { maxDecimals } from "utils/strings";
 
 const DetailDisplayer = ({ props }) => {
   const {
@@ -14,19 +15,21 @@ const DetailDisplayer = ({ props }) => {
   } = props;
 
   return (
-    <div className="flex flex-col space-y-2 items-center">
+    <div className="flex flex-col space-y-2 items-center px-2">
       <div className="border rounded p-5">
         <p>
           <span className="font-bold">Model: </span>
-          {model_checkpoint}
+          <span className="font-mono">{model_checkpoint}</span>
         </p>
         <p>
           <span className="font-bold">Run id: </span>
-          <CopyableText text={_id} />{" "}
+          <span className="font-mono">
+            <CopyableText text={_id} />{" "}
+          </span>
         </p>
         <p>
           <span className="font-bold">Execution time: </span>
-          {execution_time_in_sec} sec
+          {maxDecimals(execution_time_in_sec, 3)} sec
         </p>
       </div>
       <p className="border rounded p-5 font-bold">

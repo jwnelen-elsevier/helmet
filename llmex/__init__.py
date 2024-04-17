@@ -2,7 +2,7 @@ import transformers
 from transformers import AutoTokenizer
 
 import torch
-from llmex.models import ENC_LM, ENC_DEC_LM, DEC_LM
+from llmex.model import DEC_LM
 from llmex.updater import get_or_create_project
 
 url = "http://localhost:4000"
@@ -15,8 +15,8 @@ model_type_to_class = {
 }
 
 model_type_to_implementation = {
-    "enc": ENC_LM,
-    "enc-dec": ENC_DEC_LM,
+    # "enc": ENC_LM,
+    # "enc-dec": ENC_DEC_LM,
     "dec": DEC_LM,
 }
 

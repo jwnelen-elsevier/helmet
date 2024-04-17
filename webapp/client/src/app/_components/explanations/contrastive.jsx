@@ -2,7 +2,7 @@ import TextHighlighter from "app/_components/explanations/textHighlighter";
 import { removeSpecialChars } from "utils/strings";
 
 const ContrastiveExplainer = ({ explanation, input, output }) => {
-  const { input_attribution, contrastive_input } = explanation;
+  const { attributions, contrastive_input } = explanation;
   const { input_tokens } = input;
   const { tokens: output_tokens } = output;
 
@@ -22,7 +22,7 @@ const ContrastiveExplainer = ({ explanation, input, output }) => {
       </p>
       <TextHighlighter
         tokens={input_tokens.concat(token_list)}
-        attributions={input_attribution}
+        attributions={attributions}
       ></TextHighlighter>
     </div>
   );

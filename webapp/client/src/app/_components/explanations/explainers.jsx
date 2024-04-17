@@ -4,6 +4,8 @@ import ContrastiveExplainer from "app/_components/explanations/contrastive";
 import FeatureImportance from "app/_components/explanations/featureImportance";
 import { InfoIcon } from "app/_components/ui/icons";
 import Link from "next/link";
+import { ALTERNATIVES, CONTRASTIVE, SALIENCY } from "utils/constants";
+import CodeDisplayer from "../ui/codeDisplayer";
 
 const ExplanationTitle = ({ explanationMethod }) => {
   return (
@@ -39,6 +41,9 @@ const alternativesRenderer = (output_alternatives) => (
 );
 
 const contrastiveRenderer = (explanation, input, output) => {
+  const c = `
+  import shap
+  `.trim();
   return (
     <>
       <ExplanationTitle explanationMethod="Contrastive explainer " />
@@ -47,19 +52,21 @@ const contrastiveRenderer = (explanation, input, output) => {
         input={input}
         output={output}
       />
+      <CodeDisplayer code={c}></CodeDisplayer>
     </>
   );
 };
 
 const ExplainerRenderer = (explanation, input, output) => {
   const { explanation_method } = explanation;
+  // TODO: Refactor this
   switch (explanation_method) {
-    case "contrastive":
+    case CONTRASTIVE:
       return contrastiveRenderer(explanation, input, output);
-    case "gradient":
+    case SALIENCY:
       return tokenWiseFeatureImportance(explanation, input, output);
-    case "alternatives":
-      const output_alternatives = explanation.alternatives;
+    case ALTERNATIVES:
+      const output_alternatives = explanation.output_alternatives;
       return alternativesRenderer(output_alternatives);
     default:
       return (

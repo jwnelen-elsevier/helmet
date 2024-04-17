@@ -3,8 +3,9 @@ import typing
 import numpy
 import json
 from datetime import datetime, date
-from llmex.utils.typing import Run
 from dacite import from_dict
+from llmex.utils.types import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation, explanation_name_to_class
+from dataclasses import asdict
 
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])
 floats: tuple =  tuple([numpy.float_, numpy.float16, numpy.float32, numpy.float64])
@@ -20,13 +21,13 @@ class NumpyEncoder(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj,(numpy.ndarray,)):
             return obj.tolist()
+        elif isinstance(obj, Explanation):
+            return asdict(obj)
         return json.JSONEncoder.default(self, obj)
 
 def serialize(obj) -> dict:
     """ Serialize the object to a dictionary """
     return json.loads(json.dumps(obj, cls=NumpyEncoder))
-
-
 
 def update_app(url: str, route: str, body: dict[str, typing.Any]):
     """ Update the app with the new model and tokenizer. 
@@ -40,11 +41,12 @@ def update_app(url: str, route: str, body: dict[str, typing.Any]):
     try :
         r = requests.post(f"{url}{route}", json=serialize(body))
         r.raise_for_status()
+        print("updated app, result: ", r.json())
+        
     except Exception as e:
         print(e)
         raise ValueError(f"Failed to get app. Is it running? url: {url} route: {route}")
     
-    print("updated app")
 
 def get_run(url: str, run_id: str) -> Run | None:
     """ Get the run from the platform """
@@ -59,14 +61,18 @@ def get_run(url: str, run_id: str) -> Run | None:
         print(e)
         raise ValueError(f"Failed to get run. Is the platform running? url: {final_url}")
     
-    # parse into the Run object
     try:
         d = r.json()
         form = "%Y-%m-%dT%H:%M:%S.%fZ"
         d["date"] = datetime.strptime(d["date"], form)
-        # d["output"] = str(d["output"])
-        if d.get("groundtruth", None) is not None:
-            d["groundtruth"] = str(d["groundtruth"])
+
+        expls = []
+        for exp in d["explanations"]:
+            expl_method = exp.pop("explanation_method")
+            expl_class = explanation_name_to_class[expl_method]
+            expls.append(expl_class(**exp))
+
+        d["explanations"] = expls
         return from_dict(data_class=Run, data=d)
 
     except Exception as e:
@@ -94,8 +100,6 @@ def get_or_create_project(url: str, project_name: str, task: str) -> str:
     
 
     print("creating new project")
-    # create the project
-    
     r = requests.post(final_url, json={"projectName": project_name, "task": task})
     if r.status_code != 200:
         raise ValueError(f"Failed to create project. Status code: {r.status_code}")

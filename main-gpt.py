@@ -2,7 +2,7 @@ import llmex
 
 project_setup = {
     "url": "http://localhost:4000",
-    "project_id": "660ab0b7c4368d2cd7e713eb"
+    "project_id": "661d277c2d1c48d92d0dcb3a"
 }
 
 # checkpoint = "microsoft/phi-1_5" # here embeddings are at model.embed_tokens
@@ -23,14 +23,17 @@ model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_set
 
 predict_config = {
     "max_new_tokens": 4,
-    "generate_explanations": True,
+    "generate_explanations": False,
 }
 
-# prompt = "Can you stop the dog from"
+# prompt = "Why are you not able to"
 # result = model.predict(prompt, **predict_config)
 
-id = "6617f83e8626cc78be716cc0"
-res = model.contrastive_explainer(id, "crying")
+# id = "661e766ea9825451082bdfdc"
+# res = model.contrastive_explainer(id, "sleep")
+
+id = "661e766ea9825451082bdfdc"
+res = model.saliency_explainer(id)
 
 # TODO: Should be something like this
 # project = llmex.Project(project_setup)

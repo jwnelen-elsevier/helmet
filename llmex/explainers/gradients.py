@@ -12,7 +12,7 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
     # TODO: add with torch.no_grad():?
 
     def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
-        output = model(inputs_embeds=inp, **extra_forward_args)
+        output = model(input_ids=inp, **extra_forward_args)
         return F.softmax(output.logits, dim=1)
     
     input_embeds = wrapper.get_input_embeddings(prompt)
@@ -36,17 +36,15 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
 
 # Adapted from Interpret-LM
 # Adapted from AllenNLP Interpret and Han et al. 2020
-def register_embedding_list_hook(model, embeddings_list):
+def register_embedding_list_hook(model, embedding_layer, embeddings_list):
     def forward_hook(module, inputs, output):
         embeddings_list.append(output.squeeze(0).clone().cpu().detach().numpy())
-    embedding_layer = model.transformer.wte
     handle = embedding_layer.register_forward_hook(forward_hook)
     return handle
 
-def register_embedding_gradient_hooks(model, embeddings_gradients):
+def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradients):
     def hook_layers(module, grad_in, grad_out):
         embeddings_gradients.append(grad_out[0].detach().cpu().numpy())
-    embedding_layer = model.transformer.wte
     hook = embedding_layer.register_full_backward_hook(hook_layers)
     return hook
 
@@ -54,11 +52,13 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     # Get model gradients and input embeddings
     torch.enable_grad()
     model = wrapper.model
+    embedding_layer = wrapper.embeddings
+
     model.eval()
     embeddings_list = []
-    handle = register_embedding_list_hook(model, embeddings_list)
+    handle = register_embedding_list_hook(model, embedding_layer, embeddings_list)
     embeddings_gradients = []
-    hook = register_embedding_gradient_hooks(model, embeddings_gradients)
+    hook = register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradients)
 
     if correct is None:
         correct = input_ids[-1]
