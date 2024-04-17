@@ -25,13 +25,6 @@ class DEC_LM(Base_LM):
             raise KeyError("embeddings must be specified in model_config")
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
-
-    # Overwrite the _tokenize method to handle eos_token
-    # def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
-    #     has_eos_token = tokenizer_kwargs.get("eos_token", False)
-    #     # if has_eos_token:
-    #     #     self.tokenizer.pad_token = self.tokenizer.eos_token
-    #     return self.tokenizer(prompt, return_tensors="pt")
     
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
         input_len = len(inputs["input_ids"][0])
@@ -68,8 +61,7 @@ class DEC_LM(Base_LM):
     
     def saliency_explainer(self, id: str, **kwargs) -> SaliencyExplanation:
         run: Run = self.get_run(id)
-        input = self._tokenize(run.input.prompt)
-
+        input = self._encode_text(run.input.prompt)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
         
         input_ids = input["input_ids"][0]
@@ -86,7 +78,7 @@ class DEC_LM(Base_LM):
             base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, attention_mask, correct=output_id)
             gradients = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
             result.append(gradients)
-            print("finished token", start_index - 1 + idx, "of", total_length - start_index - 1)
+            print("finished token", idx, "of", total_length)
 
         explanation = SaliencyExplanation(input_attributions=result)
         run.explanations.append(explanation)
@@ -98,7 +90,7 @@ class DEC_LM(Base_LM):
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
         input = self._tokenize(run.input.prompt)
-        alternative_output = self._tokenize(alternative_str)
+        alternative_output = self._encode_text(alternative_str)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
 
         input_ids = input["input_ids"][0]
@@ -123,25 +115,21 @@ class DEC_LM(Base_LM):
         start = time.time()
         eos_token = False
         max_tokens = kwargs.get("max_new_tokens", 10)
-        input = self._encode_text(prompt, eos_token=eos_token)
-        # input = self._tokenize(prompt, eos_token=eos_token)
+        input = self._encode_text(prompt)
         output_token_ids, alternatives = self.forward(input, max_new_tokens=max_tokens)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
-        explanations = []
-        explanations.append(alternatives)
-
-        if generate_explanations:
-            explanation_type = kwargs.get("explanation_type", None)
-            assert explanation_type is not None, AssertionError("explanation_type must be specified if generate_explanations=True")
+        # if generate_explanations:
+        #     explanation_type = kwargs.get("explanation_type", None)
+        #     assert explanation_type is not None, AssertionError("explanation_type must be specified if generate_explanations=True")
             
-            explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
-            explanations.append(explanation)
+        #     explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
+        #     explanations.append(explanation)
 
         end = time.time()
         execution_time = end - start
 
-        formatted_run = self._format_run(prompt, output_str, explanations, execution_time)
+        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time)
 
         self.update_run(formatted_run)
 
