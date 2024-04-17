@@ -11,21 +11,15 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 torch = "^2.1.1"
-langchain = "^0.0.347"
 bs4 = "^0.0.1"
 numpy = "^1.26.2"
 transformers = "^4.35.2"
 captum = "^0.7.0"
 accelerate = "^0.25.0"
 trulens = "^0.13.4"
-fastapi = "^0.109.0"
-uvicorn = "^0.26.0"
 bitsandbytes = "^0.42.0"
 dacite = "^1.8.1"
-
-
-[tool.poetry.group.dev.dependencies]
-ipykernel = "^6.29.0"
+datasets = "^2.18.0"
 
 [build-system]
 requires = ["poetry-core"]
