@@ -7,11 +7,11 @@ import Link from "next/link";
 import { ALTERNATIVES, CONTRASTIVE, SALIENCY } from "utils/constants";
 import CodeDisplayer from "../ui/codeDisplayer";
 
-const ExplanationTitle = ({ explanationMethod }) => {
+const ExplanationTitle = ({ explanationName }) => {
   return (
     <h3 className="inline-flex gap-2 text-xl items-center bold">
-      {explanationMethod}{" "}
-      <Tooltip showArrow={true} content={"Info about explainability methods"}>
+      {explanationName}{" "}
+      <Tooltip showArrow={true} content={"Info about this method"}>
         <Link href={"/resources#gradientxinput"}>
           <InfoIcon />
         </Link>
@@ -20,60 +20,85 @@ const ExplanationTitle = ({ explanationMethod }) => {
   );
 };
 
-const tokenWiseFeatureImportance = (explanation, input, output) => {
+const ExplanationNotFound = ({ explanationName, explanationMethod, id }) => {
+  const c = "import shap";
   return (
-    <>
-      <ExplanationTitle explanationMethod="Feature Attribution" />
-      <FeatureImportance
-        explanation={explanation}
-        input={input}
-        output={output}
-      />
-    </>
-  );
-};
-
-const alternativesRenderer = (output_alternatives) => (
-  <>
-    <ExplanationTitle explanationMethod="Alternatives Tokens" />
-    <AlternativesDisplayer output_alternatives={output_alternatives} />
-  </>
-);
-
-const contrastiveRenderer = (explanation, input, output) => {
-  const c = `
-  import shap
-  `.trim();
-  return (
-    <>
-      <ExplanationTitle explanationMethod="Contrastive explainer " />
-      <ContrastiveExplainer
-        explanation={explanation}
-        input={input}
-        output={output}
-      />
+    <div>
+      <p>Want to compute the {explanationName}? Copy the code and run it</p>
       <CodeDisplayer code={c}></CodeDisplayer>
+    </div>
+  );
+};
+
+const tokenWiseFeatureImportance = (explanation, input, output, id) => {
+  const explanationName = "Feature Attribution";
+  return (
+    <>
+      <ExplanationTitle explanationName={explanationName} />
+      {explanation ? (
+        <FeatureImportance
+          explanation={explanation}
+          input={input}
+          output={output}
+        />
+      ) : (
+        <ExplanationNotFound
+          explanationName={explanationName}
+        ></ExplanationNotFound>
+      )}
     </>
   );
 };
 
-const ExplainerRenderer = (explanation, input, output) => {
-  const { explanation_method } = explanation;
-  // TODO: Refactor this
-  switch (explanation_method) {
+const alternativesRenderer = (output_alternatives, id) => {
+  const explanationName = "Alternatives Tokens";
+  return (
+    <>
+      <ExplanationTitle explanationName={explanationName} />
+      <AlternativesDisplayer output_alternatives={output_alternatives} />
+    </>
+  );
+};
+
+const contrastiveRenderer = (explanation, input, output, id) => {
+  const explanationName = "Contrastive explainer";
+  return (
+    <>
+      <ExplanationTitle explanationName={explanationName} />
+      {explanation ? (
+        <ContrastiveExplainer
+          explanation={explanation}
+          input={input}
+          output={output}
+        />
+      ) : (
+        <ExplanationNotFound
+          explanationName={explanationName}
+        ></ExplanationNotFound>
+      )}
+    </>
+  );
+};
+
+const ExplainerRenderer = (
+  explanationName,
+  explanations,
+  input,
+  output,
+  id
+) => {
+  const explanation = explanations.filter(
+    (expl) => expl.explanation_method === explanationName
+  )[0];
+
+  switch (explanationName) {
     case CONTRASTIVE:
-      return contrastiveRenderer(explanation, input, output);
+      return contrastiveRenderer(explanation, input, output, id);
     case SALIENCY:
-      return tokenWiseFeatureImportance(explanation, input, output);
+      return tokenWiseFeatureImportance(explanation, input, output.id);
     case ALTERNATIVES:
       const output_alternatives = explanation.output_alternatives;
-      return alternativesRenderer(output_alternatives);
-    default:
-      return (
-        <p className="text-red-500">
-          Explanation method {explanation_method} not found
-        </p>
-      );
+      return alternativesRenderer(output_alternatives, id);
   }
 };
 
