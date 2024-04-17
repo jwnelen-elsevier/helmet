@@ -20,18 +20,18 @@ const ExplanationTitle = ({ explanationName }) => {
   );
 };
 
-const ExplanationNotFound = ({ explanationName, explanationMethod, id }) => {
-  const c = "import shap";
+const ExplanationNotFound = ({ explanationName, code }) => {
   return (
     <div>
       <p>Want to compute the {explanationName}? Copy the code and run it</p>
-      <CodeDisplayer code={c}></CodeDisplayer>
+      <CodeDisplayer code={code}></CodeDisplayer>
     </div>
   );
 };
 
 const tokenWiseFeatureImportance = (explanation, input, output, id) => {
   const explanationName = "Feature Attribution";
+  const code = `model.saliency_explainer("${id}")`;
   return (
     <>
       <ExplanationTitle explanationName={explanationName} />
@@ -44,6 +44,7 @@ const tokenWiseFeatureImportance = (explanation, input, output, id) => {
       ) : (
         <ExplanationNotFound
           explanationName={explanationName}
+          code={code}
         ></ExplanationNotFound>
       )}
     </>
@@ -62,6 +63,8 @@ const alternativesRenderer = (output_alternatives, id) => {
 
 const contrastiveRenderer = (explanation, input, output, id) => {
   const explanationName = "Contrastive explainer";
+  const code = `model.contrastive_explainer("${id}", "<token>")`;
+
   return (
     <>
       <ExplanationTitle explanationName={explanationName} />
@@ -74,6 +77,7 @@ const contrastiveRenderer = (explanation, input, output, id) => {
       ) : (
         <ExplanationNotFound
           explanationName={explanationName}
+          code={code}
         ></ExplanationNotFound>
       )}
     </>
@@ -95,7 +99,7 @@ const ExplainerRenderer = (
     case CONTRASTIVE:
       return contrastiveRenderer(explanation, input, output, id);
     case SALIENCY:
-      return tokenWiseFeatureImportance(explanation, input, output.id);
+      return tokenWiseFeatureImportance(explanation, input, output, id);
     case ALTERNATIVES:
       const output_alternatives = explanation.output_alternatives;
       return alternativesRenderer(output_alternatives, id);
