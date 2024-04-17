@@ -23,6 +23,9 @@ class Base_LM(ABC):
         self.reset_model()
         print("model loaded")
     
+    def _encode_text(self, text: str, **kwargs):
+        return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
+
     def _tokenize(self, text: str, **kwargs):
         return self.tokenizer(text, return_tensors="pt", **kwargs)
 

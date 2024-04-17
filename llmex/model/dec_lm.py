@@ -27,11 +27,11 @@ class DEC_LM(Base_LM):
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
 
     # Overwrite the _tokenize method to handle eos_token
-    def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
-        has_eos_token = tokenizer_kwargs.get("eos_token", False)
-        # if has_eos_token:
-        #     self.tokenizer.pad_token = self.tokenizer.eos_token
-        return self.tokenizer(prompt, return_tensors="pt")
+    # def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
+    #     has_eos_token = tokenizer_kwargs.get("eos_token", False)
+    #     # if has_eos_token:
+    #     #     self.tokenizer.pad_token = self.tokenizer.eos_token
+    #     return self.tokenizer(prompt, return_tensors="pt")
     
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
         input_len = len(inputs["input_ids"][0])
@@ -59,25 +59,22 @@ class DEC_LM(Base_LM):
         output_token_ids = output.sequences[0][input_len:]
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
 
-    def explain(self, input, output_token_ids, alternative_output = None, type: str = "gradient") -> Explanation:
+
+    def explain(self, input, output_token_ids, type: str = "gradient") -> Optional[Explanation]:
+        pass
+        # if type == "perturbation":
+        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
+        # return compute_gradients_causal(self, prompt, output)
+    
+    def saliency_explainer(self, id: str, **kwargs) -> SaliencyExplanation:
+        run: Run = self.get_run(id)
+        input = self._tokenize(run.input.prompt)
+
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+        
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
-        
-        # TODO: Implement contrastive explanation
-        # For this, we need to get the alternative output
-        # Currently this is just only 1 token.
-        if type == "contrastive":
-            assert alternative_output is not None, AssertionError("alternative must be specified for contrastive explanation")
-            output_id = output_token_ids[0]
-            alternative_id = alternative_output["input_ids"][0][0] # not sure why we need this
-            saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
-            gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
-            alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
-            return ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
-
-        # For each produced token, we produce an explanation
-        # expected Tensor as element 1 in argument 0, but got list
         merged = torch.cat((input_ids, torch.tensor(output_token_ids)), 0)
         start_index = len(input_ids)
         total_length = len(merged)
@@ -91,35 +88,31 @@ class DEC_LM(Base_LM):
             result.append(gradients)
             print("finished token", start_index - 1 + idx, "of", total_length - start_index - 1)
 
-        return SaliencyExplanation(result)
-    
-            # if type == "perturbation":
-        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
-        # return compute_gradients_causal(self, prompt, output)
-    
-    def saliency_explainer(self, id: str, **kwargs) -> Explanation:
-        run: Run = self.get_run(id)
-        explanation_type="saliency"
-
-        input = self._tokenize(run.input.prompt)
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
-        
-        explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
+        explanation = SaliencyExplanation(input_attributions=result)
         run.explanations.append(explanation)
 
         self.update_run(run)
 
         return explanation
     
-    def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> Explanation:
+    def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
-        explanation_type="contrastive"
-        alternative_token = self._tokenize(alternative_str)
-
         input = self._tokenize(run.input.prompt)
+        alternative_output = self._tokenize(alternative_str)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+
+        input_ids = input["input_ids"][0]
+        attention_mask = input["attention_mask"]
         
-        explanation: Explanation = self.explain(input, output_token_ids, alternative_token, explanation_type)
+        output_id = output_token_ids[0]
+
+        alternative_id = alternative_output["input_ids"][0][0] # not sure why we need this
+        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
+        gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
+
+        alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
+        
+        explanation = ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
         run.explanations.append(explanation)
 
         self.update_run(run)
@@ -130,7 +123,8 @@ class DEC_LM(Base_LM):
         start = time.time()
         eos_token = False
         max_tokens = kwargs.get("max_new_tokens", 10)
-        input = self._tokenize(prompt, eos_token=eos_token)
+        input = self._encode_text(prompt, eos_token=eos_token)
+        # input = self._tokenize(prompt, eos_token=eos_token)
         output_token_ids, alternatives = self.forward(input, max_new_tokens=max_tokens)
         output_str: str = self.token_ids_to_string(output_token_ids)
 

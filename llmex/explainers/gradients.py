@@ -12,7 +12,7 @@ def compute_gradient(wrapper, prompt, input, output, gradient_type):
     # TODO: add with torch.no_grad():?
 
     def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
-        output = model(inputs_embeds=inp, **extra_forward_args)
+        output = model(input_ids=inp, **extra_forward_args)
         return F.softmax(output.logits, dim=1)
     
     input_embeds = wrapper.get_input_embeddings(prompt)
@@ -68,7 +68,7 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     input_mask = torch.tensor(input_mask, dtype=torch.long)
 
     model.zero_grad()
-    A = model(input_ids=input_ids)
+    A = model(input_ids=input_ids, attention_mask=input_mask)
 
     if foil is not None and correct != foil:
         (A.logits[-1][correct]-A.logits[-1][foil]).backward()
