@@ -6,7 +6,7 @@ from torch.nn import functional as F
 
 from llmex.utils.types import Explanation, Run, ContextInput
 from llmex.explainers.gradients import compute_gradient
-from llmex.models.base_lm import Base_LM
+from llmex.model.base_lm import Base_LM
 
 class ENC_DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: AutoModelForSeq2SeqLM, 

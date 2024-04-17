@@ -4,7 +4,7 @@ import torch
 from operator import attrgetter
 import time
 
-from llmex.models import Base_LM
+from llmex.model.base_lm import Base_LM
 from llmex.utils.types import *
 from llmex.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
 from llmex.explainers.gradients import analyze_token, input_x_gradient
@@ -29,8 +29,8 @@ class DEC_LM(Base_LM):
     # Overwrite the _tokenize method to handle eos_token
     def _tokenize(self, prompt, **tokenizer_kwargs) -> dict:
         has_eos_token = tokenizer_kwargs.get("eos_token", False)
-        if has_eos_token:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
+        # if has_eos_token:
+        #     self.tokenizer.pad_token = self.tokenizer.eos_token
         return self.tokenizer(prompt, return_tensors="pt")
     
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
@@ -128,7 +128,7 @@ class DEC_LM(Base_LM):
 
     def predict(self, prompt, generate_explanations=False, *args, **kwargs):
         start = time.time()
-        eos_token = True
+        eos_token = False
         max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._tokenize(prompt, eos_token=eos_token)
         output_token_ids, alternatives = self.forward(input, max_new_tokens=max_tokens)

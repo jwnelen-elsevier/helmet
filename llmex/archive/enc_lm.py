@@ -5,7 +5,7 @@ from datetime import datetime
 from torch.nn import functional as F
 
 from llmex.explainers.gradients import compute_gradient
-from llmex.models.base_lm import Base_LM
+from llmex.model.base_lm import Base_LM
 from llmex.utils.types import Explanation, Run, Input
 
 class ENC_LM(Base_LM):
