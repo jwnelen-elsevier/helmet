@@ -17,8 +17,8 @@ const ContrastiveExplainer = ({ explanation, input, output }) => {
   return (
     <div>
       <p className="text-sm">
-        Why not <span className="italic">"{contrastive_input}"</span> instead of{" "}
-        <span className="italic">"{old_token}"</span>?
+        Why not <span className="italic">{contrastive_input}</span> instead of
+        <span className="italic">{old_token}</span>?
       </p>
       <TextHighlighter
         tokens={input_tokens.concat(token_list)}

@@ -18,7 +18,7 @@ export const StatusProvider = ({ children }) => {
 
     if (!!isConnected) return;
     check();
-  }, []);
+  }, [isConnected]);
 
   return (
     <StatusContext.Provider value={{ isConnected }}>
