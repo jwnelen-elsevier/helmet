@@ -22,7 +22,7 @@ model_type_to_implementation = {
 
 project_setup = [
     "project_id",
-    "url",
+    "platform_url",
 ]
 
 model_setup_args = [
@@ -38,6 +38,8 @@ run_config_args = [
 def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}):
     print("setting up model")
     platform_url = project_setup.pop("platform_url", url)
+    print(platform_url)
+    print(project_setup)
     project_id = project_setup.pop("project_id", None)
     
     model_type = model_setup.pop("model_type", None)
