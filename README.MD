@@ -11,7 +11,7 @@
 To use llmex in one of the examples perform the following steps:
 
 1. Create venv with `python -m venv .venv`
-2. Activate the venv with `source venv/bin/activate`
+2. Activate the venv with `source .venv/bin/activate`
 3. Install LLMEX from source (from git, when located in the home folder of llmex `pip install -e .`
 4. Install jupyter notebook `pip install jupyterlab`
 5. Create a jupyter kernel based on the venv `python -m ipykernel install --user --name venv`
