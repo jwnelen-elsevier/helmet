@@ -14,9 +14,16 @@ import { deleteRun } from "app/actions/actions";
 import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
+import { CONTRASTIVE, SALIENCY } from "utils/constants";
 import { getDateString } from "utils/strings";
 import CollapsibleText from "../ui/collapsibleText";
-import { CompareIcon, DeleteIcon, DetailsIcon } from "../ui/icons";
+import {
+  CheckIcon,
+  CloseIcon,
+  CompareIcon,
+  DeleteIcon,
+  DetailsIcon,
+} from "../ui/icons";
 import DeleteAllRunsModal from "./deleteAllModal";
 
 const model_types = {
@@ -41,6 +48,10 @@ const columns = [
   {
     name: "Time",
     uid: "time",
+  },
+  {
+    name: "Expl (CO, FA)",
+    uid: "expl",
   },
   {
     name: "Actions",
@@ -146,6 +157,27 @@ const Runs = ({ runs }) => {
     );
   }
 
+  const NotExplained = () => (
+    <span className={"text-red-300 text-sm"}>
+      <CloseIcon></CloseIcon>
+    </span>
+  );
+
+  const Explained = () => (
+    <span className={"text-green-500 text-sm"}>
+      <CheckIcon></CheckIcon>
+    </span>
+  );
+
+  function ExplanationsDone({ contrastive, attribution }) {
+    return (
+      <div className="flex gap-2">
+        <span>{contrastive ? <Explained /> : <NotExplained />}</span>
+        <span>{attribution ? <Explained /> : <NotExplained />}</span>
+      </div>
+    );
+  }
+
   const Actions = () => {
     return (
       <div className="flex w-full gap-4">
@@ -182,6 +214,13 @@ const Runs = ({ runs }) => {
         </TableHeader>
         <TableBody items={runState} emptyContent={"No rows to display."}>
           {(row) => {
+            const explanationsDone = row?.explanations?.map(
+              (expl) => expl.explanation_method
+            );
+            const hasContrastiveExplanation =
+              explanationsDone.includes(CONTRASTIVE);
+            const hasAttributionExplanation =
+              explanationsDone.includes(SALIENCY);
             return (
               <TableRow key={row._id}>
                 <TableCell>
@@ -198,13 +237,19 @@ const Runs = ({ runs }) => {
                 </TableCell>
                 <TableCell>{getDateString(row.date)}</TableCell>
                 <TableCell>
+                  <ExplanationsDone
+                    contrastive={hasContrastiveExplanation}
+                    attribution={hasAttributionExplanation}
+                  />
+                </TableCell>
+                <TableCell>
                   <div className="flex items-center gap-2">
                     <Tooltip
                       showArrow={true}
                       content="Show explanation details"
                     >
                       <Link
-                        className="text-sm text-default-400 cursor-pointer"
+                        className="text-sm text-blue-500 cursor-pointer"
                         href={`/details/${row._id}`}
                       >
                         <DetailsIcon />

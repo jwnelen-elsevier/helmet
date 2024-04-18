@@ -8,7 +8,7 @@ export default function BackButton() {
 
   return (
     <Button
-      className=""
+      className="bg-white"
       color="default"
       variant="bordered"
       startContent={<BackIcon />}

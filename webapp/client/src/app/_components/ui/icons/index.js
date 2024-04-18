@@ -1,5 +1,6 @@
 import BackIcon from "./back";
 import CheckIcon from "./check";
+import CloseIcon from "./close";
 import CompareIcon from "./compare";
 import CopyIcon from "./copy";
 import CopySucceedIcon from "./copySucceed";
@@ -16,6 +17,7 @@ import RefreshIcon from "./refresh";
 export {
   BackIcon,
   CheckIcon,
+  CloseIcon,
   CompareIcon,
   CopyIcon,
   CopySucceedIcon,

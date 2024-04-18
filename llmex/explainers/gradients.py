@@ -68,7 +68,8 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     input_mask = torch.tensor(input_mask, dtype=torch.long)
 
     model.zero_grad()
-    A = model(input_ids=input_ids)
+    A = model.generate(input_ids=input_ids, attention_mask=input_mask)
+    # A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
 
     if foil is not None and correct != foil:
         (A.logits[-1][correct]-A.logits[-1][foil]).backward()
