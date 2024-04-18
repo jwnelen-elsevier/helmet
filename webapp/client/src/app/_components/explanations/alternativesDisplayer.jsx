@@ -29,7 +29,7 @@ const AlternativesDisplayer = ({ output_alternatives }) => {
   return (
     <div>
       <p>What were the alternatives?</p>
-      <div className="flex flex-row space-x-4 max-w-full overflow-x-scroll">
+      <div className="flex flex-row justify-center space-x-4 max-w-full overflow-x-scroll">
         {output_alternatives?.map((alternatives, index) =>
           AlternativesList({ key: index, alternatives })
         )}

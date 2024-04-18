@@ -5,7 +5,6 @@ const PageNav = () => {
     <div className="fixed left-4">
       <div className="p-2 flex gap-2">
         <BackButton></BackButton>
-        {/* Not sure if the forward is needed */}
         {/* <NextButton></NextButton>  */}
       </div>
     </div>
