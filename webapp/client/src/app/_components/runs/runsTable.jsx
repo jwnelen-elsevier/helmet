@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
 import { CONTRASTIVE, SALIENCY } from "utils/constants";
-import { getDateString } from "utils/strings";
+import { getTimeString } from "utils/strings";
 import CollapsibleText from "../ui/collapsibleText";
 import {
   CheckIcon,
@@ -158,7 +158,7 @@ const Runs = ({ runs }) => {
   }
 
   const NotExplained = () => (
-    <span className={"text-red-300 text-sm"}>
+    <span className={"text-gray-500 text-sm"}>
       <CloseIcon></CloseIcon>
     </span>
   );
@@ -235,7 +235,7 @@ const Runs = ({ runs }) => {
                     {row.model_checkpoint} ({getModelType(row.model_type)})
                   </span>
                 </TableCell>
-                <TableCell>{getDateString(row.date)}</TableCell>
+                <TableCell>{getTimeString(row.date)}</TableCell>
                 <TableCell>
                   <ExplanationsDone
                     contrastive={hasContrastiveExplanation}
