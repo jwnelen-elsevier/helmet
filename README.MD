@@ -1,5 +1,5 @@
 <p align="center">
-<img  width="50%" src="docs/helmet.png" />
+<img  width="75%" src="docs/helmet.png" />
 </p>
 
 ## Contents
