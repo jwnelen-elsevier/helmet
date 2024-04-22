@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
-from llmex.utils.constants import SALIENCY, ALTERNATIVES, CONTRASTIVE
+from helmet.utils.constants import SALIENCY, ALTERNATIVES, CONTRASTIVE
 
 @dataclass 
 class Attribution:

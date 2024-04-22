@@ -1,4 +1,4 @@
-import llmex
+import helmet
 
 project_setup = {
     "url": "http://localhost:4000",
@@ -22,7 +22,7 @@ run_config = {
     "device": device,
 }
 
-model = llmex.from_pretrained(project_setup=project_setup, model_setup=model_setup, run_config=run_config)
+model = helmet.from_pretrained(project_setup=project_setup, model_setup=model_setup, run_config=run_config)
 
 from datasets import load_dataset
 

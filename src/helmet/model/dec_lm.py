@@ -4,10 +4,10 @@ import torch
 from operator import attrgetter
 import time
 
-from llmex.model.base_lm import Base_LM
-from llmex.utils.types import *
-from llmex.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
-from llmex.explainers.gradients import analyze_token, input_x_gradient
+from helmet.model.base_lm import Base_LM
+from helmet.utils.types import *
+from helmet.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
+from helmet.explainers.gradients import analyze_token, input_x_gradient
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 

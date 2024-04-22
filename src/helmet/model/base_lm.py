@@ -4,8 +4,8 @@ from datetime import datetime
 
 from abc import ABC, abstractmethod
 
-from llmex.updater import update_app, get_run
-from llmex.utils.types import Explanation, Input, Output, Run
+from helmet.updater import update_app, get_run
+from helmet.utils.types import Explanation, Input, Output, Run
  
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, 
