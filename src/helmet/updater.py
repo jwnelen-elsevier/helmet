@@ -4,7 +4,7 @@ import numpy
 import json
 from datetime import datetime, date
 from dacite import from_dict
-from llmex.utils.types import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation, explanation_name_to_class
+from helmet.utils.types import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation, explanation_name_to_class
 from dataclasses import asdict
 
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])

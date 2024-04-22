@@ -3,8 +3,21 @@
 </h2>
 
 # HELMET ⛑️ (Human Evaluated large Language Model Explainability Tool)
+-----
 
 ## Tool
+
+**Table of Contents**
+
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install llmex
+```
+
 
 ### Use LLMEX in examples
 
@@ -48,3 +61,8 @@ Starting a dev server;
 
 To stop it again:
 `brew services stop mongodb-community@7.0`
+
+
+## License
+
+`llmex` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

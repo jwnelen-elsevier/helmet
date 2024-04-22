@@ -2,8 +2,8 @@ import transformers
 from transformers import AutoTokenizer
 
 import torch
-from llmex.model import DEC_LM
-from llmex.updater import get_or_create_project
+from helmet.model import DEC_LM
+from helmet.updater import get_or_create_project
 
 url = "http://localhost:4000"
 
@@ -40,7 +40,7 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
         import accelerate
         import bitsandbytes
     except ImportError:
-        raise ImportError("accelerate and bitsandbytes must be installed to use llmex")
+        raise ImportError("accelerate and bitsandbytes must be installed to use helmet")
     
 
     platform_url = project_setup.get("platform_url", url)
