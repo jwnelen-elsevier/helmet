@@ -1,31 +1,26 @@
-<h2 align="center">
-<img width="50%" src="https://github.com/jwnelen-elsevier/llmex/blob/main/helmet_logo.png?raw=true" />
-</h2>
+<p align="center">
+<img  width="75%" src="docs/helmet.png" />
+</p>
 
-# HELMET ⛑️ (Human Evaluated large Language Model Explainability Tool)
------
+## Contents
 
-## Tool
-
-**Table of Contents**
-
-- [Installation](#installation)
+- [Installation helmet](#installation)
+- [Local installation helmet-platform](#installation)
 - [License](#license)
 
 ## Installation
 
 ```console
-pip install llmex
+pip install helmet
 ```
 
+### Use `helmet` in examples
 
-### Use LLMEX in examples
-
-To use llmex in one of the examples perform the following steps:
+To use helmet in one of the examples perform the following steps:
 
 1. Create venv with `python -m venv .venv`
 2. Activate the venv with `source .venv/bin/activate`
-3. Install LLMEX from source (from git, when located in the home folder of llmex `pip install -e .`
+3. Install HELMET from source (from git, when located in the home folder of helmet `pip install -e .`
 4. Install jupyter notebook `pip install jupyterlab`
 5. Create a jupyter kernel based on the venv `python -m ipykernel install --user --name venv`
 6. Open Jupyter notebook `jupyter lab`
@@ -36,33 +31,23 @@ To remove:
 2. `jupyter-kernelspec uninstall venv`
 3. `rm -r venv`
 
-<!-- To activate a Python virtual environmen    t in Visual Studio Code's terminal, you can use the following command: -->
+## Configuration files
 
-# Platform
+- Project configuration
+- Model configuration
+- Run configuration
 
-### Backend
+## Features
 
-```
-cd webapp/api
-npx nodemon server.js
-```
+- Load any causal model from Huggingface.
+- Create a project for your experiment
+- Run experimental prompts
+-
 
-### Frontend
+## Running webapp locally
 
-```
-cd webapp/client
-npm run dev
-```
-
-## MongoDB
-
-Starting a dev server;
-`brew services start mongodb-community@7.0`
-
-To stop it again:
-`brew services stop mongodb-community@7.0`
-
+For this, please check the `README`
 
 ## License
 
-`llmex` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`helmet` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
