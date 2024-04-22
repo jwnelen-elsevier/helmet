@@ -36,17 +36,22 @@ run_config_args = [
 ]
 
 def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}):
-    print("setting up model")
-    platform_url = project_setup.pop("platform_url", url)
-    print(platform_url)
-    print(project_setup)
-    project_id = project_setup.pop("project_id", None)
+    try: 
+        import accelerate
+        import bitsandbytes
+    except ImportError:
+        raise ImportError("accelerate and bitsandbytes must be installed to use llmex")
     
-    model_type = model_setup.pop("model_type", None)
-    device = run_config.pop("device", "cpu")
-    model_checkpoint = model_setup.pop("checkpoint", None)
 
-    assert device in ["cpu", "cuda:0"], AssertionError("device must be either 'cpu' or 'cuda:0'")
+    platform_url = project_setup.get("platform_url", url)
+    project_id = project_setup.get("project_id", None)
+    
+    model_type = model_setup.get("model_type", None)
+    model_checkpoint = model_setup.get("checkpoint", None)
+
+    device = run_config.get("device", "cpu")
+
+    assert device in ["cpu", "auto", "cuda:0"], AssertionError("device must be either 'cpu', 'auto', or 'cuda:0'")
     if device == "cuda:0":
         torch.device(device)
         assert torch.cuda.is_available(), AssertionError("cuda is not available")
@@ -54,9 +59,12 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
     assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
     assert project_id is not None, AssertionError("project_id must be specified")
 
+    print("updates will be sent to", platform_url)
+    print("setting up model with config", model_setup)
+
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True).to(device)
+    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, device_map="auto", load_in_8bit=True)
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]
