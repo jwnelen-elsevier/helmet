@@ -91,7 +91,7 @@ class Run:
     explanations: list[Explanation]
 
     _id: Optional[str] = None
-    groundtruth: Optional[str | list[str]] = None
+    groundtruth: Optional[str] = None
     execution_time_in_sec: Optional[float] = None
     
     def dict(self) -> dict:
@@ -108,5 +108,7 @@ class Run:
         }
         if self._id is not None:
             d["_id"] = self._id
+        if self.groundtruth is not None:
+            d["groundtruth"] = self.groundtruth
         return d
     

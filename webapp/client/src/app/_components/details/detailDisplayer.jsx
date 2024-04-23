@@ -13,7 +13,9 @@ const DetailDisplayer = ({ props }) => {
     _id,
     model_checkpoint,
     execution_time_in_sec,
+    groundtruth = "not provided",
   } = props;
+  console.log(props);
 
   return (
     <div className="flex flex-col space-y-2 items-center px-2 m-4 mb-8">
@@ -38,6 +40,9 @@ const DetailDisplayer = ({ props }) => {
       </p>
       <p className="border rounded p-5 font-bold">
         Output: <span className="font-normal">{output.output_str}</span>
+      </p>
+      <p className="border rounded p-5 font-bold">
+        Groundtruth: <span className="font-normal">{groundtruth}</span>
       </p>
       <div className="max-w-full flex flex-col gap-y-2">
         <h2>Explanations</h2>

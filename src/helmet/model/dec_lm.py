@@ -116,7 +116,7 @@ class DEC_LM(Base_LM):
 
         return explanation
 
-    def predict(self, prompt, generate_explanations=False, *args, **kwargs):
+    def predict(self, prompt, generate_explanations=False, groundtruth=None, *args, **kwargs):
         start = time.time()
         eos_token = False
         max_tokens = kwargs.get("max_new_tokens", 10)
@@ -130,11 +130,11 @@ class DEC_LM(Base_LM):
             
         #     explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
         #     explanations.append(explanation)
-
+        print("Predicted output:", output_str)
         end = time.time()
         execution_time = end - start
 
-        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time)
+        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time, groundtruth=groundtruth)
 
         self.update_run(formatted_run)
 
