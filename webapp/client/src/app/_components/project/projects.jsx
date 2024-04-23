@@ -11,8 +11,8 @@ const DisplayProjects = () => {
       {projects?.map((p, i) => (
         <p key={p._id}>{p?.projectName}</p>
       ))}
-      <h1>Create a new project</h1>
-      <p className="italic">
+      <h3>Create a new project</h3>
+      <p className="italic mb-4">
         Its adviced to create a project for every task you are solving. You can
         have multiple models within the same project
       </p>
