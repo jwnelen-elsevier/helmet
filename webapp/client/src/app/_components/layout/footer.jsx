@@ -1,6 +1,6 @@
 "use client";
 
-import StatusIndicator from "../ui/status";
+import StatusIndicator from "app/_components/ui/status";
 
 const Footer = () => {
   return (

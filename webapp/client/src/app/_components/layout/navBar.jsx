@@ -2,7 +2,6 @@
 import SelectProjectModal from "app/_components/project/selectProjectModal";
 import { MenuIcon } from "app/_components/ui/icons";
 import ReloadButton from "app/_components/ui/reloadButton";
-import StatusIndicator from "app/_components/ui/status";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
