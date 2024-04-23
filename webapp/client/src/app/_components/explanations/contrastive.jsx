@@ -5,7 +5,7 @@ const ContrastiveExplainer = ({ explanation, input, output }) => {
   const { attributions, contrastive_input } = explanation;
   const { input_tokens } = input;
   const { tokens: output_tokens } = output;
-
+  const inputLength = input_tokens.length;
   // Create copy of token list
   const token_list = [...output_tokens];
 
@@ -17,12 +17,13 @@ const ContrastiveExplainer = ({ explanation, input, output }) => {
   return (
     <div>
       <p className="text-sm">
-        Why not <span className="italic">{contrastive_input}</span> instead of
+        Why not <span className="italic">{contrastive_input}</span> instead of{" "}
         <span className="italic">{old_token}</span>?
       </p>
       <TextHighlighter
         tokens={input_tokens.concat(token_list)}
         attributions={attributions}
+        hoveredIndex={inputLength}
       ></TextHighlighter>
     </div>
   );

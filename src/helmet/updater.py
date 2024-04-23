@@ -3,6 +3,8 @@ import typing
 import numpy
 import json
 from datetime import datetime, date
+from dateutil import parser
+
 from dacite import from_dict
 from helmet.utils.types import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation, explanation_name_to_class
 from dataclasses import asdict
@@ -63,8 +65,9 @@ def get_run(url: str, run_id: str) -> Run | None:
     
     try:
         d = r.json()
-        form = "%Y-%m-%dT%H:%M:%S.%fZ"
-        d["date"] = datetime.strptime(d["date"], form)
+        d["date"] = parser.parse(d["date"])
+        # form = "%Y-%m-%dT%H:%M:%S.%fZ"
+        # d["date"] = datetime.strptime(d["date"], form)
 
         expls = []
         for exp in d["explanations"]:

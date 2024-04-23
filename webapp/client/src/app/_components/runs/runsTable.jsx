@@ -1,7 +1,6 @@
 "use client";
 import {
   Button,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -10,7 +9,7 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import { deleteRun } from "app/actions/actions";
+import { deleteAllRuns, deleteRun } from "app/actions/actions";
 import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
@@ -24,6 +23,7 @@ import {
   DeleteIcon,
   DetailsIcon,
 } from "../ui/icons";
+import SearchBar from "../ui/searchBar";
 import DeleteAllRunsModal from "./deleteAllModal";
 
 const model_types = {
@@ -63,14 +63,24 @@ const Runs = ({ runs }) => {
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     if (!selectedProject) return;
     const filteredRuns = runs.filter(
       (run) => `${run.project_id}` === `${selectedProject._id}`
     );
-    setRuns(filteredRuns);
-  }, [selectedProject, runs]);
+
+    if (!searchInput) {
+      setRuns(filteredRuns);
+      return;
+    }
+    const searchedRuns = filteredRuns.filter((run) =>
+      run.input.prompt.toLowerCase().includes(searchInput.toLowerCase())
+    );
+
+    setRuns(searchedRuns);
+  }, [selectedProject, searchInput, runs]);
 
   const [selectedKeys, setSelectedKeys] = useState(new Set());
   const twoKeysSelected = selectedKeys.size === 2;
@@ -182,7 +192,7 @@ const Runs = ({ runs }) => {
     return (
       <div className="flex w-full gap-4">
         <div className="flex-grow">
-          <Input className="w-2/5" placeholder="search prompts"></Input>
+          <SearchBar value={searchInput} setValue={setSearchInput} />
         </div>
         <CompareButton />
       </div>
@@ -196,8 +206,7 @@ const Runs = ({ runs }) => {
         onCloseDecision={handleOnClose}
       ></DeleteAllRunsModal>
       <h2 className="">Runs ({runState.length})</h2>
-      <Filter></Filter>
-      <Actions />
+      {Actions()}
       <Table
         className="text-left"
         removeWrapper
@@ -244,10 +253,7 @@ const Runs = ({ runs }) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Tooltip
-                      showArrow={true}
-                      content="Show explanation details"
-                    >
+                    <Tooltip showArrow={true} content="Show Details">
                       <Link
                         className="text-sm text-blue-500 cursor-pointer"
                         href={`/details/${row._id}`}
