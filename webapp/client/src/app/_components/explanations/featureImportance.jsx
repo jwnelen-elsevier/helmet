@@ -27,7 +27,7 @@ const FeatureImportance = ({ explanation, input, output }) => {
     return (
       <p className="text-sm">
         Why did the model predict{" "}
-        <span className="italic">{highlightedToken}&quot;</span>?
+        <span className="italic">&quot;{highlightedToken}&quot;</span>?
       </p>
     );
   };
