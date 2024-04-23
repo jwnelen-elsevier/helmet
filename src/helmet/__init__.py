@@ -35,14 +35,7 @@ run_config_args = [
     "device"
 ]
 
-def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}):
-    try: 
-        import accelerate
-        import bitsandbytes
-    except ImportError:
-        raise ImportError("accelerate and bitsandbytes must be installed to use helmet")
-    
-
+def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}): 
     platform_url = project_setup.get("platform_url", url)
     project_id = project_setup.get("project_id", None)
     
@@ -64,7 +57,7 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, device_map="auto", load_in_8bit=True)
+    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, device_map="auto")
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]

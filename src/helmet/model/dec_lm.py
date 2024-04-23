@@ -30,6 +30,11 @@ class DEC_LM(Base_LM):
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
         
+        device = torch.device("cpu")
+        self.model.to(device)
+        inputs["input_ids"] = inputs["input_ids"].to(device)
+        inputs["attention_mask"] = inputs["attention_mask"].to(device)
+
         output = self.model.generate(
             input_ids=inputs["input_ids"], 
             attention_mask=inputs["attention_mask"],
