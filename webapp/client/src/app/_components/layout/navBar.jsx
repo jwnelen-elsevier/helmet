@@ -27,8 +27,6 @@ const NagivationBar = () => {
         <SelectProjectModal />
 
         <div className="flex items-center flex-grow">
-          <span> Status:</span>
-          <StatusIndicator></StatusIndicator>
           <ReloadButton />
         </div>
         <button

@@ -43,7 +43,9 @@ export default function CreateProjectModal() {
 
   return (
     <div>
-      <Button onPress={onOpen}>New Project</Button>
+      <Button onPress={onOpen} variant="solid" color="primary">
+        New Project
+      </Button>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
