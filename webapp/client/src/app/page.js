@@ -41,7 +41,7 @@ export default async function Page() {
       <h1 className="h1">Welcome at the HELMET⛑️ platform</h1>
       <div className="flex flex-row gap-8 justify-center p-2 mt-10">
         {links.map((j) => (
-          <CardProvider cardInfo={j} />
+          <CardProvider key={j.title} cardInfo={j} />
         ))}
       </div>
     </div>
