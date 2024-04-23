@@ -244,10 +244,7 @@ const Runs = ({ runs }) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Tooltip
-                      showArrow={true}
-                      content="Show explanation details"
-                    >
+                    <Tooltip showArrow={true} content="Show Details">
                       <Link
                         className="text-sm text-blue-500 cursor-pointer"
                         href={`/details/${row._id}`}
