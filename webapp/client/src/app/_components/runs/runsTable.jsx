@@ -10,7 +10,7 @@ import {
   TableRow,
   Tooltip,
 } from "@nextui-org/react";
-import { deleteRun } from "app/actions/actions";
+import { deleteAllRuns, deleteRun } from "app/actions/actions";
 import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
