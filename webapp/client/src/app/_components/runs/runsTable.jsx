@@ -1,7 +1,6 @@
 "use client";
 import {
   Button,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -24,6 +23,7 @@ import {
   DeleteIcon,
   DetailsIcon,
 } from "../ui/icons";
+import SearchBar from "../ui/searchBar";
 import DeleteAllRunsModal from "./deleteAllModal";
 
 const model_types = {
@@ -63,14 +63,24 @@ const Runs = ({ runs }) => {
   const [runState, setRuns] = useState([]);
   const { selectedProject } = useSelectedProject();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     if (!selectedProject) return;
     const filteredRuns = runs.filter(
       (run) => `${run.project_id}` === `${selectedProject._id}`
     );
-    setRuns(filteredRuns);
-  }, [selectedProject, runs]);
+
+    if (!searchInput) {
+      setRuns(filteredRuns);
+      return;
+    }
+    const searchedRuns = filteredRuns.filter((run) =>
+      run.input.prompt.toLowerCase().includes(searchInput.toLowerCase())
+    );
+
+    setRuns(searchedRuns);
+  }, [selectedProject, searchInput, runs]);
 
   const [selectedKeys, setSelectedKeys] = useState(new Set());
   const twoKeysSelected = selectedKeys.size === 2;
@@ -182,7 +192,7 @@ const Runs = ({ runs }) => {
     return (
       <div className="flex w-full gap-4">
         <div className="flex-grow">
-          <Input className="w-2/5" placeholder="search prompts"></Input>
+          <SearchBar value={searchInput} setValue={setSearchInput} />
         </div>
         <CompareButton />
       </div>
@@ -196,8 +206,7 @@ const Runs = ({ runs }) => {
         onCloseDecision={handleOnClose}
       ></DeleteAllRunsModal>
       <h2 className="">Runs ({runState.length})</h2>
-      <Filter></Filter>
-      <Actions />
+      {Actions()}
       <Table
         className="text-left"
         removeWrapper
