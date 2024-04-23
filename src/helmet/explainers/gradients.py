@@ -59,22 +59,22 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     handle = register_embedding_list_hook(model, embedding_layer, embeddings_list)
     embeddings_gradients = []
     hook = register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradients)
-
     if correct is None:
         correct = input_ids[-1]
         input_ids = input_ids[:-1]
         input_mask = input_mask[:-1]
-    input_ids = torch.tensor(input_ids, dtype=torch.long)
-    input_mask = torch.tensor(input_mask, dtype=torch.long)
 
-    model.zero_grad()
-    A = model.generate(input_ids=input_ids, attention_mask=input_mask)
-    # A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+    input_ids_new = torch.tensor(input_ids.clone().detach())
+    input_ids_unsqueezed = input_ids_new.unsqueeze(0)
+
+    # A = model.generate(input_ids=input_ids_unsqueezed, attention_mask=input_mask)
+    A = model(input_ids=input_ids_unsqueezed, output_attentions=False)
 
     if foil is not None and correct != foil:
-        (A.logits[-1][correct]-A.logits[-1][foil]).backward()
+        (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
     else:
-        p = A.logits[-1][correct]
+        # Take the last logits and backpropagate the gradient
+        p = A.logits[0][-1][correct]
         p.backward()
     handle.remove()
     hook.remove()

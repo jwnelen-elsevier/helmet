@@ -2,24 +2,9 @@
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
-
-[project]
-name = "helmet"
-version = "0.1.1"
-description = ""
-authors = [
-  { name = "Jeroen Nelen", email = "jnelen@elsevier.com" },
-]
-readme = "README.md"
-
-
 [tool.poetry]
 name = "helmet"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Jeroen"]
 readme = "README.md"
