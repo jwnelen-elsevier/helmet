@@ -21,3 +21,6 @@ trulens = "^0.13.4"
 bitsandbytes = "^0.42.0"
 dacite = "^1.8.1"
 datasets = "^2.18.0"
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.4"
+
