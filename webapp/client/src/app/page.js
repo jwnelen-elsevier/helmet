@@ -5,7 +5,7 @@ import {
   CardHeader,
   Divider,
   Link,
-} from "@nextui-org/react";
+} from "@nextui-org/card";
 
 const links = [
   {
