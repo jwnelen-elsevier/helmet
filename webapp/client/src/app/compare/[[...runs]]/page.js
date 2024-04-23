@@ -18,7 +18,7 @@ export default async function Page({ params: { runs: runs } }) {
   return (
     <div>
       <PageNav />
-      <div className="flex divide-x-2 divide-solid justify-center">
+      <div className="grid grid-cols-2">
         <DetailDisplayer props={run1} />
         <DetailDisplayer props={run2} />
       </div>
