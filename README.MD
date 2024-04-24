@@ -33,7 +33,14 @@ To remove:
 
 ## Configuration files
 
-- Project configuration
+### Project configuration
+
+```python
+project_config = {
+    platform_url: "localhost:4000"
+}
+```
+
 - Model configuration
 - Run configuration
 
