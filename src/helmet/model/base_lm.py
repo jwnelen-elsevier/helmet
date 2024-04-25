@@ -8,8 +8,8 @@ from helmet.updater import update_app, get_run
 from helmet.utils.types import Explanation, Input, Output, Run
  
 class Base_LM(ABC):    
-    def __init__(self, model_checkpoint: str, model, 
-                 tokenizer, model_type: str, url: str, project_id:str, embeddings):
+    def __init__(self, model_checkpoint: str, model, tokenizer, 
+                 model_type: str, url: str, project_id:str, embeddings, device="cpu"):
         self.model = model
         self.model_checkpoint = model_checkpoint
         self.tokenizer = tokenizer
@@ -17,6 +17,7 @@ class Base_LM(ABC):
         self.project_id = project_id
         self.model_type = model_type
         self.embeddings = embeddings
+        self.device = device
         self.__post_init__()
     
     def __post_init__(self):
@@ -27,7 +28,8 @@ class Base_LM(ABC):
         return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
 
     def _tokenize(self, text: str, **kwargs):
-        return self.tokenizer(text, return_tensors="pt", **kwargs)
+        t = self.tokenizer(text, return_tensors="pt", **kwargs)
+        return t.to(self.device)
 
     def token_ids_to_string(self, output) -> str:
         # Return back the string
@@ -36,13 +38,16 @@ class Base_LM(ABC):
     def get_tokens(self, text: str):
         return self.tokenizer.get_tokens(text)
     
+    def to_device(self, tensor):
+        return tensor.to(self.device)
+
     def get_input_embeddings(self, text: str):
         """Extract input embeddings
 
         :param text str: the string to extract embeddings from.
         """
         item = self._tokenize(text)
-        item = {k: v.to(self.model.device) for k, v in item.items()}
+        item = {k: v.to(self.device) for k, v in item.items()}
         embeddings = self._get_input_embeds_from_ids(item["input_ids"][0])
         embeddings = embeddings.unsqueeze(0)
         return embeddings

@@ -44,11 +44,12 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
 
     device = run_config.get("device", "cpu")
 
-    assert device in ["cpu", "auto", "cuda:0"], AssertionError("device must be either 'cpu', 'auto', or 'cuda:0'")
-    if device == "cuda:0":
-        torch.device(device)
-        assert torch.cuda.is_available(), AssertionError("cuda is not available")
+    assert device in ["cpu", "cuda"], AssertionError("device must be either 'cpu' or 'cuda'")
 
+    if device == "cuda":
+        assert torch.cuda.is_available(), AssertionError("cuda is not available")
+        torch.device(device)
+    
     assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
     assert project_id is not None, AssertionError("project_id must be specified")
 
@@ -57,13 +58,17 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, device_map="auto")
+    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True)
+
+    if device == "cuda":
+        hfModel = hfModel.to(device)
+    
     hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
     modelHelper = model_type_to_implementation[model_type]
     assert modelHelper is not None, AssertionError(f"model_type {model_type} not implemented")
 
-    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, model_setup)
+    model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, model_setup, device=device)
     return model
 
 

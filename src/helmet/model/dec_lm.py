@@ -11,7 +11,7 @@ from helmet.explainers.gradients import analyze_token, input_x_gradient
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
-                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id: str, model_config: dict = {}):
+                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id: str, model_config: dict = {}, device="cpu"):
         self.model_type = "dec"
         self.model_config = model_config
 
@@ -24,16 +24,14 @@ class DEC_LM(Base_LM):
             print(e)
             raise KeyError("embeddings must be specified in model_config")
 
-        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings)
+        super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
+        inputs["input_ids"] = inputs["input_ids"].to_device(self.device)
+        inputs["attention_mask"] = inputs["attention_mask"].to_device(self.device)
+
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
-        
-        device = torch.device("cpu")
-        self.model.to(device)
-        inputs["input_ids"] = inputs["input_ids"].to(device)
-        inputs["attention_mask"] = inputs["attention_mask"].to(device)
 
         output = self.model.generate(
             input_ids=inputs["input_ids"], 
@@ -56,13 +54,6 @@ class DEC_LM(Base_LM):
         
         output_token_ids = output.sequences[0][input_len:]
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
-
-
-    def explain(self, input, output_token_ids, type: str = "gradient") -> Optional[Explanation]:
-        pass
-        # if type == "perturbation":
-        #     calculate_feature_ablation(self.model, self.tokenizer, prompt, output)
-        # return compute_gradients_causal(self, prompt, output)
     
     def saliency_explainer(self, id: str, **kwargs) -> SaliencyExplanation:
         run: Run = self.get_run(id)
@@ -73,6 +64,8 @@ class DEC_LM(Base_LM):
         attention_mask = input["attention_mask"]
 
         merged = torch.cat((input_ids, torch.tensor(output_token_ids)), 0)
+        merged = self.to_device(merged)
+
         start_index = len(input_ids)
         total_length = len(merged)
 
@@ -139,20 +132,3 @@ class DEC_LM(Base_LM):
         self.update_run(formatted_run)
 
         return output_str
-
-
-
-
-    # def explain_from_run(self, id: str, explanation_type="gradient", **kwargs):
-    #     start = time.time()
-    #     run = self.get_run(id)
-    #     explanation = self.explain(run.input.prompt, run.output, explanation_type)
-    #     formatted_expl = self._format_explanation(explanation, explanation_type)
-
-    #      # record end time
-    #     end = time.time()
-    #     execution_time = end - start
-
-    #     formatted_run = self._format_run(prompt, result, alternatives, formatted_expl, execution_time_in_sec=execution_time)
-    #     self.update_run(formatted_run)
-    #     print("Explanation generated and saved successfully!")
