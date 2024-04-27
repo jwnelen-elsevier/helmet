@@ -29,8 +29,8 @@ class DEC_LM(Base_LM):
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
     def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
-        inputs["input_ids"] = inputs["input_ids"].to_device(self.device)
-        inputs["attention_mask"] = inputs["attention_mask"].to_device(self.device)
+        inputs["input_ids"] = self.to_device(inputs["input_ids"])
+        inputs["attention_mask"] = self.to_device(inputs["attention_mask"])
 
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
