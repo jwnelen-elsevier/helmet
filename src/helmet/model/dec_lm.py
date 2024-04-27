@@ -42,21 +42,21 @@ class DEC_LM(Base_LM):
             output_scores=True, # this gets the scores, while logits are unprocessed.
             **generation_args,
         )
-        output = output.to_tuple()
-        outputIds = output.sequences[0]
-        
+        output = output.to_tuple() #0 it tokens, 1 is scores
+        outputIds = output[0]
+        scores = output[1]
         print("outputIds", outputIds)
 
         alternatives_per_token = []
-        for i in range(len(output.scores)):
-            scores = output.scores[i]
-            top_k = scores.topk(amount_potentials, dim=1)
-            top_k_scores = top_k.values.detach().flatten().tolist()
-            top_k_indices = top_k.indices
+        # for i in range(len(scores)):
+        #     scores = scores[i]
+        #     top_k = scores.topk(amount_potentials, dim=1)
+        #     top_k_scores = top_k.values.detach().flatten().tolist()
+        #     top_k_indices = top_k.indices
 
-            tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
-            res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
-            alternatives_per_token.append(res)
+        #     tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
+        #     res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
+        #     alternatives_per_token.append(res)
         
         output_token_ids = outputIds[input_len:]
         print("output_token_ids", output_token_ids)
