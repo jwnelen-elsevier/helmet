@@ -29,20 +29,24 @@ class DEC_LM(Base_LM):
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
     def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, AlternativesExplanation]:
-        inputs["input_ids"] = self.to_device(inputs["input_ids"])
-        inputs["attention_mask"] = self.to_device(inputs["attention_mask"])
+        ids = self.to_device(inputs["input_ids"])
 
-        input_len = len(inputs["input_ids"][0])
+        input_len = len(ids[0])
         amount_potentials = 5
 
+        print("ids", ids)
+
         output = self.model.generate(
-            input_ids=inputs["input_ids"], 
-            attention_mask=inputs["attention_mask"],
+            input_ids=ids, 
             return_dict_in_generate=True,
             output_scores=True, # this gets the scores, while logits are unprocessed.
             **generation_args,
-            **kwargs
         )
+        output = output.to_tuple()
+        outputIds = output.sequences[0]
+        
+        print("outputIds", outputIds)
+
         alternatives_per_token = []
         for i in range(len(output.scores)):
             scores = output.scores[i]
@@ -54,9 +58,31 @@ class DEC_LM(Base_LM):
             res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
             alternatives_per_token.append(res)
         
-        output_token_ids = output.sequences[0][input_len:]
+        output_token_ids = outputIds[input_len:]
+        print("output_token_ids", output_token_ids)
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
     
+    def predict(self, prompt, generation_args, groundtruth=None, *args, **kwargs):
+        start = time.time()
+        input = self._encode_text(prompt)
+        input_str = self.token_ids_to_string(input["input_ids"][0])
+        
+        print("Input:", input_str)
+        
+        output_token_ids, alternatives = self.forward(input, generation_args)
+        output_str: str = self.token_ids_to_string(output_token_ids)
+
+        print("Predicted output:", output_str)
+        
+        end = time.time()
+        execution_time = end - start
+
+        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time, groundtruth=groundtruth)
+
+        self.update_run(formatted_run)
+
+        return output_str
+
     def saliency_explainer(self, id: str, **kwargs) -> SaliencyExplanation:
         run: Run = self.get_run(id)
         input = self._encode_text(run.input.prompt)
@@ -111,24 +137,3 @@ class DEC_LM(Base_LM):
 
         return explanation
 
-    def predict(self, prompt, generation_args, generate_explanations=False, groundtruth=None, *args, **kwargs):
-        start = time.time()
-        input = self._encode_text(prompt)
-        output_token_ids, alternatives = self.forward(input, generation_args)
-        output_str: str = self.token_ids_to_string(output_token_ids)
-
-        # if generate_explanations:
-        #     explanation_type = kwargs.get("explanation_type", None)
-        #     assert explanation_type is not None, AssertionError("explanation_type must be specified if generate_explanations=True")
-            
-        #     explanation: Explanation = self.explain(input, output_token_ids, explanation_type)
-        #     explanations.append(explanation)
-        print("Predicted output:", output_str)
-        end = time.time()
-        execution_time = end - start
-
-        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time, groundtruth=groundtruth)
-
-        self.update_run(formatted_run)
-
-        return output_str
