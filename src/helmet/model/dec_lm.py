@@ -113,9 +113,9 @@ class DEC_LM(Base_LM):
 
     def predict(self, prompt, generate_explanations=False, groundtruth=None, *args, **kwargs):
         start = time.time()
-        eos_token = False
+        eos_token = True
         max_tokens = kwargs.get("max_new_tokens", 10)
-        input = self._encode_text(prompt)
+        input = self._encode_text(prompt, eos_token=eos_token)
         output_token_ids, alternatives = self.forward(input, max_new_tokens=max_tokens)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
