@@ -113,7 +113,7 @@ class DEC_LM(Base_LM):
     def predict(self, prompt, generation_args, generate_explanations=False, groundtruth=None, *args, **kwargs):
         start = time.time()
         input = self._encode_text(prompt)
-        output_token_ids, alternatives = self.forward(input, generation_args)
+        output_token_ids, alternatives = self.forward(input, **generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
         # if generate_explanations:
