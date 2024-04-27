@@ -58,7 +58,7 @@ class DEC_LM(Base_LM):
         #     res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
         #     alternatives_per_token.append(res)
         
-        output_token_ids = outputIds[input_len:]
+        output_token_ids = outputIds[0][input_len:]
         print("output_token_ids", output_token_ids)
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
     
