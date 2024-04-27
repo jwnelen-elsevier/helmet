@@ -25,7 +25,11 @@ class Base_LM(ABC):
         self.reset_model()
         print("model loaded")
     
-    def _encode_text(self, text: str, **kwargs):
+    def _encode_text(self, text, **kwargs):
+        if isinstance(text, list):
+            text = self.tokenizer.apply_chat_template(text, tokenize = False, add_generation_prompt = True)
+            # token_ids = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
+
         return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
 
     def _tokenize(self, text: str, **kwargs):
