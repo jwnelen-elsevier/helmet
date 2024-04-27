@@ -33,7 +33,7 @@ const TextHighlighter = ({
   const isNewWord = (word) => {
     return (
       !word.includes("##") ||
-      word.includes("Ġ") ||
+      word.includes("Ġ", "_") ||
       !word.includes([",", "!", "."])
     );
   };
