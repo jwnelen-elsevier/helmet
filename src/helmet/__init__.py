@@ -62,7 +62,7 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
     if device == "cuda":
         from transformers import BitsAndBytesConfig
         quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True, load_in_8bit=True)
-        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, config=quantization_config, device_map="auto")
+        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, config=quantization_config, device_map="auto", dtype = torch.float16 if device == "cuda" else torch.float32)
     else:
         hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True)
 
