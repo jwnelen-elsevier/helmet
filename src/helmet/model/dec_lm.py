@@ -28,7 +28,7 @@ class DEC_LM(Base_LM):
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
-    def forward(self, inputs, **kwargs) -> Tuple[list, AlternativesExplanation]:
+    def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, AlternativesExplanation]:
         inputs["input_ids"] = self.to_device(inputs["input_ids"])
         inputs["attention_mask"] = self.to_device(inputs["attention_mask"])
 
@@ -39,7 +39,8 @@ class DEC_LM(Base_LM):
             input_ids=inputs["input_ids"], 
             attention_mask=inputs["attention_mask"],
             return_dict_in_generate=True,
-            output_scores=True # this gets the scores, while logits are unprocessed.
+            output_scores=True, # this gets the scores, while logits are unprocessed.
+            **generation_args,
             **kwargs
         )
         alternatives_per_token = []
@@ -113,7 +114,7 @@ class DEC_LM(Base_LM):
     def predict(self, prompt, generation_args, generate_explanations=False, groundtruth=None, *args, **kwargs):
         start = time.time()
         input = self._encode_text(prompt)
-        output_token_ids, alternatives = self.forward(input, **generation_args)
+        output_token_ids, alternatives = self.forward(input, generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
         # if generate_explanations:
