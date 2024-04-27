@@ -1,7 +1,7 @@
+import torch
 import transformers
 from transformers import AutoTokenizer
 
-import torch
 from helmet.model import DEC_LM
 from helmet.updater import get_or_create_project
 
@@ -54,11 +54,17 @@ def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config:
     assert project_id is not None, AssertionError("project_id must be specified")
 
     print("updates will be sent to", platform_url)
-    print("setting up model with config", model_setup)
+    print("setting up model with config, ", model_setup)
 
     model_cls = model_type_to_class[model_type]
 
-    hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True)
+    # Quantization of the model
+    if device == "cuda":
+        from transformers import BitsAndBytesConfig
+        quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True, load_in_8bit=True)
+        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, config=quantization_config, device_map="auto", torch_dtype = torch.float16 if device == "cuda" else torch.float32)
+    else:
+        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True)
 
     if device == "cuda":
         hfModel = hfModel.to(device)

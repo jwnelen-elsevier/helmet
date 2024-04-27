@@ -1,12 +1,13 @@
-import torch
-import numpy as np
+from abc import ABC, abstractmethod
 from datetime import datetime
 
-from abc import ABC, abstractmethod
+import numpy as np
+import torch
 
-from helmet.updater import update_app, get_run
+from helmet.updater import get_run, update_app
 from helmet.utils.types import Explanation, Input, Output, Run
- 
+
+
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, tokenizer, 
                  model_type: str, url: str, project_id:str, embeddings, device="cpu"):
@@ -24,7 +25,11 @@ class Base_LM(ABC):
         self.reset_model()
         print("model loaded")
     
-    def _encode_text(self, text: str, **kwargs):
+    def _encode_text(self, text, **kwargs):
+        if isinstance(text, list):
+            text = self.tokenizer.apply_chat_template(text, tokenize = False, add_generation_prompt = True)
+            # token_ids = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
+
         return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
 
     def _tokenize(self, text: str, **kwargs):

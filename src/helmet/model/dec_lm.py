@@ -1,13 +1,15 @@
-from typing import Tuple
-import transformers
-import torch
-from operator import attrgetter
 import time
+from operator import attrgetter
+from typing import Tuple
 
-from helmet.model.base_lm import Base_LM
-from helmet.utils.types import *
-from helmet.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
+import torch
+import transformers
+
 from helmet.explainers.gradients import analyze_token, input_x_gradient
+from helmet.model.base_lm import Base_LM
+from helmet.utils.constants import ALTERNATIVES, CONTRASTIVE, SALIENCY
+from helmet.utils.types import *
+
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
@@ -26,9 +28,9 @@ class DEC_LM(Base_LM):
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
-    def forward(self, inputs, max_new_tokens, **kwargs) -> Tuple[list, AlternativesExplanation]:
-        inputs["input_ids"] = inputs["input_ids"].to_device(self.device)
-        inputs["attention_mask"] = inputs["attention_mask"].to_device(self.device)
+    def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, AlternativesExplanation]:
+        inputs["input_ids"] = self.to_device(inputs["input_ids"])
+        inputs["attention_mask"] = self.to_device(inputs["attention_mask"])
 
         input_len = len(inputs["input_ids"][0])
         amount_potentials = 5
@@ -36,10 +38,10 @@ class DEC_LM(Base_LM):
         output = self.model.generate(
             input_ids=inputs["input_ids"], 
             attention_mask=inputs["attention_mask"],
-            use_cache=True, 
-            max_new_tokens=max_new_tokens,
-            return_dict_in_generate=True, 
-            output_scores=True # this gets the scores, while logits are unprocessed.
+            return_dict_in_generate=True,
+            output_scores=True, # this gets the scores, while logits are unprocessed.
+            **generation_args,
+            **kwargs
         )
         alternatives_per_token = []
         for i in range(len(output.scores)):
@@ -109,12 +111,10 @@ class DEC_LM(Base_LM):
 
         return explanation
 
-    def predict(self, prompt, generate_explanations=False, groundtruth=None, *args, **kwargs):
+    def predict(self, prompt, generation_args, generate_explanations=False, groundtruth=None, *args, **kwargs):
         start = time.time()
-        eos_token = False
-        max_tokens = kwargs.get("max_new_tokens", 10)
         input = self._encode_text(prompt)
-        output_token_ids, alternatives = self.forward(input, max_new_tokens=max_tokens)
+        output_token_ids, alternatives = self.forward(input, generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
         # if generate_explanations:
