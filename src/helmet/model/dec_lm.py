@@ -1,13 +1,15 @@
-from typing import Tuple
-import transformers
-import torch
-from operator import attrgetter
 import time
+from operator import attrgetter
+from typing import Tuple
 
-from helmet.model.base_lm import Base_LM
-from helmet.utils.types import *
-from helmet.utils.constants import ALTERNATIVES, SALIENCY, CONTRASTIVE
+import torch
+import transformers
+
 from helmet.explainers.gradients import analyze_token, input_x_gradient
+from helmet.model.base_lm import Base_LM
+from helmet.utils.constants import ALTERNATIVES, CONTRASTIVE, SALIENCY
+from helmet.utils.types import *
+
 
 class DEC_LM(Base_LM):
     def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
