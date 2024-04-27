@@ -63,6 +63,7 @@ class DEC_LM(Base_LM):
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
     
     def predict(self, prompt, generation_args, groundtruth=None, *args, **kwargs):
+        print("start of the predict function")
         start = time.time()
         input = self._encode_text(prompt)
         input_str = self.token_ids_to_string(input["input_ids"][0])
@@ -77,7 +78,7 @@ class DEC_LM(Base_LM):
         end = time.time()
         execution_time = end - start
 
-        formatted_run = self._format_run(prompt, output_str, [alternatives], execution_time, groundtruth=groundtruth)
+        formatted_run = self._format_run(input_str, output_str, [alternatives], execution_time, groundtruth=groundtruth)
 
         self.update_run(formatted_run)
 
