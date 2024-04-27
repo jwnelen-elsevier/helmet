@@ -34,7 +34,7 @@ class DEC_LM(Base_LM):
         input_len = len(ids[0])
         amount_potentials = 5
 
-        print("ids", ids)
+        print("ids: ", ids)
 
         output = self.model.generate(
             input_ids=ids, 
@@ -45,7 +45,7 @@ class DEC_LM(Base_LM):
         output = output.to_tuple() #0 it tokens, 1 is scores
         outputIds = output[0]
         scores = output[1]
-        print("outputIds", outputIds)
+        print("outputIds: ", outputIds)
 
         alternatives_per_token = []
         # for i in range(len(scores)):
@@ -58,9 +58,9 @@ class DEC_LM(Base_LM):
         #     res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
         #     alternatives_per_token.append(res)
         
-        outs = outputIds[0]
-        print(outs)
-        output_token_ids = outputIds[0][input_len:]
+        outs = outputIds[0].detach().cpu.numpy().tolist()
+        print("outs", outs)
+        output_token_ids = outs[input_len:]
         print("output_token_ids", output_token_ids)
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
     
