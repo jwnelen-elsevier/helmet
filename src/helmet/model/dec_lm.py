@@ -34,14 +34,13 @@ class DEC_LM(Base_LM):
         input_len = len(ids[0])
         amount_potentials = 5
 
-        print("ids: ", ids)
-
         output = self.model.generate(
             input_ids=ids, 
             return_dict_in_generate=True,
             output_scores=True, # this gets the scores, while logits are unprocessed.
             **generation_args,
         )
+
         output = output.to_tuple() #0 it tokens, 1 is scores
         outputIds = output[0]
         scores = output[1]
@@ -57,10 +56,7 @@ class DEC_LM(Base_LM):
         #     res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
         #     alternatives_per_token.append(res)
         
-        print("outputIds: ", outputIds)
         outs = outputIds[0].detach().cpu().numpy()
-        print("outs", outs)
-
         output_token_ids = outs[input_len:]
         print("output_token_ids", output_token_ids)
         
