@@ -59,7 +59,7 @@ class DEC_LM(Base_LM):
             top_k = local_scores.topk(amount_potentials) 
             top_k_scores = top_k.values.detach().flatten().tolist()
             #  normalize scores
-            top_k_scores = [score / sum(top_k_scores) for score in top_k_scores]
+            top_k_scores = self.normalize(top_k_scores)
             top_k_indices = top_k.indices
 
             tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
@@ -127,12 +127,15 @@ class DEC_LM(Base_LM):
         alternative_output = self._encode_text(alternative_str)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
 
-        input_ids = input["input_ids"][0]
-        attention_mask = input["attention_mask"]
+        input_ids = self.to_device(input["input_ids"][0])
+        attention_mask = self.to_device(input["attention_mask"])
         
         output_id = output_token_ids[0]
 
-        alternative_id = alternative_output["input_ids"][0][0] # not sure why we need this
+        alternative_id = alternative_output["input_ids"][0]
+        if len(alternative_id) > 1:
+            print("Warning: alternative output has more than one token, using the first one")
+            alternative_id = alternative_id[0]
         saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
