@@ -43,7 +43,9 @@ def update_app(url: str, route: str, body: dict[str, typing.Any]):
     try :
         r = requests.post(f"{url}{route}", json=serialize(body))
         r.raise_for_status()
-        print("updated app, result: ", r.json())
+        res = r.json()
+        print("updated app, result: ", res)
+        return res.get("insertedId", None)
         
     except Exception as e:
         print(e)
