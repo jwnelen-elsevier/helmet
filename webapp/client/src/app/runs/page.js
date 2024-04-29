@@ -5,7 +5,7 @@ export default async function Page({ searchParams }) {
   const runs = await fetchRuns();
 
   return (
-    <div className="container text-center mx-auto">
+    <div className="container text-center mx-auto mb-10">
       <Runs runs={runs} params={searchParams}></Runs>
     </div>
   );
