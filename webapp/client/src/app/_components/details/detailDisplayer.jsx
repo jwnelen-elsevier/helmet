@@ -1,6 +1,7 @@
 "use client";
 
 import ExplainerRenderer from "app/_components/explanations/explainers";
+import Legenda from "app/_components/explanations/legenda";
 import CopyableText from "app/_components/ui/copyableText";
 import { options } from "utils/constants";
 import { maxDecimals } from "utils/strings";
@@ -15,7 +16,6 @@ const DetailDisplayer = ({ props }) => {
     execution_time_in_sec,
     groundtruth = "not provided",
   } = props;
-  console.log(props);
 
   return (
     <div className="flex flex-col space-y-2 items-center px-2 m-4 mb-8">
@@ -57,6 +57,7 @@ const DetailDisplayer = ({ props }) => {
             )}
           </div>
         ))}
+        <Legenda />
       </div>
     </div>
   );
