@@ -48,8 +48,6 @@ class DEC_LM(Base_LM):
         outputIds = output.sequences[0] #first of 5 sequence outputs
         outs = outputIds.detach().cpu().numpy()
         output_token_ids = outs[input_len:]
-        print("output_token_ids", output_token_ids)
-
         scores = output.scores
 
         alternatives_per_token = []
@@ -70,7 +68,6 @@ class DEC_LM(Base_LM):
         return output_token_ids, AlternativesExplanation(alternatives_per_token)
     
     def predict(self, prompt, generation_args, groundtruth=None, *args, **kwargs):
-        print("start of the predict function")
         start = time.time()
         input = self._encode_text(prompt)
         input_str = self.token_ids_to_string(input["input_ids"][0])
@@ -80,7 +77,7 @@ class DEC_LM(Base_LM):
         output_token_ids, alternatives = self.forward(input, generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
-        print("Predicted output:", output_str)
+        print("Output:", output_str)
         
         end = time.time()
         execution_time = end - start
