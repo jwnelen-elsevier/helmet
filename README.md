@@ -55,6 +55,16 @@ project_config = {
 
 For this, please check the `README`
 
+## Credits
+
+Some inspiration has been drawn from a couple of other tools:
+
+- [Interpret-ml](https://github.com/kayoyin/interpret-lm)
+- [Ecco](https://github.com/jalammar/ecco)
+- [Phoenix](https://github.com/Arize-ai/phoenix)
+- [Inseq](https://github.com/inseq-team/inseq)
+- [Ferret](https://github.com/g8a9/ferret)
+
 ## License
 
 `helmet` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

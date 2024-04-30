@@ -85,7 +85,8 @@ class Base_LM(ABC):
         return l2_normalized_matrix
 
     def update_run(self, run: Run):
-        update_app(self.platform_url, "/runs", run.dict())
+        id = update_app(self.platform_url, "/runs", run.dict())
+        return id
 
     def update_explainer_model(self):
         b = {
@@ -94,7 +95,7 @@ class Base_LM(ABC):
             "tokenizer": self.tokenizer.name_or_path,
             "model_type": self.model_type
         }
-        update_app(self.platform_url, "/update_model", b)
+        id = update_app(self.platform_url, "/update_model", b)
 
     def reset_model(self):
         self.model.eval()

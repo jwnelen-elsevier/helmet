@@ -8,7 +8,7 @@ const TextHighlighter = ({
   hoveredIndex = -1,
   setHoveredIndex = () => {},
 }) => {
-  const showAttributions = false;
+  const showAttributions = true;
   const lowest = -0.5;
   const highest = 0.5;
 
