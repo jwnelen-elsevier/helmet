@@ -57,8 +57,8 @@ const DetailDisplayer = ({ props }) => {
             )}
           </div>
         ))}
-        <Legenda />
       </div>
+      <Legenda />
     </div>
   );
 };
