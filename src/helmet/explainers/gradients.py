@@ -1,38 +1,5 @@
 import torch
 import numpy as np
-from captum.attr import (
-    InputXGradient, Saliency, LayerIntegratedGradients, 
-    LLMGradientAttribution, TextTokenInput, LLMAttribution, IntegratedGradients
-)
-from typing import Dict, Any
-from functools import partial
-from torch.nn import functional as F
-
-def compute_gradient(wrapper, prompt, input, output, gradient_type):
-    # TODO: add with torch.no_grad():?
-
-    def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
-        output = model(input_ids=inp, **extra_forward_args)
-        return F.softmax(output.logits, dim=1)
-    
-    input_embeds = wrapper.get_input_embeddings(prompt)
-    attention_mask = input["attention_mask"]
-
-    forward_func = partial(model_forward, model=wrapper.model, extra_forward_args={"attention_mask": attention_mask})
-
-    if gradient_type == "input_x_gradient":
-        # According to Luo and Specia (2024), inputxgradient has a lot of overhead because they also compute the gradients
-        # of the input based on a reference input.
-        lig = InputXGradient(forward_func)
-    else:
-        lig = Saliency(forward_func)
-    attributions = lig.attribute(inputs=input_embeds, target=output)
-    attributions = attributions.detach().cpu().numpy()
-    r = attributions[0, :, :]
-    attr = r.sum(axis=1)
-    attr = wrapper.normalize(attr)
-
-    return attr
 
 # Adapted from Interpret-LM
 # Adapted from AllenNLP Interpret and Han et al. 2020
@@ -137,4 +104,28 @@ def input_x_gradient(grads, embds, normalize=False):
 #     res = llm_attr.attribute(input, target=output)
 #     return res.seq_attr.detach().cpu().numpy()
 
+# def compute_gradient(wrapper, prompt, input, output, gradient_type):
+#     # TODO: add with torch.no_grad():?
 
+#     def model_forward(inp, model, extra_forward_args: Dict[str, Any] = {}):
+#         output = model(input_ids=inp, **extra_forward_args)
+#         return F.softmax(output.logits, dim=1)
+    
+#     input_embeds = wrapper.get_input_embeddings(prompt)
+#     attention_mask = input["attention_mask"]
+
+#     forward_func = partial(model_forward, model=wrapper.model, extra_forward_args={"attention_mask": attention_mask})
+
+#     if gradient_type == "input_x_gradient":
+#         # According to Luo and Specia (2024), inputxgradient has a lot of overhead because they also compute the gradients
+#         # of the input based on a reference input.
+#         lig = InputXGradient(forward_func)
+#     else:
+#         lig = Saliency(forward_func)
+#     attributions = lig.attribute(inputs=input_embeds, target=output)
+#     attributions = attributions.detach().cpu().numpy()
+#     r = attributions[0, :, :]
+#     attr = r.sum(axis=1)
+#     attr = wrapper.normalize(attr)
+
+#     return attr
