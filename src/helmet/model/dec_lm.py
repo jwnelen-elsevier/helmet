@@ -51,6 +51,7 @@ class DEC_LM(Base_LM):
         print("output_token_ids", output_token_ids)
 
         scores = output.scores
+        print("scores", scores)
 
         alternatives_per_token = []
         for i in range(len(scores)):

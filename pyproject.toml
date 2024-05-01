@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "helmet"
-version = "1.0.5"
+version = "1.0.7"
 description = ""
 authors = ["Jeroen"]
 readme = "README.md"
