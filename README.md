@@ -1,10 +1,12 @@
 <p align="center">
 <img  width="75%" src="docs/helmet.png" />
 </p>
+
+<br>
+
 [![PyPI version](https://badge.fury.io/py/helmet.svg)](https://badge.fury.io/py/helmet)
 
 ## Contents
-
 - [Installation helmet](#installation)
 - [Local installation helmet-platform](#installation)
 - [License](#license)
