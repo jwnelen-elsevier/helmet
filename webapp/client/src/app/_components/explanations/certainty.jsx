@@ -25,7 +25,7 @@ const CertaintyExplainer = ({ certainties, output }) => {
           const { trimmedWord, addSpace } = marginStyle(word);
 
           return (
-            <div>
+            <div key={`key-${i}`}>
               <div
                 className={clsx(
                   "flex flex-col text-center gap-2",
