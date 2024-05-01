@@ -1,6 +1,7 @@
 <p align="center">
 <img  width="75%" src="docs/helmet.png" />
 </p>
+[![PyPI version](https://badge.fury.io/py/helmet.svg)](https://badge.fury.io/py/helmet)
 
 ## Contents
 
@@ -13,23 +14,6 @@
 ```console
 pip install helmet
 ```
-
-### Use `helmet` in examples
-
-To use helmet in one of the examples perform the following steps:
-
-1. Create venv with `python -m venv .venv`
-2. Activate the venv with `source .venv/bin/activate`
-3. Install HELMET from source (from git, when located in the home folder of helmet `pip install -e .`
-4. Install jupyter notebook `pip install jupyterlab`
-5. Create a jupyter kernel based on the venv `python -m ipykernel install --user --name venv`
-6. Open Jupyter notebook `jupyter lab`
-
-To remove:
-
-1. `deactivate`
-2. `jupyter-kernelspec uninstall venv`
-3. `rm -r venv`
 
 ## Configuration files
 
@@ -49,11 +33,25 @@ project_config = {
 - Load any causal model from Huggingface.
 - Create a project for your experiment
 - Run experimental prompts
--
+
+### Insall `helmet` from source
+
+To use helmet in one of the examples perform the following steps:
+
+1. Create venv with `python -m venv .venv`
+2. Activate the venv with `source .venv/bin/activate`
+3. Install HELMET from source (from git, when located in the home folder of helmet `pip install -e .`
+4. Install jupyter notebook `pip install jupyterlab`
+
+To remove:
+
+1. `deactivate`
+2. `jupyter-kernelspec uninstall venv`
+3. `rm -r venv`
 
 ## Running webapp locally
 
-For this, please check the `README`
+For this, please check the `README` in the webapp
 
 ## Credits
 
