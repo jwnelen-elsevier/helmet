@@ -59,7 +59,9 @@ class DEC_LM(Base_LM):
             top_k = local_scores.topk(amount_potentials) 
             top_k_scores = top_k.values.detach().flatten().tolist()
             #  normalize scores
+            print("top_k_scores", top_k_scores)
             top_k_scores = self.normalize(top_k_scores)
+            print("top_k_scores normalized", top_k_scores)
             top_k_indices = top_k.indices
 
             tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
@@ -123,7 +125,7 @@ class DEC_LM(Base_LM):
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
-        input = self._tokenize(run.input.prompt)
+        input = self._tokenize(run.input.prompt, add_special_tokens=False)
         alternative_output = self._encode_text(alternative_str)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
 
@@ -139,7 +141,7 @@ class DEC_LM(Base_LM):
         saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
-        alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
+        alternative_output_str = self. token_ids_to_string(alternative_id)
         
         explanation = ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
         run.explanations.append(explanation)
