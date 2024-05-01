@@ -1,6 +1,7 @@
 import time
 from operator import attrgetter
 from typing import Tuple
+import numpy as np
 
 import torch
 import transformers
@@ -28,7 +29,7 @@ class DEC_LM(Base_LM):
 
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
-    def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, AlternativesExplanation]:
+    def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, CertaintyExplanation]:
         amount_potentials = 5
         inputs_ = self.to_device(inputs)
 
@@ -37,44 +38,25 @@ class DEC_LM(Base_LM):
         output = self.model.generate(
             **inputs_, 
             return_dict_in_generate=True,
-            output_scores=True, # this gets the scores, while logits are unprocessed.
-            # num_beams=5,
-            no_repeat_ngram_size=2,
-            # num_return_sequences=5,
-            # early_stopping=True,
+            output_scores=True, # this gets the scores
             **generation_args,
         )
+        transition_scores = self.model.compute_transition_scores(output.sequences, output.scores, normalize_logits=True)
+        generated_tokens = output.sequences[:, input_len:]
+        certainties = [float(np.exp(score)) for score in transition_scores[0]]
 
-        outputIds = output.sequences[0] #first of 5 sequence outputs
-        outs = outputIds.detach().cpu().numpy()
-        output_token_ids = outs[input_len:]
-        scores = output.scores
+        outs = generated_tokens[0].detach().cpu().numpy() 
 
-        alternatives_per_token = []
-        for i in range(len(scores)):
-            local_scores = scores[i][0] #only for the final sequence, thus [0]
-            # Scores is now a tensor of shape (vocab_size)
-            top_k = local_scores.topk(amount_potentials) 
-            top_k_scores = top_k.values.detach().flatten().tolist()
-            #  normalize scores
-            top_k_scores = self.normalize(top_k_scores)
-            top_k_indices = top_k.indices
-
-            tokens = self.tokenizer.convert_ids_to_tokens(top_k_indices.detach().flatten(), skip_special_tokens=True)
-            res = [{"token": token, "score": score} for token, score in zip(tokens, top_k_scores)]
-            alternatives_per_token.append(res)
-
-        
-        return output_token_ids, AlternativesExplanation(alternatives_per_token)
+        return outs, CertaintyExplanation(certainties)
     
     def predict(self, prompt, generation_args, groundtruth=None, *args, **kwargs):
         start = time.time()
         input = self._encode_text(prompt)
         input_str = self.token_ids_to_string(input["input_ids"][0])
         
-        print("Input:", input_str)
+        print("Processed input:", input_str)
         
-        output_token_ids, alternatives = self.forward(input, generation_args)
+        output_token_ids, certainties = self.forward(input, generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
         print("Output:", output_str)
@@ -82,7 +64,7 @@ class DEC_LM(Base_LM):
         end = time.time()
         execution_time = end - start
 
-        formatted_run = self._format_run(input_str, output_str, [alternatives], execution_time, groundtruth=groundtruth)
+        formatted_run = self._format_run(input_str, output_str, [certainties], execution_time, groundtruth=groundtruth)
 
         id = self.update_run(formatted_run)
 
