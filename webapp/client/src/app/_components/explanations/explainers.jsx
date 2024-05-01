@@ -1,10 +1,16 @@
 import { Tooltip } from "@nextui-org/react";
 import AlternativesDisplayer from "app/_components/explanations/alternativesDisplayer";
+import CertaintyExplainer from "app/_components/explanations/certainty";
 import ContrastiveExplainer from "app/_components/explanations/contrastive";
 import FeatureImportance from "app/_components/explanations/featureImportance";
 import { InfoIcon } from "app/_components/ui/icons";
 import Link from "next/link";
-import { ALTERNATIVES, CONTRASTIVE, SALIENCY } from "utils/constants";
+import {
+  ALTERNATIVES,
+  CERTAINTY,
+  CONTRASTIVE,
+  SALIENCY,
+} from "utils/constants";
 import CodeDisplayer from "../ui/codeDisplayer";
 
 const ExplanationTitle = ({ explanationName }) => {
@@ -84,18 +90,22 @@ const contrastiveRenderer = (explanation, input, output, id) => {
   );
 };
 
-const ExplainerRenderer = (
-  explanationName,
-  explanations,
-  input,
-  output,
-  id
-) => {
-  const explanation = explanations.filter(
-    (expl) => expl.explanation_method === explanationName
-  )[0];
+const CertaintyRenderer = (explanation, input, output, id) => {
+  const explanationName = "Certainty";
 
-  switch (explanationName) {
+  return (
+    <>
+      <ExplanationTitle explanationName={explanationName} />
+      <CertaintyExplainer
+        certainties={explanation.certainties}
+        output={output.tokens}
+      ></CertaintyExplainer>
+    </>
+  );
+};
+
+const ExplainerRenderer = (explanation, input, output, id) => {
+  switch (explanation?.explanation_method) {
     case CONTRASTIVE:
       return contrastiveRenderer(explanation, input, output, id);
     case SALIENCY:
@@ -103,6 +113,10 @@ const ExplainerRenderer = (
     case ALTERNATIVES:
       const output_alternatives = explanation.output_alternatives;
       return alternativesRenderer(output_alternatives, id);
+    case CERTAINTY:
+      return CertaintyRenderer(explanation, input, output, id);
+    default:
+      return <div>Unknown explainer</div>;
   }
 };
 

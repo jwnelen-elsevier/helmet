@@ -3,7 +3,6 @@
 import ExplainerRenderer from "app/_components/explanations/explainers";
 import Legenda from "app/_components/explanations/legenda";
 import CopyableText from "app/_components/ui/copyableText";
-import { options } from "utils/constants";
 import { maxDecimals } from "utils/strings";
 
 const DetailDisplayer = ({ props }) => {
@@ -16,6 +15,10 @@ const DetailDisplayer = ({ props }) => {
     execution_time_in_sec,
     groundtruth = "not provided",
   } = props;
+
+  const explanationNames = explanations.map(
+    (explanation) => explanation.explanation_method
+  );
 
   return (
     <div className="flex flex-col space-y-2 items-center px-2 m-4 mb-8">
@@ -46,15 +49,9 @@ const DetailDisplayer = ({ props }) => {
       </p>
       <div className="max-w-full flex flex-col gap-y-2">
         <h2>Explanations</h2>
-        {options?.map((explanationName, index) => (
+        {explanations?.map((explanation, index) => (
           <div key={index} className="border rounded p-5">
-            {ExplainerRenderer(
-              explanationName,
-              explanations,
-              input,
-              output,
-              _id
-            )}
+            {ExplainerRenderer(explanation, input, output, _id)}
           </div>
         ))}
       </div>
