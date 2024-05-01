@@ -43,7 +43,7 @@ class DEC_LM(Base_LM):
         )
         transition_scores = self.model.compute_transition_scores(output.sequences, output.scores, normalize_logits=True)
         generated_tokens = output.sequences[:, input_len:]
-        certainties = [float(np.exp(score)) for score in transition_scores[0]]
+        certainties = [float(np.exp(score.cpu().numpy())) for score in transition_scores[0]]
 
         outs = generated_tokens[0].detach().cpu().numpy() 
 
