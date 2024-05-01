@@ -19,16 +19,25 @@ pip install helmet
 
 ## Configuration files
 
-### Project configuration
+### Platform configuration
 
 ```python
 project_config = {
     platform_url: "localhost:4000"
+    project_id: "<ID>"
 }
 ```
 
 - Model configuration
 - Run configuration
+
+## Load/create project
+
+## Load model
+
+```python
+model = helmet.from_pretrained(project_setup=project_setup, model_setup=model_setup, run_config=run_config)
+```
 
 ## Features
 
