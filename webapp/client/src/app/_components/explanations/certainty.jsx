@@ -2,8 +2,7 @@ import clsx from "clsx";
 import { marginStyle, toPercentageString } from "utils/strings";
 
 const lowCertainty = 0.1;
-const mediumCertainty = 0.3;
-const highCertainty = 0.5;
+const highCertainty = 0.3;
 
 const highColor = "bg-green-100";
 const mediumColor = "bg-yellow-100";
@@ -13,7 +12,7 @@ const CertaintyExplainer = ({ certainties, output }) => {
   const color = (value) =>
     value >= highCertainty
       ? highColor
-      : value >= mediumCertainty
+      : value >= lowCertainty
         ? mediumColor
         : lowColor;
 
@@ -43,7 +42,7 @@ const CertaintyExplainer = ({ certainties, output }) => {
                     {trimmedWord}
                   </span>
                 </div>
-                <div>{toPercentageString(certainties[i])}</div>
+                {/* <div>{toPercentageString(certainties[i])}</div> */}
               </div>
             </div>
           );
@@ -54,10 +53,10 @@ const CertaintyExplainer = ({ certainties, output }) => {
           P {">="} {toPercentageString(highCertainty, 0)}
         </span>
         <span className={clsx("px-2 py-1 rounded", mediumColor)}>
-          P {">="} {toPercentageString(mediumCertainty, 0)}
+          P {">="} {toPercentageString(lowCertainty, 0)}
         </span>
         <span className={clsx("px-2 py-1 rounded", lowColor)}>
-          P {"<"} {toPercentageString(mediumCertainty, 0)}
+          P {"<"} {toPercentageString(lowCertainty, 0)}
         </span>
       </div>
     </div>
