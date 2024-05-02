@@ -11,7 +11,6 @@ import {
   CONTRASTIVE,
   SALIENCY,
 } from "utils/constants";
-import CodeDisplayer from "../ui/codeDisplayer";
 
 const ExplanationTitle = ({ explanationName }) => {
   return (
@@ -26,95 +25,69 @@ const ExplanationTitle = ({ explanationName }) => {
   );
 };
 
-const ExplanationNotFound = ({ explanationName, code }) => {
+const AlternativesRenderer = (output_alternatives) => {
+  const explanationName = "Alternatives Tokens";
   return (
     <div>
-      <p>Want to compute the {explanationName}? Copy the code and run it</p>
-      <CodeDisplayer code={code}></CodeDisplayer>
+      <ExplanationTitle explanationName={explanationName} />
+      <AlternativesDisplayer output_alternatives={output_alternatives} />
     </div>
   );
 };
 
-const tokenWiseFeatureImportance = (explanation, input, output, id) => {
-  const explanationName = "Feature Attribution";
-  const code = `model.saliency_explainer("${id}")`;
+const ContrastiveRenderer = (explanation, input, output) => {
+  const explanationName = "Contrastive Explainer";
+
   return (
-    <>
+    <div>
       <ExplanationTitle explanationName={explanationName} />
-      {explanation ? (
-        <FeatureImportance
-          explanation={explanation}
-          input={input}
-          output={output}
-        />
-      ) : (
-        <ExplanationNotFound
-          explanationName={explanationName}
-          code={code}
-        ></ExplanationNotFound>
-      )}
-    </>
+      <ContrastiveExplainer
+        explanation={explanation}
+        input={input}
+        output={output}
+      />
+    </div>
   );
 };
 
-const alternativesRenderer = (output_alternatives, id) => {
-  const explanationName = "Alternatives Tokens";
-  return (
-    <>
-      <ExplanationTitle explanationName={explanationName} />
-      <AlternativesDisplayer output_alternatives={output_alternatives} />
-    </>
-  );
-};
-
-const contrastiveRenderer = (explanation, input, output, id) => {
-  const explanationName = "Contrastive explainer";
-  const code = `model.contrastive_explainer("${id}", "<token>")`;
-
-  return (
-    <>
-      <ExplanationTitle explanationName={explanationName} />
-      {explanation ? (
-        <ContrastiveExplainer
-          explanation={explanation}
-          input={input}
-          output={output}
-        />
-      ) : (
-        <ExplanationNotFound
-          explanationName={explanationName}
-          code={code}
-        ></ExplanationNotFound>
-      )}
-    </>
-  );
-};
-
-const CertaintyRenderer = (explanation, input, output, id) => {
+const CertaintyRenderer = (explanation, output) => {
   const explanationName = "Certainty";
 
   return (
-    <>
+    <div>
       <ExplanationTitle explanationName={explanationName} />
       <CertaintyExplainer
         certainties={explanation.certainties}
         output={output.tokens}
       ></CertaintyExplainer>
-    </>
+    </div>
   );
 };
 
-const ExplainerRenderer = (explanation, input, output, id) => {
+const FeatureImportanceRenderer = (explanation, input, output) => {
+  const explanationName = "Token Level Feature Importance";
+  return (
+    <div>
+      <ExplanationTitle explanationName={explanationName} />
+      <FeatureImportance
+        explanation={explanation}
+        input={input}
+        output={output}
+      />
+    </div>
+  );
+};
+
+const ExplainerRenderer = (explanation, input, output) => {
   switch (explanation?.explanation_method) {
     case CONTRASTIVE:
-      return contrastiveRenderer(explanation, input, output, id);
+      return ContrastiveRenderer(explanation, input, output);
     case SALIENCY:
-      return tokenWiseFeatureImportance(explanation, input, output, id);
+      return FeatureImportanceRenderer(explanation, input, output);
     case ALTERNATIVES:
-      const output_alternatives = explanation.output_alternatives;
-      return alternativesRenderer(output_alternatives, id);
+      return AlternativesRenderer(explanation.output_alternatives);
     case CERTAINTY:
-      return CertaintyRenderer(explanation, input, output, id);
+      return CertaintyRenderer(explanation, output);
     default:
       return <div>Unknown explainer</div>;
   }

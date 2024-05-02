@@ -3,7 +3,9 @@
 import ExplainerRenderer from "app/_components/explanations/explainers";
 import Legenda from "app/_components/explanations/legenda";
 import CopyableText from "app/_components/ui/copyableText";
+import { options } from "utils/constants";
 import { maxDecimals } from "utils/strings";
+import SuggestionRenderer from "../explanations/suggestions";
 
 const DetailDisplayer = ({ props }) => {
   const {
@@ -16,10 +18,10 @@ const DetailDisplayer = ({ props }) => {
     groundtruth = "not provided",
   } = props;
 
-  const explanationNames = explanations.map(
-    (explanation) => explanation.explanation_method
+  const explanationNames = new Set(
+    explanations.map((explanation) => explanation.explanation_method)
   );
-
+  let optionsLeft = [...options.filter((x) => !explanationNames.has(x))];
   return (
     <div className="flex flex-col space-y-2 items-center px-2 m-4 mb-8">
       <div className="border rounded p-5">
@@ -48,14 +50,24 @@ const DetailDisplayer = ({ props }) => {
         Groundtruth: <span className="font-normal">{groundtruth}</span>
       </p>
       <div className="max-w-full flex flex-col gap-y-2">
-        <h2>Explanations</h2>
+        <h2>Calculated Explanations</h2>
         {explanations?.map((explanation, index) => (
           <div key={index} className="border rounded p-5">
-            {ExplainerRenderer(explanation, input, output, _id)}
+            {ExplainerRenderer(explanation, input, output)}
           </div>
         ))}
       </div>
       <Legenda />
+      {optionsLeft.length > 0 && (
+        <div className="max-w-full flex flex-col gap-y-2">
+          <h2>Suggested Explanations</h2>
+          {optionsLeft.map((explanationName, index) => (
+            <div key={`${index}-expl`} className="border rounded p-5">
+              {SuggestionRenderer(explanationName, _id)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
