@@ -13,8 +13,14 @@ from helmet.utils.types import *
 
 
 class DEC_LM(Base_LM):
-    def __init__(self, model_checkpoint: str, model: transformers.AutoModelForCausalLM, 
-                 tokenizer: transformers.PreTrainedTokenizer, url: str, project_id: str, model_config: dict = {}, device="cpu"):
+    def __init__(self, 
+                 model_checkpoint: str, 
+                 model: transformers.AutoModelForCausalLM, 
+                 tokenizer: transformers.PreTrainedTokenizer, 
+                 url: str, 
+                 project_id: str, 
+                 model_config: dict = {}, 
+                 device="cpu"):
         self.model_type = "dec"
         self.model_config = model_config
 
@@ -30,22 +36,22 @@ class DEC_LM(Base_LM):
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
     def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, CertaintyExplanation]:
-        amount_potentials = 5
         inputs_ = self.to_device(inputs)
-
         input_len = len(inputs_["input_ids"][0])
 
-        output = self.model.generate(
+        generated_outputs = self.model.generate(
             **inputs_, 
             return_dict_in_generate=True,
             output_scores=True, # this gets the scores
             **generation_args,
+            **kwargs
         )
-        transition_scores = self.model.compute_transition_scores(output.sequences, output.scores, normalize_logits=True)
-        generated_tokens = output.sequences[:, input_len:]
+        
+        transition_scores = self.model.compute_transition_scores(generated_outputs.sequences, generated_outputs.scores, normalize_logits=True)
+        gen_sequences = generated_outputs.sequences[:, input_len:]
         certainties = [float(np.exp(score.cpu().numpy())) for score in transition_scores[0]]
 
-        outs = generated_tokens[0].detach().cpu().numpy() 
+        outs = gen_sequences[0].detach().cpu().numpy() 
 
         return outs, CertaintyExplanation(certainties)
     
