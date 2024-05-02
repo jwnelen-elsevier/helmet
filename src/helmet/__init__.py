@@ -61,8 +61,7 @@ def from_pretrained(model_checkpoint: str, model_type: str, embeddings_path:str,
     else:
         hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, **model_config)
 
-    hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-
+    hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint, **model_config)
     modelHelper = model_type_to_model_wrapper[model_type]
 
     model_setup = {
