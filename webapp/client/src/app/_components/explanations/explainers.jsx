@@ -9,7 +9,7 @@ import {
   ALTERNATIVES,
   CERTAINTY,
   CONTRASTIVE,
-  SALIENCY,
+  FEATURE_ATTRIBUTION,
 } from "utils/constants";
 
 const ExplanationTitle = ({ explanationName }) => {
@@ -82,7 +82,7 @@ const ExplainerRenderer = (explanation, input, output) => {
   switch (explanation?.explanation_method) {
     case CONTRASTIVE:
       return ContrastiveRenderer(explanation, input, output);
-    case SALIENCY:
+    case FEATURE_ATTRIBUTION:
       return FeatureImportanceRenderer(explanation, input, output);
     case ALTERNATIVES:
       return AlternativesRenderer(explanation.output_alternatives);

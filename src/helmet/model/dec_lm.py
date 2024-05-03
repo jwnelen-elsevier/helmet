@@ -75,7 +75,7 @@ class DEC_LM(Base_LM):
 
         return output_str, id
 
-    def saliency_explainer(self, id: str, **kwargs) -> SaliencyExplanation:
+    def feature_attribution(self, id: str, **kwargs) -> FeatureAttributionExplainer:
         run: Run = self.get_run(id)
         input = self._encode_text(run.input.prompt)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
@@ -98,7 +98,7 @@ class DEC_LM(Base_LM):
             result.append(gradients)
             print("finished token", idx, "of", total_length)
 
-        explanation = SaliencyExplanation(input_attributions=result)
+        explanation = FeatureAttributionExplainer(input_attributions=result)
         run.explanations.append(explanation)
 
         id = self.update_run(run)

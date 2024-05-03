@@ -6,7 +6,7 @@ from datetime import datetime, date
 from dateutil import parser
 
 from dacite import from_dict
-from helmet.utils.types import Run, Explanation, AlternativesExplanation, ContrastiveExplanation, SaliencyExplanation, explanation_name_to_class
+from helmet.utils.types import Run, Explanation, explanation_name_to_class
 from dataclasses import asdict
 
 numbers: tuple = tuple([numpy.int_, numpy.intc, numpy.intp, numpy.int8])
