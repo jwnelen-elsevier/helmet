@@ -36,11 +36,10 @@ class DEC_LM(Base_LM):
         super().__init__(model_checkpoint, model, tokenizer, self.model_type, url, project_id, embeddings, device)
     
     def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, CertaintyExplanation]:
-        inputs_ = self.to_device(inputs)
-        input_len = len(inputs_["input_ids"][0])
+        input_len = len(inputs["input_ids"][0])
 
         generated_outputs = self.model.generate(
-            **inputs_, 
+            **inputs, 
             return_dict_in_generate=True,
             output_scores=True, # this gets the scores
             **generation_args,

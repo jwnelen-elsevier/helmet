@@ -13,7 +13,7 @@ args = {
     "token": "hf_..."
 }
 
-model = helmet.from_pretrained(checkpoint, model_type, embeddings, project_id, device, platform_url, args)
+model = helmet.from_pretrained(checkpoint, model_type, embeddings, project_id, device, platform_url)
 
 predict_config = {
     "max_new_tokens": 5,
