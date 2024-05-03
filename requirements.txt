@@ -1,8 +1,0 @@
-numpy
-transformers
-accelerate
-setuptools
-torch==2.1.1
-PyYAML
-captum
-requests==2.27.1

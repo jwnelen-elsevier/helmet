@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "helmet"
-version = "1.0.5"
+version = "1.0.6"
 description = ""
 authors = ["Jeroen"]
 readme = "README.md"
@@ -12,15 +12,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 torch = "^2.1.1"
-bs4 = "^0.0.1"
 numpy = "^1.26.2"
 transformers = "^4.35.2"
-captum = "^0.7.0"
 accelerate = "^0.25.0"
-trulens = "^0.13.4"
 bitsandbytes = "^0.42.0"
 dacite = "^1.8.1"
 datasets = "^2.18.0"
+
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.4"
 

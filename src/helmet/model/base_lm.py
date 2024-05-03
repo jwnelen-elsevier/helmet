@@ -29,7 +29,8 @@ class Base_LM(ABC):
         if isinstance(text, list):
             text = self.tokenizer.apply_chat_template(text, tokenize = False, add_generation_prompt = True)
 
-        return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
+        enc = self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
+        return {k: v.to(self.device) for k, v in enc.items()}
 
     def _tokenize(self, text: str, **kwargs):
         t = self.tokenizer(text, return_tensors="pt", **kwargs)
