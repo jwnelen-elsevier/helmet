@@ -14,65 +14,59 @@ model_type_to_class = {
     "enc-dec": transformers.AutoModelForSeq2SeqLM,
 }
 
-model_type_to_implementation = {
+model_type_to_model_wrapper = {
     # "enc": ENC_LM,
     # "enc-dec": ENC_DEC_LM,
     "dec": DEC_LM,
 }
 
-project_setup = [
-    "project_id",
-    "platform_url",
-]
 
-model_setup_args = [
-    "checkpoint",
-    "model_type",
-    "embeddings",
-]
-
-run_config_args = [
-    "device"
-]
-
-def from_pretrained(project_setup: dict = {}, model_setup:dict = {}, run_config: dict={}): 
-    platform_url = project_setup.get("platform_url", url)
-    project_id = project_setup.get("project_id", None)
-    
-    model_type = model_setup.get("model_type", None)
-    model_checkpoint = model_setup.get("checkpoint", None)
-
-    device = run_config.get("device", "cpu")
-
+def from_pretrained(model_checkpoint: str, model_type: str, embeddings_path:str, project_id:str,                     device:str, platform_url:str = url, model_config: dict={}):
+    """
+    Load a model from a checkpoint and return the model object
+    Args:
+        model_checkpoint (str): The model checkpoint to load
+        model_type (str): The type of model to load (enc, dec, enc-dec)
+        embeddings_path (str): The embeddings pointer
+        project_id (str): The project id to send updates to
+        device (str): The device to load the model on (cpu or cuda)
+        platform_url (str): The url to send updates to (default is http://localhost:4000)
+        model_config (dict): The model configuration
+    """
+    # First checks
     assert device in ["cpu", "cuda"], AssertionError("device must be either 'cpu' or 'cuda'")
-
+    assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
+    if model_type in ["enc", "enc-dec"]:
+        raise NotImplementedError("model_type 'enc' and 'enc-dec' not implemented yet")
+    
     if device == "cuda":
         assert torch.cuda.is_available(), AssertionError("cuda is not available")
         torch.device(device)
+
     
-    assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
-    assert project_id is not None, AssertionError("project_id must be specified")
-
     print("updates will be sent to", platform_url)
-    print("setting up model with config, ", model_setup)
+    print("setting up model with config, ", model_config)
 
+    # Getting the Hugginface class
     model_cls = model_type_to_class[model_type]
 
     # Quantization of the model
     if device == "cuda":
         from transformers import BitsAndBytesConfig
         quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True, load_in_8bit=True)
-        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, config=quantization_config, device_map="auto", torch_dtype = torch.float16 if device == "cuda" else torch.float32)
-    else:
-        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True)
-
-    if device == "cuda":
+        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, config=quantization_config, 
+                                            device_map="auto", torch_dtype = torch.float16 if device == "cuda" else torch.float32, **model_config)
         hfModel = hfModel.to(device)
-    
-    hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+        
+    else:
+        hfModel = model_cls.from_pretrained(model_checkpoint, trust_remote_code=True, **model_config)
 
-    modelHelper = model_type_to_implementation[model_type]
-    assert modelHelper is not None, AssertionError(f"model_type {model_type} not implemented")
+    hfTokenizer = AutoTokenizer.from_pretrained(model_checkpoint, **model_config)
+    modelHelper = model_type_to_model_wrapper[model_type]
+
+    model_setup = {
+        "embeddings": embeddings_path
+    }
 
     model = modelHelper(model_checkpoint, hfModel, hfTokenizer, platform_url, project_id, model_setup, device=device)
     return model

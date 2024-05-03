@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
-from helmet.utils.constants import SALIENCY, ALTERNATIVES, CONTRASTIVE
+from helmet.utils.constants import SALIENCY, ALTERNATIVES, CONTRASTIVE, CERTAINTY
 
 @dataclass 
 class Attribution:
@@ -39,10 +39,19 @@ class AlternativesExplanation(Explanation):
         self.output_alternatives = output_alternatives
         super().__init__(ALTERNATIVES)
 
+@dataclass
+class CertaintyExplanation(Explanation):
+    """Certainty Explanation dataclass"""
+    certainties: list[float]
+    def __init__(self, certainties: list[float]):
+        self.certainties = certainties
+        super().__init__(CERTAINTY)
+
 explanation_name_to_class = {
     ALTERNATIVES: AlternativesExplanation,
     CONTRASTIVE: ContrastiveExplanation,
-    SALIENCY: SaliencyExplanation
+    SALIENCY: SaliencyExplanation,
+    CERTAINTY: CertaintyExplanation
 }
 
 @dataclass  

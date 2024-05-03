@@ -1,6 +1,6 @@
 // Create a component that will highlight text
 import clsx from "clsx";
-import { removeSpecialChars } from "utils/strings";
+import { marginStyle } from "utils/strings";
 
 const TextHighlighter = ({
   tokens,
@@ -28,24 +28,6 @@ const TextHighlighter = ({
       return `bg-${colorHue}-${colorSaturation}`;
     }
     return `bg-${colorHue}-${colorSaturation}`;
-  };
-
-  const isNewWord = (word) => {
-    return (
-      !word.includes("##") ||
-      word.includes("Ġ", "_") ||
-      !word.includes([",", "!", "."])
-    );
-  };
-
-  const marginStyle = (word) => {
-    if (!word) {
-      return { trimmedWord: "", addSpace: false };
-    }
-
-    const addSpace = isNewWord(word);
-    let trimmedWord = removeSpecialChars(word);
-    return { trimmedWord, addSpace };
   };
 
   return (

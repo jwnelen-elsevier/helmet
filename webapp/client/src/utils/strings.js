@@ -19,10 +19,33 @@ export const maxDecimals = (number, maxDecimals) => {
   return number.toFixed(maxDecimals);
 };
 
+export const toPercentageString = (number, decimals = 2) => {
+  const n = maxDecimals(number * 100, decimals);
+  return `${n}%`;
+};
+
 export const removeSpecialChars = (word) => {
   return word
     ?.replaceAll(/#/g, "")
     ?.replaceAll(/Ġ/g, "")
     ?.replaceAll("Ċ", "")
     ?.replaceAll("▁", "");
+};
+
+export const isNewWord = (word) => {
+  return (
+    !word.includes([",", "!", ".", "?", ":", ";"]) ||
+    !word.includes("##") ||
+    word.includes("Ġ", "_")
+  );
+};
+
+export const marginStyle = (word) => {
+  if (!word) {
+    return { trimmedWord: "", addSpace: false };
+  }
+
+  const addSpace = isNewWord(word);
+  let trimmedWord = removeSpecialChars(word);
+  return { trimmedWord, addSpace };
 };
