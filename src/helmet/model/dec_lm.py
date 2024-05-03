@@ -83,7 +83,7 @@ class DEC_LM(Base_LM):
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
 
-        merged = torch.cat((input_ids, torch.tensor(output_token_ids)), 0)
+        merged = torch.cat((input_ids, self.to_device(torch.tensor(output_token_ids))), 0)
         merged = self.to_device(merged)
 
         start_index = len(input_ids)
