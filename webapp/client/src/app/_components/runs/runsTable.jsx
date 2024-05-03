@@ -168,7 +168,7 @@ const Runs = ({ runs }) => {
   }
 
   const NotExplained = () => (
-    <span className={"text-gray-500 text-sm"}>
+    <span className={"text-gray-400 text-sm"}>
       <CloseIcon></CloseIcon>
     </span>
   );
@@ -241,7 +241,7 @@ const Runs = ({ runs }) => {
                 <TableCell>{row.output.output_str}</TableCell>
                 <TableCell>
                   <span className="font-mono text-xs">
-                    {row.model_checkpoint} ({getModelType(row.model_type)})
+                    {row.model_checkpoint}
                   </span>
                 </TableCell>
                 <TableCell>{getTimeString(row.date)}</TableCell>
