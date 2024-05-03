@@ -15,8 +15,8 @@ export default async function Page() {
             <li className="mb-1">Contrastive Explanation</li>
           </ol>
         </div>
-        {/* ------- CERTAINTY --------- */}
-        <Accordion>
+        <Accordion selectionMode="multiple">
+          {/* ------- CERTAINTY --------- */}
           <AccordionItem key="1" aria-label="Certainty" title="Certainty">
             <div className="text-gray-600 mb-3">
               <p>
@@ -56,7 +56,6 @@ export default async function Page() {
               </ul>
             </div>
           </AccordionItem>
-
           {/* ------- Feature Attribution --------- */}
           <AccordionItem
             key="2"
@@ -70,12 +69,33 @@ export default async function Page() {
                 For example, in a text-based model, this might involve
                 identifying which words or phrases most strongly influence the
                 model's output. In the current approach, Integrated Gradients
-                are used.
+                are used. <br />
+                This is done using a baseline (normally a zero vector) and then
               </p>
               <br />
               <h4>Resources on Feature Attribution</h4>
               <ul className="list-disc ml-5">
-                <li>More information on</li>
+                <li>
+                  Integrated Gradients article on{" "}
+                  <Link
+                    className="underline text-blue-500"
+                    href={
+                      "https://medium.com/@seth_12468/integrated-gradients-interpreting-the-llm-decision-making-process-821789001046"
+                    }
+                  >
+                    Medium
+                  </Link>
+                </li>
+                <li>
+                  Or if you want to dive deeper into it, find the original
+                  publication
+                  <Link
+                    className="underline text-blue-500"
+                    href={"https://dl.acm.org/doi/10.5555/3305890.3306024"}
+                  >
+                    https://dl.acm.org/doi/10.5555/3305890.3306024
+                  </Link>
+                </li>
               </ul>
             </div>
           </AccordionItem>
@@ -96,6 +116,17 @@ export default async function Page() {
                 slightly varied inputs.
               </p>
             </div>
+          </AccordionItem>
+
+          {/* ------- Surveys --------- */}
+          <AccordionItem
+            key="4"
+            aria-label="Surveys"
+            title="Additional surveys"
+          >
+            <p>
+              Lastly, I would like to give an overview of some existing surveys
+            </p>
           </AccordionItem>
         </Accordion>
       </div>
