@@ -17,7 +17,6 @@ def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradien
 
 def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=None):
     # Get model gradients and input embeddings
-    torch.enable_grad()
     model = wrapper.model
     embedding_layer = wrapper.embeddings
 
@@ -34,19 +33,18 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     input_ids_new = torch.tensor(input_ids.clone().detach())
     input_ids_unsqueezed = input_ids_new.unsqueeze(0)
 
-    # A = model.generate(input_ids=input_ids_unsqueezed, attention_mask=input_mask)
-    A = model(input_ids=input_ids_unsqueezed, output_attentions=False)
+    with torch.enable_grad():
+        A = model(input_ids=input_ids_unsqueezed, output_attentions=False)
 
-    if foil is not None and correct != foil:
-        (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
-    else:
-        # Take the last logits and backpropagate the gradient
-        p = A.logits[0][-1][correct]
-        p.backward()
-    handle.remove()
-    hook.remove()
+        if foil is not None and correct != foil:
+            (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
+        else:
+            # Take the last logits and backpropagate the gradient
+            p = A.logits[0][-1][correct]
+            p.backward()
+        handle.remove()
+        hook.remove()
 
-    import numpy as np
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
 
 def input_x_gradient(grads, embds, normalize=False):
