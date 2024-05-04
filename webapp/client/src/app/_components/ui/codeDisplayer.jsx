@@ -1,12 +1,10 @@
-import CopyableText from "./copyableText";
+import { Snippet } from "@nextui-org/snippet";
 
 const CodeDisplayer = ({ code }) => {
   return (
-    <CopyableText text={code}>
-      <code className="border-2 rounded font-mono text-left text-sm p-2 ">
-        {code}
-      </code>
-    </CopyableText>
+    <Snippet symbol="" radius="sm" color="default">
+      {code}
+    </Snippet>
   );
 };
 export default CodeDisplayer;

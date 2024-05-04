@@ -1,4 +1,4 @@
 ALTERNATIVES = "alternatives"
 CONTRASTIVE = "contrastive"
-SALIENCY = "saliency"
+FEATURE_ATTRIBUTION = "feature_attribution"
 CERTAINTY = "certainty"

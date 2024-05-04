@@ -1,7 +1,7 @@
 const ALTERNATIVES = "alternatives";
 const CONTRASTIVE = "contrastive";
-const SALIENCY = "saliency";
+const FEATURE_ATTRIBUTION = "feature_attribution";
 const CERTAINTY = "certainty";
 
-const options = [CONTRASTIVE, SALIENCY, CERTAINTY];
-export { ALTERNATIVES, CERTAINTY, CONTRASTIVE, SALIENCY, options };
+const options = [CONTRASTIVE, FEATURE_ATTRIBUTION, CERTAINTY];
+export { ALTERNATIVES, CERTAINTY, CONTRASTIVE, FEATURE_ATTRIBUTION, options };

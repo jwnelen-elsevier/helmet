@@ -1,4 +1,4 @@
-import { CONTRASTIVE, SALIENCY } from "utils/constants";
+import { CONTRASTIVE, FEATURE_ATTRIBUTION } from "utils/constants";
 import CodeDisplayer from "../ui/codeDisplayer";
 
 const ExplanationSuggestion = ({ explanationName, subText = "", code }) => {
@@ -11,7 +11,7 @@ const ExplanationSuggestion = ({ explanationName, subText = "", code }) => {
   );
 };
 
-const SaliencySuggestion = ({ id }) => {
+const FeatureAttrSuggestion = ({ id }) => {
   const explanationName = "Feature Attribution";
   const code = `model.saliency_explainer("${id}")`;
   return (
@@ -40,8 +40,8 @@ const SuggestionRenderer = (explanationName, _id) => {
   switch (explanationName) {
     case CONTRASTIVE:
       return <ContrastiveSuggestion id={_id} />;
-    case SALIENCY:
-      return <SaliencySuggestion id={_id} />;
+    case FEATURE_ATTRIBUTION:
+      return <FeatureAttrSuggestion id={_id} />;
     default:
       return <div>Unknown explainer</div>;
   }
