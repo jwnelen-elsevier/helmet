@@ -76,14 +76,13 @@ class DEC_LM(Base_LM):
 
     def feature_attribution(self, id: str, **kwargs) -> FeatureAttributionExplainer:
         run: Run = self.get_run(id)
-        input = self._encode_text(run.input.prompt)
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
-        
+        input = self._encode_text(run.input.prompt) #on cuda
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) #on cpu
+        output_token_ids = torch.tensor(output_token_ids).to(self.device)
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
 
-        merged = torch.cat((input_ids, torch.tensor(output_token_ids)), 0)
-        merged = self.to_device(merged)
+        merged = torch.cat((input_ids, output_token_ids), 0)
 
         start_index = len(input_ids)
         total_length = len(merged)
@@ -130,4 +129,5 @@ class DEC_LM(Base_LM):
         id = self.update_run(run)
 
         return explanation
+        
 
