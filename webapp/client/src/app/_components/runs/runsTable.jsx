@@ -13,7 +13,7 @@ import { deleteAllRuns, deleteRun } from "app/actions/actions";
 import Link from "next/link";
 import { useSelectedProject } from "providers/project";
 import { useEffect, useState } from "react";
-import { CONTRASTIVE, SALIENCY } from "utils/constants";
+import { CONTRASTIVE, FEATURE_ATTRIBUTION } from "utils/constants";
 import { getTimeString } from "utils/strings";
 import CollapsibleText from "../ui/collapsibleText";
 import {
@@ -229,7 +229,7 @@ const Runs = ({ runs }) => {
             const hasContrastiveExplanation =
               explanationsDone.includes(CONTRASTIVE);
             const hasAttributionExplanation =
-              explanationsDone.includes(SALIENCY);
+              explanationsDone.includes(FEATURE_ATTRIBUTION);
             return (
               <TableRow key={row._id}>
                 <TableCell>

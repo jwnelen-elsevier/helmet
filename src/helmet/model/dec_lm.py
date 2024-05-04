@@ -8,7 +8,6 @@ import transformers
 
 from helmet.explainers.gradients import analyze_token, input_x_gradient
 from helmet.model.base_lm import Base_LM
-from helmet.utils.constants import ALTERNATIVES, CONTRASTIVE, SALIENCY
 from helmet.utils.types import *
 
 
