@@ -2,7 +2,7 @@
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import Link from "next/link";
 
-export default async function Page() {
+export default function Page() {
   return (
     <div className="flex justify-center align-middle min-w-full items-center ">
       <div className="text-left p-8 m-8  max-w-screen-md flex-grow border shadow-lg rounded-lg bg-white">
@@ -68,8 +68,8 @@ export default async function Page() {
                 by highlighting the most influential parts of the input data.
                 For example, in a text-based model, this might involve
                 identifying which words or phrases most strongly influence the
-                model's output. In the current approach, Integrated Gradients
-                are used. <br />
+                {`model's`} output. In the current approach, Integrated
+                Gradients are used. <br />
                 This is done using a baseline (normally a zero vector) and then
               </p>
               <br />

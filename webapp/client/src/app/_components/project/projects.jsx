@@ -17,8 +17,8 @@ const DisplayProjects = () => {
       <h3>Load/create project from helmet</h3>
       <p>Create/load a new project can also be done in Jupyter notebook:</p>
       <Snippet symbol="" radius="sm" color="default">
-        project_id = helmet.get_or_create_project(platform_url, project_name,
-        "text_generation")
+        {`project_id = helmet.get_or_create_project(platform_url, project_name,
+        "text_generation")`}
       </Snippet>
       <h3>Create a new project</h3>
       <p className="italic mb-4">
