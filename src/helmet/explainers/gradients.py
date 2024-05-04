@@ -17,7 +17,6 @@ def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradien
 
 def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=None):
     # Get model gradients and input embeddings
-    torch.enable_grad()
     model = wrapper.model
     embedding_layer = wrapper.embeddings
 
