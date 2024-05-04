@@ -8,6 +8,10 @@ const DisplayProjects = () => {
   return (
     <div className="space-y-2">
       <h1>Projects page</h1>
+      <p className="italic mb-4">
+        Its adviced to create a project for every task you are solving. You can
+        have multiple models within the same project
+      </p>
       <h3 className="">Existing projects {`(${projects?.length})`}</h3>
       <div>
         {projects?.map((p, i) => (
@@ -21,10 +25,6 @@ const DisplayProjects = () => {
         "text_generation")`}
       </Snippet>
       <h3>Create a new project</h3>
-      <p className="italic mb-4">
-        Its adviced to create a project for every task you are solving. You can
-        have multiple models within the same project
-      </p>
       <CreateProjectModal />
     </div>
   );

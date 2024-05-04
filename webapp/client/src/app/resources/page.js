@@ -19,6 +19,10 @@ export default function Page() {
           {/* ------- CERTAINTY --------- */}
           <AccordionItem key="1" aria-label="Certainty" title="Certainty">
             <div className="text-gray-600 mb-3">
+              <h4>How to interpret certainty?</h4>
+              <p>Interpreting certainty is quite intiutive.</p>
+              <br />
+              <h4>How does it work?</h4>
               <p>
                 The certainty is calculated based on the logits. Logits are the
                 raw scores output by the last layer of a neural network. They
@@ -63,6 +67,10 @@ export default function Page() {
             title="Feature Attribution"
           >
             <div className="text-gray-600 mb-3">
+              <h4>How to interpret certainty?</h4>
+              <p>Interpreting certainty is quite intiutive.</p>
+              <br />
+              <h4>How does it work?</h4>
               <p>
                 Feature Attribution techniques aim to explain model predictions
                 by highlighting the most influential parts of the input data.
@@ -107,6 +115,10 @@ export default function Page() {
             title=" Contrastive Explanation"
           >
             <div>
+              <h4>How to interpret certainty?</h4>
+              <p>Interpreting certainty is quite intiutive.</p>
+              <br />
+              <h4>How does it work?</h4>
               <p className="text-gray-600 mb-3">
                 Contrastive Explanation focuses on explaining why the model made
                 a specific decision instead of another. It identifies what
@@ -115,6 +127,10 @@ export default function Page() {
                 decision-making process of a model by comparing the outcomes of
                 slightly varied inputs.
               </p>
+              <h4>Resources on Feature Attribution</h4>
+              <ul className="list-disc ml-5">
+                <li></li>
+              </ul>
             </div>
           </AccordionItem>
 
@@ -127,6 +143,9 @@ export default function Page() {
             <p>
               Lastly, I would like to give an overview of some existing surveys
             </p>
+            <ul className="list-disc ml-5 mt-1">
+              <li>Full list of XAI for LLMs</li>
+            </ul>
           </AccordionItem>
         </Accordion>
       </div>

@@ -35,5 +35,5 @@ h3 {
 }
 
 h4 {
-  @apply italic;
+  @apply italic font-bold;
 }

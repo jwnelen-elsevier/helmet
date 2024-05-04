@@ -17,7 +17,7 @@ const ExplanationTitle = ({ explanationName }) => {
     <h3 className="inline-flex gap-2 text-xl items-center bold">
       {explanationName}{" "}
       <Tooltip showArrow={true} content={"Info about this method"}>
-        <Link href={"/resources#gradientxinput"}>
+        <Link href={"/resources"}>
           <InfoIcon />
         </Link>
       </Tooltip>{" "}
