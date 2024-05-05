@@ -37,19 +37,21 @@ class DEC_LM(Base_LM):
     def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, CertaintyExplanation]:
         input_len = len(inputs["input_ids"][0])
 
-        generated_outputs = self.model.generate(
-            **inputs, 
-            return_dict_in_generate=True,
-            output_scores=True, # this gets the scores
-            **generation_args,
-            **kwargs
-        )
+        with torch.no_grad():
+            inputs = self.to_device(inputs)
+            generated_outputs = self.model.generate(
+                **inputs, 
+                return_dict_in_generate=True,
+                output_scores=True, # this gets the scores
+                **generation_args,
+                **kwargs
+            )
         
-        transition_scores = self.model.compute_transition_scores(generated_outputs.sequences, generated_outputs.scores, normalize_logits=True)
-        gen_sequences = generated_outputs.sequences[:, input_len:]
-        certainties = [float(np.exp(score.cpu().numpy())) for score in transition_scores[0]]
+            transition_scores = self.model.compute_transition_scores(generated_outputs.sequences, generated_outputs.scores, normalize_logits=True)
+            gen_sequences = generated_outputs.sequences[:, input_len:]
+            certainties = [float(np.exp(score.cpu().numpy())) for score in transition_scores[0]]
 
-        outs = gen_sequences[0].detach().cpu().numpy() 
+            outs = gen_sequences[0].detach().cpu().numpy() 
 
         return outs, CertaintyExplanation(certainties)
     
@@ -79,6 +81,10 @@ class DEC_LM(Base_LM):
         input = self._encode_text(run.input.prompt) #on cuda
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) #on cpu
         output_token_ids = torch.tensor(output_token_ids).to(self.device)
+
+        # TODO: GPU is still not fixed:
+        # input_ids_new = torch.tensor(input_ids.clone().detach()) is maybe needed
+
         input_ids = input["input_ids"][0]
         attention_mask = input["attention_mask"]
 
@@ -108,6 +114,9 @@ class DEC_LM(Base_LM):
         input = self._tokenize(run.input.prompt)
         alternative_output = self._encode_text(alternative_str)
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
+
+        # TODO: GPU is still not fixed:
+        # input_ids_new = torch.tensor(input_ids.clone().detach()) is maybe needed
 
         input_ids = self.to_device(input["input_ids"][0])
         attention_mask = self.to_device(input["attention_mask"])
