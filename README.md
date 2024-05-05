@@ -33,23 +33,33 @@ This package exists of two parts;
 #### Platform configuration
 
 ```python
-project_setup = {
-    # This should point to the NodeJS API
-    platform_url: "localhost:4000"
-    project_id: "<ID>"
-}
+project_name = "Project Name"
+project_id = "Id" # (get from frontend or code)
+platform_url = "https://" # Please do not change this
+
 ```
 
 #### Model configuration
 
 ```python
-model_checkpoint = "meta-llama/Meta-Llama-3-8B"
-model_setup = {
-    "checkpoint": model_checkpoint,
-    # This can be enc/enc-dec/dec
-    "model_type": "dec",
-    # This should specify where the embeddings are stored
-    "embeddings": "model.embed_tokens",
+# This should be the name as is presented on Huggingface 🤗
+checkpoint = "meta-llama/Meta-Llama-3-8B-Instruct"
+# The embeddings are needed for the XAI part. This varies between models, thus please provide it yourself.
+embeddings = "model.embed_tokens"
+
+# This is for wrapper to know what kind of model it is.
+model_type = "dec"
+```
+
+#### Model Args
+
+```python
+# This is needed to use Llama-3
+access_token = "hf_"
+
+# You can add more here if you like
+model_args = {
+    "token": access_token
 }
 ```
 
@@ -67,7 +77,7 @@ run_config = {
 Creating a project can be done by current the following python code in your jupyter notebook.
 
 ```python
-project_id = helmet.get_or_create_project("<platform url>", "<project name>", "text_generation")
+project_id = get_or_create_project(platform_url, project_name, "text_generation")
 ```
 
 This will give you back the ID of the project, that you can then use to load the model.
@@ -75,7 +85,7 @@ This will give you back the ID of the project, that you can then use to load the
 After you have configured the model, platform & device, you can start loading the model like this:
 
 ```python
-model = helmet.from_pretrained(project_setup, model_setup, run_config)
+model = from_pretrained(checkpoint, model_type, embeddings, project_id, device, platform_url, model_args)
 ```
 
 ### Features
@@ -87,6 +97,12 @@ model = helmet.from_pretrained(project_setup, model_setup, run_config)
 ### Demo
 
 A demo can be found at [https://helmet.jeroennelen.nl](https://helmet.jeroennelen.nl)
+
+### Component architecture
+
+<p align="center">
+<img  width="75%" src="docs/helmet simplified.png" />
+</p>
 
 ## Install from source
 
