@@ -38,7 +38,6 @@ class DEC_LM(Base_LM):
         input_len = len(inputs["input_ids"][0])
 
         with torch.no_grad():
-            inputs = self.to_device(inputs)
             generated_outputs = self.model.generate(
                 **inputs, 
                 return_dict_in_generate=True,
