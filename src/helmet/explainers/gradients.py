@@ -30,22 +30,28 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
         input_ids = input_ids[:-1]
         input_mask = input_mask[:-1]
 
-    input_ids = torch.tensor(input_ids, device=wrapper.device).unsqueeze(0)
-    with torch.enable_grad():
-        A = model(input_ids=input_ids, output_attentions=False)
+    input_ids = torch.tensor(input_ids).unsqueeze(0)
 
+
+    with torch.no_grad():
+        input_ids = input_ids.to(wrapper.device)
+        input_mask = input_mask.to(wrapper.device)
+
+        model.eval()
+        A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+        
+        # Backpropagate the gradient
         if foil is not None and correct != foil:
             (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
         else:
             # Take the last logits and backpropagate the gradient
             p = A.logits[0][-1][correct]
             p.backward()
-    
-    handle.remove()
-    hook.remove()
-    model.zero_grad()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+        
+        handle.remove()
+        hook.remove()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
 
