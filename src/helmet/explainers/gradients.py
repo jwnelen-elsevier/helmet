@@ -30,25 +30,27 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
         input_ids = input_ids[:-1]
         input_mask = input_mask[:-1]
 
-    with torch.no_grad():
-        input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
-        input_mask =  torch.tensor(input_mask).to(wrapper.device)
-        model.eval()
-        A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+    input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
+    input_mask =  torch.tensor(input_mask).to(wrapper.device)
+    model.eval()
+    A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
 
-        # Backpropagate the gradient
-        if foil is not None and correct != foil:
-            ls = (A.logits[0][-1][correct].detach()-A.logits[0][-1][foil].detach())
-            ls.backward()
-        else:
-            # Take the last logits and backpropagate the gradient
-            p = A.logits[0][-1][correct].detach()
-            p.backward()
-        
-        handle.remove()
-        hook.remove()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+    
+    # For contrastive explanations
+    if foil is not None and correct != foil:
+        ls = (A.logits[0][-1][correct]-A.logits[0][-1][foil])
+        torch.autograd.backward(ls)
+        # ls.backward()
+    else:
+    # When doing just the correct token
+        p = A.logits[0][-1][correct]
+        torch.autograd.backward(p)
+        # p.backward()
+    
+    handle.remove()
+    hook.remove()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
 
