@@ -32,20 +32,18 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
 
     input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
     input_mask =  torch.tensor(input_mask).to(wrapper.device)
-    with torch.enable_grad():
-        model.eval()    
-        A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+    
+    model.eval()    
+    A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
 
-        # For contrastive explanations
-        if foil is not None and correct != foil:
-            ls = (A.logits[0][-1][correct]-A.logits[0][-1][foil])
-            torch.autograd.backward(ls)
-            # ls.backward()
-        else:
-            # When doing just the correct token
-            p = A.logits[0][-1][correct]
-            torch.autograd.backward(p)
-            # p.backward()
+    # For contrastive explanations
+    if foil is not None and correct != foil:
+        ls = torch.tensor((A.logits[0][-1][correct]-A.logits[0][-1][foil]), requires_grad=True).detach()
+        ls.backward()
+    else:
+        # When doing just the correct token
+        p = torch.tensor(A.logits[0][-1][correct], requires_grad=True).detach()
+        p.backward()
     
     handle.remove()
     hook.remove()
