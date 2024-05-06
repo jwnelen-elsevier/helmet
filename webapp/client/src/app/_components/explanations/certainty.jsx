@@ -42,7 +42,9 @@ const CertaintyExplainer = ({ certainties, output }) => {
                     {trimmedWord}
                   </span>
                 </div>
-                <div>{toPercentageString(certainties[i])}</div>
+                {/* <div className="text-xs">
+                  {toPercentageString(certainties[i], 0)}
+                </div> */}
               </div>
             </div>
           );

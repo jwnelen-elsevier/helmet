@@ -101,6 +101,7 @@ class Run:
 
     _id: Optional[str] = None
     groundtruth: Optional[str] = None
+    custom_args: Optional[dict] = None
     execution_time_in_sec: Optional[float] = None
     
     def dict(self) -> dict:
@@ -119,5 +120,7 @@ class Run:
             d["_id"] = self._id
         if self.groundtruth is not None:
             d["groundtruth"] = self.groundtruth
+        if self.custom_args is not None:
+            d["custom_args"] = self.custom_args
         return d
     

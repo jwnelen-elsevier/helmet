@@ -17,19 +17,11 @@ model = helmet.from_pretrained(checkpoint, model_type, embeddings, project_id, d
 
 predict_config = {
     "max_new_tokens": 5,
+    "temperature": 0.7,
+    "do_sample": True
 }
 
-prompt = "Can you stop the dog from"
+prompt = "Who is the current president of the United States?"
 result, id = model.predict(prompt, generation_args=predict_config)
-model.feature_attribution(id)
+# model.feature_attribution(id)
 model.contrastive_explainer(id, "Clinton")
-
-# prompt = "The president of the United States of America is"
-# result, id = model.predict(prompt, generation_args=predict_config)
-
-# id = "66326bcd22c8ab06ba6fe191"
-
-# project = llmex.Project(project_setup)
-# model = llmex.from_pretrained(model_setup=model_setup, run_config=run_config)
-
-# project.load_model(model)
