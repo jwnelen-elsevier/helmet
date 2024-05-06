@@ -106,18 +106,19 @@ class DEC_LM(Base_LM):
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
-        input_ids = self.tokenizer.convert_tokens_to_ids(run.input.input_tokens) # on cpu
-        alternative_output = self._encode_text(alternative_str.strip()) # on cpu
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
         
-        # Stay on CPU
-        output_id = output_token_ids[0]
-        alternative_id = alternative_output["input_ids"][0]
+        input_ids = self.tokenizer.convert_tokens_to_ids(run.input.input_tokens) # on cpu
+        alternative_output_toks = self.tokenizer.tokenize(alternative_str.strip()) # on cpu
+        alternative_id = self.tokenizer.convert_tokens_to_ids(alternative_output_toks) # on cpu
         
         if len(alternative_id) > 1:
             alternative_id = alternative_id[0]
-            print("Warning: alternative output has more than one token, using the first one, which is ", self.tokenizer.decode(alternative_id, skip_special_tokens=True))
+            print("Warning: alternative output has more than one token, using the first one, which is ", str(alternative_output_toks[0]))
         
+        # To get the first output token, for the contrast
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
+        output_id = output_token_ids[0]
+
         saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
