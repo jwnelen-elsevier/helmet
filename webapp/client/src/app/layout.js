@@ -1,5 +1,6 @@
 import Footer from "app/_components/layout/footer";
 import NavigationBar from "app/_components/layout/navBar";
+import { CertaintyConstantsProvider } from "providers/certaintyConstants";
 import { Providers } from "providers/nextUI";
 import { ProjectsProvider } from "providers/project";
 import { StatusProvider } from "providers/status";
@@ -12,9 +13,11 @@ export default function RootLayout({ children }) {
         <Providers>
           <ProjectsProvider>
             <StatusProvider>
-              <NavigationBar />
-              <div className="text-center">{children}</div>
-              <Footer />
+              <CertaintyConstantsProvider>
+                <NavigationBar />
+                <div className="text-center">{children}</div>
+                <Footer />
+              </CertaintyConstantsProvider>
             </StatusProvider>
           </ProjectsProvider>
         </Providers>
