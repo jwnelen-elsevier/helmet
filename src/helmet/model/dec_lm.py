@@ -86,8 +86,6 @@ class DEC_LM(Base_LM):
         # Catenate input_ids and output_token_ids
         merged = np.concatenate((input_ids, output_token_ids), 0)
 
-        # merged = torch.cat((input_ids, output_token_ids), 0).detach().cpu().numpy()
-
         start_index = len(input_ids)
         total_length = len(merged)
 
@@ -107,34 +105,33 @@ class DEC_LM(Base_LM):
 
         return explanation
     
-    # def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
-    #     run: Run = self.get_run(id)
-    #     input = self._tokenize(run.input.prompt)
-    #     alternative_output = self._encode_text(alternative_str)
-    #     output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
-
-    #     # TODO: GPU is still not fixed:
-    #     # input_ids_new = torch.tensor(input_ids.clone().detach()) is maybe needed
-
-    #     input_ids = self.to_device(input["input_ids"][0])
-    #     attention_mask = self.to_device(input["attention_mask"])
+    def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
+        run: Run = self.get_run(id)
+        input = self._encode_text(run.input.prompt) # on cpu
+        alternative_output = self._encode_text(alternative_str) # on cpu
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
         
-    #     output_id = output_token_ids[0]
-
-    #     alternative_id = alternative_output["input_ids"][0]
-    #     if len(alternative_id) > 1:
-    #         print("Warning: alternative output has more than one token, using the first one")
-    #         alternative_id = alternative_id[0]
-    #     saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
-    #     gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
-
-    #     alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
+        # Stay on CPU
+        input_ids = input["input_ids"][0].detach().cpu().numpy()
+        attention_mask = input["attention_mask"].detach().cpu().numpy()
         
-    #     explanation = ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
-    #     run.explanations.append(explanation)
+        output_id = output_token_ids[0]
+        alternative_id = alternative_output["input_ids"][0]
 
-    #     id = self.update_run(run)
+        if len(alternative_id) > 1:
+            print("Warning: alternative output has more than one token, using the first one")
+            alternative_id = alternative_id[0]
+        
+        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
+        gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
-    #     return explanation
+        alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
+        
+        explanation = ContrastiveExplanation(contrastive_input=alternative_output_str, attributions=gradients)
+        run.explanations.append(explanation)
+
+        id = self.update_run(run)
+
+        return explanation
         
 

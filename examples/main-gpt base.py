@@ -22,12 +22,12 @@ predict_config = {
 prompt = "Can you stop the dog from"
 result, id = model.predict(prompt, generation_args=predict_config)
 model.feature_attribution(id)
+model.contrastive_explainer(id, "Clinton")
 
 # prompt = "The president of the United States of America is"
 # result, id = model.predict(prompt, generation_args=predict_config)
 
 # id = "66326bcd22c8ab06ba6fe191"
-# model.contrastive_explainer(id, "Clinton")
 
 # project = llmex.Project(project_setup)
 # model = llmex.from_pretrained(model_setup=model_setup, run_config=run_config)
