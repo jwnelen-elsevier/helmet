@@ -35,7 +35,6 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     
     with torch.enable_grad():
         model.eval()
-        model.zero_grad()
         for param in model.parameters():
             param.grad = None
         
@@ -43,10 +42,12 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
 
         # For contrastive explanations
         if foil is not None and correct != foil:
-            p = torch.tensor((A.logits[0][-1][correct]-A.logits[0][-1][foil]))
+            p = A.logits[0][-1][correct] - A.logits[0][-1][foil]
         else:
-            p = torch.tensor(A.logits[0][-1][correct])
+            # for feature attributions
+            p = A.logits[0][-1][correct]
 
+        # p.retain_grad() Maybe needed?
         p.backward()
         
         handle.remove()
