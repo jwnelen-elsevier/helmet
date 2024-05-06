@@ -18,6 +18,7 @@ model = helmet.from_pretrained(checkpoint, model_type, embeddings, project_id, d
 predict_config = {
     "max_new_tokens": 5,
     "temperature": 0.7,
+    "do_sample": True
 }
 
 prompt = "Who is the current president of the United States?"
