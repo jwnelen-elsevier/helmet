@@ -28,17 +28,17 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
         # All is on CPU at this moment
         correct = input_ids[-1]
         input_ids = input_ids[:-1]
-        input_mask = input_mask[:-1]
+        # input_mask = input_mask[]
 
     input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
-    input_mask =  torch.tensor(input_mask).to(wrapper.device)
+    # input_mask =  torch.tensor(input_mask).to(wrapper.device)
     
     with torch.enable_grad():
         model.eval()
         for param in model.parameters():
             param.grad = None
         
-        A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+        A = model(input_ids=input_ids, output_attentions=False)
 
         # For contrastive explanations
         if foil is not None and correct != foil:
