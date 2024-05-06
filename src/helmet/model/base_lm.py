@@ -7,7 +7,6 @@ import torch
 from helmet.updater import get_run, update_app
 from helmet.utils.types import Explanation, Input, Output, Run
 
-
 class Base_LM(ABC):    
     def __init__(self, model_checkpoint: str, model, tokenizer, 
                  model_type: str, url: str, project_id:str, embeddings, device="cpu"):
@@ -19,22 +18,19 @@ class Base_LM(ABC):
         self.model_type = model_type
         self.embeddings = embeddings
         self.device = device
-        self.__post_init__()
-    
-    def __post_init__(self):
-        self.reset_model()
+        self.model.eval()
+        self.model.zero_grad()
         print("model loaded")
-    
+
     def _encode_text(self, text, **kwargs):
         if isinstance(text, list):
             text = self.tokenizer.apply_chat_template(text, tokenize = False, add_generation_prompt = True)
-
-        enc = self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
-        return {k: v.to(self.device) for k, v in enc.items()}
+        # encode = conert_tokens_to_ids(tokenize(text))
+        # encode plus will also give the attention mask
+        return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
 
     def _tokenize(self, text: str, **kwargs):
-        t = self.tokenizer(text, return_tensors="pt", **kwargs)
-        return t.to(self.device)
+        return self.tokenizer(text, return_tensors="pt", **kwargs)
 
     def token_ids_to_string(self, output) -> str:
         # Return back the string
@@ -43,26 +39,12 @@ class Base_LM(ABC):
     def get_tokens(self, text: str):
         return self.tokenizer.get_tokens(text)
     
-    def to_device(self, tensor):
-        return tensor.to(self.device)
-
-    def get_input_embeddings(self, text: str):
-        """Extract input embeddings
-
-        :param text str: the string to extract embeddings from.
-        """
-        item = self._tokenize(text)
-        item = {k: v.to(self.device) for k, v in item.items()}
-        embeddings = self._get_input_embeds_from_ids(item["input_ids"][0])
-        embeddings = embeddings.unsqueeze(0)
-        return embeddings
-    
     def _get_input_embeds_from_ids(self, ids) -> torch.Tensor:
         return self.model.get_input_embeddings()(ids)
 
     def get_run(self, run_id: str) -> Run:
         resp = get_run(self.platform_url, run_id)
-        if resp is None:
+        if resp is None or not isinstance(resp, Run):
             raise ValueError(f"Run with id {run_id} not found") 
         return resp
 
@@ -86,22 +68,7 @@ class Base_LM(ABC):
         return l2_normalized_matrix
 
     def update_run(self, run: Run):
-        id = update_app(self.platform_url, "/runs", run.dict())
-        return id
-
-    def update_explainer_model(self):
-        b = {
-            "model_checkpoint": self.model_checkpoint,
-            "model": self.model.config.model_type,
-            "tokenizer": self.tokenizer.name_or_path,
-            "model_type": self.model_type
-        }
-        id = update_app(self.platform_url, "/update_model", b)
-
-    def reset_model(self):
-        self.model.eval()
-        self.model.zero_grad()
-
+        return update_app(self.platform_url, "/runs", run.dict())
 
     @abstractmethod
     def predict(self, *args, **kwargs):
