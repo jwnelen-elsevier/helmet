@@ -113,7 +113,7 @@ class DEC_LM(Base_LM):
         
         if len(alternative_id) > 1:
             alternative_id = alternative_id[0]
-            print("Warning: alternative output has more than one token, using the first one, which is ", str(alternative_output_toks[0]))
+            print("Warning (v2): alternative output has more than one token, using the first one, which is ", str(alternative_output_toks[0]))
         
         # To get the first output token, for the contrast
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
