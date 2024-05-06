@@ -15,7 +15,7 @@ def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradien
     hook = embedding_layer.register_full_backward_hook(hook_layers)
     return hook
 
-def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=None):
+def analyze_token(wrapper, input_ids, correct=None, foil=None):
     # Get model gradients and input embeddings
     model = wrapper.model
     embedding_layer = wrapper.embeddings
@@ -28,10 +28,8 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
         # All is on CPU at this moment
         correct = input_ids[-1]
         input_ids = input_ids[:-1]
-        # input_mask = input_mask[]
 
     input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
-    # input_mask =  torch.tensor(input_mask).to(wrapper.device)
     
     with torch.enable_grad():
         model.eval()

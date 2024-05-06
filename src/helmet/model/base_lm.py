@@ -25,7 +25,7 @@ class Base_LM(ABC):
     def _encode_text(self, text, **kwargs):
         if isinstance(text, list):
             text = self.tokenizer.apply_chat_template(text, tokenize = False, add_generation_prompt = True)
-        # encode = conert_tokens_to_ids(tokenize(text))
+        # encode = convert_tokens_to_ids(tokenize(text))
         # encode plus will also give the attention mask
         return self.tokenizer.encode_plus(text, return_tensors="pt", **kwargs)
 

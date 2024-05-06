@@ -81,7 +81,6 @@ class DEC_LM(Base_LM):
 
         # Stay on CPU
         input_ids = input["input_ids"][0].detach().cpu().numpy()
-        attention_mask = input["attention_mask"].detach().cpu().numpy()
 
         # Catenate input_ids and output_token_ids
         merged = np.concatenate((input_ids, output_token_ids), 0)
@@ -93,7 +92,7 @@ class DEC_LM(Base_LM):
         for idx in range(start_index, total_length):
             curr_input_ids = merged[:idx]
             output_id = merged[idx]
-            base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, attention_mask, correct=output_id)
+            base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, correct=output_id)
             gradients = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
             result.append(gradients)
             print("finished token", idx, "of", total_length)
@@ -107,14 +106,11 @@ class DEC_LM(Base_LM):
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
-        input = self._encode_text(run.input.prompt) # on cpu
-        alternative_output = self._encode_text(alternative_str) # on cpu
+        input_ids = self.tokenizer.convert_tokens_to_ids(run.input.input_tokens) # on cpu
+        alternative_output = self._encode_text(alternative_str.strip()) # on cpu
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
         
         # Stay on CPU
-        input_ids = input["input_ids"][0].detach().cpu().numpy()
-        attention_mask = input["attention_mask"].detach().cpu().numpy()
-        
         output_id = output_token_ids[0]
         alternative_id = alternative_output["input_ids"][0]
 
@@ -122,7 +118,7 @@ class DEC_LM(Base_LM):
             print("Warning: alternative output has more than one token, using the first one")
             alternative_id = alternative_id[0]
         
-        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
+        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
         alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)

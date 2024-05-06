@@ -25,11 +25,13 @@ export const toPercentageString = (number, decimals = 2) => {
 };
 
 export const removeSpecialChars = (word) => {
-  return word
+  const stripped = word
     ?.replaceAll(/#/g, "")
     ?.replaceAll(/Ġ/g, "")
     ?.replaceAll("Ċ", "")
     ?.replaceAll("▁", "");
+  // if stripped is empty, return "_"
+  return stripped === "" ? "_" : stripped;
 };
 
 export const isNewWord = (word) => {
