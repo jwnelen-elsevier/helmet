@@ -79,11 +79,14 @@ class DEC_LM(Base_LM):
         input = self._encode_text(run.input.prompt) # on cpu
         output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
 
-        # Move to device
-        input_ids = input["input_ids"][0].detach()
-        attention_mask = input["attention_mask"].detach()
+        # Stay on CPU
+        input_ids = input["input_ids"][0].detach().cpu().numpy()
+        attention_mask = input["attention_mask"].detach().cpu().numpy()
 
-        merged = torch.cat((input_ids, output_token_ids), 0).detach().cpu().numpy()
+        # Catenate input_ids and output_token_ids
+        merged = np.concatenate((input_ids, output_token_ids), 0)
+
+        # merged = torch.cat((input_ids, output_token_ids), 0).detach().cpu().numpy()
 
         start_index = len(input_ids)
         total_length = len(merged)

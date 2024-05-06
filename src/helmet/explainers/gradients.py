@@ -30,7 +30,7 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
         input_ids = input_ids[:-1]
         input_mask = input_mask[:-1]
 
-    input_ids = torch.tensor(input_ids, device=wrapper.device, requires_grad=True).unsqueeze(0)
+    input_ids = torch.tensor(input_ids, device=wrapper.device).unsqueeze(0)
     with torch.enable_grad():
         A = model(input_ids=input_ids, output_attentions=False)
 
