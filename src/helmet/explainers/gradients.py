@@ -39,7 +39,7 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
 
         model.eval()
         A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
-        
+        print("A", A)
         # Backpropagate the gradient
         if foil is not None and correct != foil:
             (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
