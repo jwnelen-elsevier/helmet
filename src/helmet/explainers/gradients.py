@@ -33,22 +33,21 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
     input_mask =  torch.tensor(input_mask).to(wrapper.device)
     
-    model.eval()    
-    A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
+    with torch.enable_grad():
+        A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
 
-    # For contrastive explanations
-    if foil is not None and correct != foil:
-        ls = torch.tensor((A.logits[0][-1][correct]-A.logits[0][-1][foil]), requires_grad=True).detach()
-        ls.backward()
-    else:
-        # When doing just the correct token
-        p = torch.tensor(A.logits[0][-1][correct], requires_grad=True).detach()
-        p.backward()
-    
-    handle.remove()
-    hook.remove()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+        # For contrastive explanations
+        if foil is not None and correct != foil:
+            p = torch.tensor((A.logits[0][-1][correct]-A.logits[0][-1][foil]), requires_grad=True)
+        else:
+            p = torch.tensor(A.logits[0][-1][correct], requires_grad=True)
+
+        p.retain_grad.backward()
+        
+        handle.remove()
+        hook.remove()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
 
