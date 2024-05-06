@@ -35,16 +35,16 @@ def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=No
     model.eval()
     A = model(input_ids=input_ids, attention_mask=input_mask, output_attentions=False)
 
-    
-    # For contrastive explanations
-    if foil is not None and correct != foil:
-        ls = (A.logits[0][-1][correct]-A.logits[0][-1][foil])
-        torch.autograd.backward(ls)
-        # ls.backward()
-    else:
-    # When doing just the correct token
-        p = A.logits[0][-1][correct]
-        torch.autograd.backward(p)
+    with torch.enable_grad():
+        # For contrastive explanations
+        if foil is not None and correct != foil:
+            ls = (A.logits[0][-1][correct]-A.logits[0][-1][foil]).detach()
+            torch.autograd.backward(ls)
+            # ls.backward()
+        else:
+        # When doing just the correct token
+            p = A.logits[0][-1][correct].detach()
+            torch.autograd.backward(p)
         # p.backward()
     
     handle.remove()
