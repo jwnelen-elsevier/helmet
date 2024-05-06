@@ -59,7 +59,7 @@ class Base_LM(ABC):
             "explanations": explanations,
             "project_id": self.project_id,
             "execution_time_in_sec": execution_time_in_sec,
-            **kwargs # e.g. _id or groundtruth
+            **kwargs # e.g. _id, groundtruth, custom args
         })
 
     def normalize(self, attr):

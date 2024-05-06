@@ -68,7 +68,7 @@ class DEC_LM(Base_LM):
         execution_time = end - start
 
         input_str = self.token_ids_to_string(input["input_ids"][0]) # on cpu
-        formatted_run = self._format_run(input_str, output_str, [certainties], execution_time, groundtruth=groundtruth)
+        formatted_run = self._format_run(input_str, output_str, [certainties], execution_time, groundtruth=groundtruth, custom_args=generation_args)
 
         id = self.update_run(formatted_run)
 
