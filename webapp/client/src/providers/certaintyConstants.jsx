@@ -15,10 +15,15 @@ export const CertaintyConstantsProvider = ({ children }) => {
   const [lowCertainty, setLowCertainty] = useState(lowDefault);
   const [highCertainty, setHighCertainty] = useState(highDefault);
 
-  useEffect(() => {
-    localStorage.setItem("lowCertainty", lowCertainty);
-    localStorage.setItem("highCertainty", highCertainty);
-  }, [lowCertainty, highCertainty]);
+  const updateLowCertainty = (value) => {
+    setLowCertainty(value);
+    localStorage.setItem("lowCertainty", value);
+  };
+
+  const updateHighCertainty = (value) => {
+    setHighCertainty(value);
+    localStorage.setItem("highCertainty", value);
+  };
 
   useEffect(() => {
     const low = localStorage.getItem("lowCertainty");
@@ -37,8 +42,8 @@ export const CertaintyConstantsProvider = ({ children }) => {
       value={{
         lowCertainty,
         highCertainty,
-        setLowCertainty,
-        setHighCertainty,
+        updateLowCertainty,
+        updateHighCertainty,
       }}
     >
       {children}

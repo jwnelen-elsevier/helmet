@@ -2,17 +2,21 @@ import { Slider } from "@nextui-org/slider";
 import { useCertaintyConstants } from "providers/certaintyConstants";
 
 const Legenda = () => {
-  const { lowCertainty, highCertainty, setLowCertainty, setHighCertainty } =
-    useCertaintyConstants();
+  const {
+    lowCertainty,
+    highCertainty,
+    updateLowCertainty,
+    updateHighCertainty,
+  } = useCertaintyConstants();
 
   const handleLowCertaintyChange = (v) => {
     const newVal = Math.min(v, highCertainty);
-    setLowCertainty(newVal);
+    updateLowCertainty(newVal);
   };
 
   const handleHighCertaintyChange = (v) => {
     const newVal = Math.max(v, lowCertainty);
-    setHighCertainty(newVal);
+    updateHighCertainty(newVal);
   };
 
   return (
@@ -33,7 +37,7 @@ const Legenda = () => {
         <Slider
           label="High Certainty Threshold"
           size="sm"
-          value={highCertainty}
+          value={highCertainty ? highCertainty : 0.5}
           onChange={(v) => handleHighCertaintyChange(v)}
           step={0.05}
           minValue={0}
@@ -59,7 +63,7 @@ const Legenda = () => {
         <Slider
           label="Low Certainty Threshold"
           size="sm"
-          value={lowCertainty}
+          value={lowCertainty ? lowCertainty : 0.3}
           onChange={(v) => handleLowCertaintyChange(v)}
           step={0.05}
           minValue={0}

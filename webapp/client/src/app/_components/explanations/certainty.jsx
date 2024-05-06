@@ -1,15 +1,12 @@
 import clsx from "clsx";
 import { marginStyle } from "utils/strings";
 
-import {
-  highCertainty,
-  highColor,
-  lowCertainty,
-  lowColor,
-  mediumColor,
-} from "utils/constants";
+import { useCertaintyConstants } from "providers/certaintyConstants";
+import { highColor, lowColor, mediumColor } from "utils/constants";
 
 const CertaintyExplainer = ({ certainties, output }) => {
+  const { highCertainty, lowCertainty } = useCertaintyConstants();
+
   const color = (value) =>
     value >= highCertainty
       ? highColor
