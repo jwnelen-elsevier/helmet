@@ -113,10 +113,10 @@ class DEC_LM(Base_LM):
         # Stay on CPU
         output_id = output_token_ids[0]
         alternative_id = alternative_output["input_ids"][0]
-
+        
         if len(alternative_id) > 1:
-            print("Warning: alternative output has more than one token, using the first one")
             alternative_id = alternative_id[0]
+            print("Warning: alternative output has more than one token, using the first one, which is ", self.tokenizer.decode(alternative_id, skip_special_tokens=True))
         
         saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
