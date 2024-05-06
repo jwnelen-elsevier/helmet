@@ -1,12 +1,13 @@
 import clsx from "clsx";
-import { marginStyle, toPercentageString } from "utils/strings";
+import { marginStyle } from "utils/strings";
 
-const lowCertainty = 0.1;
-const highCertainty = 0.3;
-
-const highColor = "bg-green-100";
-const mediumColor = "bg-yellow-100";
-const lowColor = "bg-red-100";
+import {
+  highCertainty,
+  highColor,
+  lowCertainty,
+  lowColor,
+  mediumColor,
+} from "utils/constants";
 
 const CertaintyExplainer = ({ certainties, output }) => {
   const color = (value) =>
@@ -49,17 +50,6 @@ const CertaintyExplainer = ({ certainties, output }) => {
             </div>
           );
         })}
-      </div>
-      <div className="flex gap-2">
-        <span className={clsx("px-2 py-1 rounded", highColor)}>
-          P {">="} {toPercentageString(highCertainty, 0)}
-        </span>
-        <span className={clsx("px-2 py-1 rounded", mediumColor)}>
-          P {">="} {toPercentageString(lowCertainty, 0)}
-        </span>
-        <span className={clsx("px-2 py-1 rounded", lowColor)}>
-          P {"<"} {toPercentageString(lowCertainty, 0)}
-        </span>
       </div>
     </div>
   );

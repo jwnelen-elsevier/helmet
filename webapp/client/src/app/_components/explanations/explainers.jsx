@@ -14,7 +14,7 @@ import {
 
 const ExplanationTitle = ({ explanationName }) => {
   return (
-    <h3 className="inline-flex gap-2 text-xl items-center bold">
+    <h3 className="inline-flex gap-2 text-xl items-center">
       {explanationName}{" "}
       <Tooltip showArrow={true} content={"Info about this method"}>
         <Link href={"/resources#gradientxinput"}>
