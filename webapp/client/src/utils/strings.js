@@ -34,12 +34,17 @@ export const removeSpecialChars = (word) => {
   return stripped === "" ? "_" : stripped;
 };
 
+function isNumber(str) {
+  return /^[0-9]+$/.test(str);
+}
+
 export const isNewWord = (word) => {
-  return (
-    !word.includes([",", "!", ".", "?", ":", ";"]) ||
-    !word.includes("##") ||
-    word.includes("Ġ", "_")
-  );
+  if (isNumber(word)) return false;
+  if (word.split("").includes(["Ġ", "_", "▁"])) return true;
+  debugger;
+  return !word
+    .split("")
+    .includes([",", "!", ".", "?", ":", ";", "'", "$", "##"]);
 };
 
 export const marginStyle = (word) => {
@@ -49,5 +54,6 @@ export const marginStyle = (word) => {
 
   const addSpace = isNewWord(word);
   let trimmedWord = removeSpecialChars(word);
+
   return { trimmedWord, addSpace };
 };

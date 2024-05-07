@@ -12,7 +12,8 @@ def register_embedding_list_hook(model, embedding_layer, embeddings_list):
 def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradients):
     def hook_layers(module, grad_in, grad_out):
         embeddings_gradients.append(grad_out[0].detach().cpu().numpy())
-    hook = embedding_layer.register_full_backward_hook(hook_layers)
+    hook = embedding_layer.register_backward_hook(hook_layers)
+    # hook = embedding_layer.register_full_backward_hook(hook_layers)
     return hook
 
 def analyze_token(wrapper, input_ids, correct=None, foil=None):
@@ -32,6 +33,8 @@ def analyze_token(wrapper, input_ids, correct=None, foil=None):
     input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
     
     with torch.enable_grad():
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         model.eval()
         for param in model.parameters():
             param.grad = None
@@ -40,12 +43,11 @@ def analyze_token(wrapper, input_ids, correct=None, foil=None):
 
         # For contrastive explanations
         if foil is not None and correct != foil:
-            p = A.logits[0][-1][correct] - A.logits[0][-1][foil]
+            p = A.logits[0][-1][correct] - A.logits[0][-1][foil].detach().cpu()
         else:
             # for feature attributions
-            p = A.logits[0][-1][correct]
+            p = A.logits[0][-1][correct].detach().cpu()
 
-        # p.retain_grad() Maybe needed?
         p.backward()
         
         handle.remove()
