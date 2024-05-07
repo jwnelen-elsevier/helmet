@@ -1,5 +1,6 @@
 // Create a component that will highlight text
 import clsx from "clsx";
+import { useState } from "react";
 import { marginStyle } from "utils/strings";
 
 const TextHighlighter = ({
@@ -9,8 +10,9 @@ const TextHighlighter = ({
   setHoveredIndex = () => {},
 }) => {
   const showAttributions = false;
-  const lowest = -0.5;
-  const highest = 0.5;
+  const lowest = -0.2;
+  const highest = 0.2;
+  const [locked, setLocked] = useState(false);
 
   const color = (value) => {
     // Map to new range of 0 to 1000 with interval of 50
@@ -21,7 +23,7 @@ const TextHighlighter = ({
     const colorSaturation = Math.floor(newValue / newInterval) * newInterval;
     let colorHue = value < 0 ? "red" : "blue";
     // Kind of threshold for when we are highlighting
-    colorHue = Math.abs(value) < 0.05 ? "white" : colorHue;
+    colorHue = Math.abs(value) < 0.02 ? "white" : colorHue;
 
     // Treshold for white text on dark background
     if (colorSaturation > 100) {
@@ -46,8 +48,13 @@ const TextHighlighter = ({
               <span
                 className={clsx(`rounded-sm whitespace-pre-line`, color(f), {
                   "bg-slate-400": i === hoveredIndex,
+                  "bg-slate-300": locked && i === hoveredIndex,
+                  "hover:cursor-default": !locked && i === hoveredIndex,
                 })}
-                onMouseEnter={() => setHoveredIndex(i)}
+                onClick={() => setLocked((prev) => !prev)}
+                onMouseEnter={() => {
+                  if (!locked) setHoveredIndex(i);
+                }}
               >
                 {trimmedWord}
               </span>
