@@ -43,10 +43,10 @@ def analyze_token(wrapper, input_ids, correct=None, foil=None):
 
         # For contrastive explanations
         if foil is not None and correct != foil:
-            p = A.logits[0][-1][correct] - A.logits[0][-1][foil].detach().cpu()
+            p = A.logits[0][-1][correct] - A.logits[0][-1][foil]
         else:
             # for feature attributions
-            p = A.logits[0][-1][correct].detach().cpu()
+            p = A.logits[0][-1][correct]
 
         p.backward()
         
