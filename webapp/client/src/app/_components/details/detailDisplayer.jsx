@@ -15,6 +15,7 @@ const DetailDisplayer = ({ props }) => {
     _id,
     model_checkpoint,
     execution_time_in_sec,
+    custom_args = {},
     groundtruth = "not provided",
   } = props;
 
@@ -46,6 +47,12 @@ const DetailDisplayer = ({ props }) => {
       <p className="border rounded p-5 font-bold">
         Output: <span className="font-normal">{output.output_str}</span>
       </p>
+      {Object.keys(custom_args).length > 0 && (
+        <p className="border rounded p-5">
+          <span className="font-bold">Custom arguments: </span>
+          <span className="font-mono">{JSON.stringify(custom_args)}</span>
+        </p>
+      )}
       <p className="border rounded p-5 font-bold">
         Groundtruth: <span className="font-normal">{groundtruth}</span>
       </p>

@@ -13,37 +13,47 @@ def register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradien
     def hook_layers(module, grad_in, grad_out):
         embeddings_gradients.append(grad_out[0].detach().cpu().numpy())
     hook = embedding_layer.register_full_backward_hook(hook_layers)
+    # hook = embedding_layer.register_full_backward_hook(hook_layers)
     return hook
 
-def analyze_token(wrapper, input_ids, input_mask, batch=0, correct=None, foil=None):
+def analyze_token(wrapper, input_ids, correct=None, foil=None):
     # Get model gradients and input embeddings
     model = wrapper.model
     embedding_layer = wrapper.embeddings
 
-    model.eval()
     embeddings_list = []
     handle = register_embedding_list_hook(model, embedding_layer, embeddings_list)
     embeddings_gradients = []
     hook = register_embedding_gradient_hooks(model, embedding_layer, embeddings_gradients)
     if correct is None:
+        # All is on CPU at this moment
         correct = input_ids[-1]
         input_ids = input_ids[:-1]
-        input_mask = input_mask[:-1]
 
-    input_ids_new = torch.tensor(input_ids.clone().detach())
-    input_ids_unsqueezed = input_ids_new.unsqueeze(0)
-
+    input_ids = torch.tensor(input_ids).unsqueeze(0).to(wrapper.device)
+    
     with torch.enable_grad():
-        A = model(input_ids=input_ids_unsqueezed, output_attentions=False)
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        model.eval()
+        for param in model.parameters():
+            param.grad = None
+        
+        A = model(input_ids=input_ids, output_attentions=False)
 
+        # For contrastive explanations
         if foil is not None and correct != foil:
-            (A.logits[0][-1][correct]-A.logits[0][-1][foil]).backward()
+            p = A.logits[0][-1][correct] - A.logits[0][-1][foil]
         else:
-            # Take the last logits and backpropagate the gradient
+            # for feature attributions
             p = A.logits[0][-1][correct]
-            p.backward()
+
+        p.backward()
+        
         handle.remove()
         hook.remove()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
     return np.array(embeddings_gradients).squeeze(), np.array(embeddings_list).squeeze()
 

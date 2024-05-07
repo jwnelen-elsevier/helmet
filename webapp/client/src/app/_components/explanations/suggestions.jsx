@@ -13,7 +13,7 @@ const ExplanationSuggestion = ({ explanationName, subText = "", code }) => {
 
 const FeatureAttrSuggestion = ({ id }) => {
   const explanationName = "Feature Attribution";
-  const code = `model.saliency_explainer("${id}")`;
+  const code = `model.feature_attribution("${id}")`;
   return (
     <ExplanationSuggestion
       explanationName={explanationName}

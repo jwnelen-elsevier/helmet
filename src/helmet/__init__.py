@@ -21,7 +21,8 @@ model_type_to_model_wrapper = {
 }
 
 
-def from_pretrained(model_checkpoint: str, model_type: str, embeddings_path:str, project_id:str,                     device:str, platform_url:str = url, model_config: dict={}):
+def from_pretrained(model_checkpoint: str, model_type: str, embeddings_path:str, project_id:str, 
+                    device:str, platform_url:str = url, model_config: dict={}):
     """
     Load a model from a checkpoint and return the model object
     Args:
@@ -34,16 +35,15 @@ def from_pretrained(model_checkpoint: str, model_type: str, embeddings_path:str,
         model_config (dict): The model configuration
     """
     # First checks
-    assert device in ["cpu", "cuda"], AssertionError("device must be either 'cpu' or 'cuda'")
     assert model_type in ["enc", "dec", "enc-dec"], AssertionError("model_type must be either 'enc', 'dec', or 'enc-dec'")
     if model_type in ["enc", "enc-dec"]:
         raise NotImplementedError("model_type 'enc' and 'enc-dec' not implemented yet")
     
+    assert device in ["cpu", "cuda"], AssertionError("device must be either 'cpu' or 'cuda'")
     if device == "cuda":
         assert torch.cuda.is_available(), AssertionError("cuda is not available")
         torch.device(device)
 
-    
     print("updates will be sent to", platform_url)
     print("setting up model with config, ", model_config)
 

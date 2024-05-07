@@ -36,39 +36,39 @@ class DEC_LM(Base_LM):
     
     def forward(self, inputs, generation_args, **kwargs) -> Tuple[list, CertaintyExplanation]:
         input_len = len(inputs["input_ids"][0])
-
-        generated_outputs = self.model.generate(
-            **inputs, 
-            return_dict_in_generate=True,
-            output_scores=True, # this gets the scores
-            **generation_args,
-            **kwargs
-        )
+        inputs.to(self.device)
         
-        transition_scores = self.model.compute_transition_scores(generated_outputs.sequences, generated_outputs.scores, normalize_logits=True)
-        gen_sequences = generated_outputs.sequences[:, input_len:]
-        certainties = [float(np.exp(score.cpu().numpy())) for score in transition_scores[0]]
+        with torch.no_grad():
+            generated_outputs = self.model.generate(
+            **inputs, 
+                return_dict_in_generate=True,
+                output_scores=True, # this gets the scores
+                **generation_args,
+                **kwargs
+            )
+        
+            transition_scores = self.model.compute_transition_scores(generated_outputs.sequences, generated_outputs.scores, normalize_logits=True)
+            
+            transition_scores = transition_scores[0].cpu().numpy()
+            certainties = [float(np.exp(score)) for score in transition_scores]
 
-        outs = gen_sequences[0].detach().cpu().numpy() 
+            gen_sequences = generated_outputs.sequences[:, input_len:]
+            outs = gen_sequences[0].detach().cpu().numpy() 
 
         return outs, CertaintyExplanation(certainties)
     
     def predict(self, prompt, generation_args, groundtruth=None, *args, **kwargs):
         start = time.time()
         input = self._encode_text(prompt)
-        input_str = self.token_ids_to_string(input["input_ids"][0])
-        
-        print("Processed input:", input_str)
-        
+
         output_token_ids, certainties = self.forward(input, generation_args)
         output_str: str = self.token_ids_to_string(output_token_ids)
 
-        print("Output:", output_str)
-        
         end = time.time()
         execution_time = end - start
 
-        formatted_run = self._format_run(input_str, output_str, [certainties], execution_time, groundtruth=groundtruth)
+        input_str = self.token_ids_to_string(input["input_ids"][0]) # on cpu
+        formatted_run = self._format_run(input_str, output_str, [certainties], execution_time, groundtruth=groundtruth, custom_args=generation_args)
 
         id = self.update_run(formatted_run)
 
@@ -76,13 +76,14 @@ class DEC_LM(Base_LM):
 
     def feature_attribution(self, id: str, **kwargs) -> FeatureAttributionExplainer:
         run: Run = self.get_run(id)
-        input = self._encode_text(run.input.prompt) #on cuda
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) #on cpu
-        output_token_ids = torch.tensor(output_token_ids).to(self.device)
-        input_ids = input["input_ids"][0]
-        attention_mask = input["attention_mask"]
+        input = self._encode_text(run.input.prompt) # on cpu
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
 
-        merged = torch.cat((input_ids, output_token_ids), 0)
+        # Stay on CPU
+        input_ids = input["input_ids"][0].detach().cpu().numpy()
+
+        # Catenate input_ids and output_token_ids
+        merged = np.concatenate((input_ids, output_token_ids), 0)
 
         start_index = len(input_ids)
         total_length = len(merged)
@@ -91,7 +92,7 @@ class DEC_LM(Base_LM):
         for idx in range(start_index, total_length):
             curr_input_ids = merged[:idx]
             output_id = merged[idx]
-            base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, attention_mask, correct=output_id)
+            base_saliency_matrix, base_embd_matrix = analyze_token(self, curr_input_ids, correct=output_id)
             gradients = input_x_gradient(base_saliency_matrix, base_embd_matrix, normalize=True)
             result.append(gradients)
             print("finished token", idx, "of", total_length)
@@ -105,20 +106,20 @@ class DEC_LM(Base_LM):
     
     def contrastive_explainer(self, id: str, alternative_str: str, **kwargs) -> ContrastiveExplanation:
         run: Run = self.get_run(id)
-        input = self._tokenize(run.input.prompt)
-        alternative_output = self._encode_text(alternative_str)
-        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens)
-
-        input_ids = self.to_device(input["input_ids"][0])
-        attention_mask = self.to_device(input["attention_mask"])
         
+        input_ids = self.tokenizer.convert_tokens_to_ids(run.input.input_tokens) # on cpu
+        alternative_output_toks = self.tokenizer.tokenize(alternative_str.strip()) # on cpu
+        alternative_id = self.tokenizer.convert_tokens_to_ids(alternative_output_toks) # on cpu
+        
+        if len(alternative_id) > 1:
+            alternative_id = alternative_id[0]
+            print("Warning (v2): alternative output has more than one token, using the first one, which is ", str(alternative_output_toks[0]))
+        
+        # To get the first output token, for the contrast
+        output_token_ids = self.tokenizer.convert_tokens_to_ids(run.output.tokens) # on cpu
         output_id = output_token_ids[0]
 
-        alternative_id = alternative_output["input_ids"][0]
-        if len(alternative_id) > 1:
-            print("Warning: alternative output has more than one token, using the first one")
-            alternative_id = alternative_id[0]
-        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, attention_mask, correct=output_id, foil=alternative_id)
+        saliency_matrix, base_embd_matrix = analyze_token(self, input_ids, correct=output_id, foil=alternative_id)
         gradients = input_x_gradient(saliency_matrix, base_embd_matrix, normalize=True)
 
         alternative_output_str = self.tokenizer.decode(alternative_id, skip_special_tokens=True)
