@@ -71,8 +71,8 @@ export default function Page() {
             <div className="text-gray-600 mb-3">
               <p>
                 <span className="font-bold">Gradient x Input: </span>
-                <span>
-                  2 "Do they raise or lower the probablity of the next token?"
+                <span className="italic">
+                  Do they raise or lower the probablity of the next token?
                 </span>
               </p>
               <p>
@@ -87,8 +87,8 @@ export default function Page() {
               <h4>Resources on Feature Attribution</h4>
               <ul className="list-disc ml-5">
                 <li>
-                  "Learning Important Features Through Propagating Activation
-                  Differences", Avanti Shrikumar 2019
+                  Learning Important Features Through Propagating Activation
+                  Differences, Avanti Shrikumar 2019
                   <Url href={"https://arxiv.org/pdf/1704.02685"}></Url>
                 </li>
                 {/* Need to double check if this is true */}
@@ -151,26 +151,25 @@ export default function Page() {
             </li>
             <li>
               M. Danilevsky, K. Qian, R. Aharonov, Y. Katsis, B. Kawas, and P.
-              Sen, “A Survey of the State of Explainable AI for Natural Language
-              Processing,” in Proceedings of the 1st Conference of the
-              Asia-Pacific Chapter of the Association for Computational
-              Linguistics
+              Sen, &quot;A Survey of the State of Explainable AI for Natural
+              Language Processing,&quot; in Proceedings of the 1st Conference of
+              the Asia-Pacific Chapter of the Association for Computational
+              Linguistics and the 10th International Joint Conference on Natural
+              Language Processing, Suzhou, China: Association for Computational
+              Linguistics, Dec. 2020, pp. 447–459. Accessed: Oct. 27, 2023.
+              [Online]. Available: https://aclanthology.org/2020.aacl-main.46
             </li>
-            and the 10th International Joint Conference on Natural Language
-            Processing, Suzhou, China: Association for Computational
-            Linguistics, Dec. 2020, pp. 447–459. Accessed: Oct. 27, 2023.
-            [Online]. Available: https://aclanthology.org/2020.aacl-main.46
             <li>
-              H. Luo and L. Specia, “From Understanding to Utilization: A Survey
-              on Explainability for Large Language Models,” Jan. 2024. Accessed:
-              Jan. 29, 2024. [Online]. Available:
+              H. Luo and L. Specia, &quot;From Understanding to Utilization: A
+              Survey on Explainability for Large Language Models,&quot; Jan.
+              2024. Accessed: Jan. 29, 2024. [Online]. Available:
               https://www.semanticscholar.org/paper/
             </li>
             From-Understanding-to-Utilization%3A-A-Survey-on-for-Luo-Specia/3f877562995d1408b0b3abd5dfbbe8eeecb6061e?utm_source=alert_email&utm_content=LibraryFolder&utm_campaign=AlertEmails_WEEKLY&utm_term=LibraryFolder&email_index=1-2-4&utm_medium=28267295
             <li>
-              Madsen, S. Reddy, and S. Chandar, “Post-hoc Interpretability for
-              Neural NLP: A Survey,” ACM Comput. Surv., vol. 55, no. 8, p.
-              155:1-155:42, Dec. 2022, doi: 10.1145/3546577.
+              Madsen, S. Reddy, and S. Chandar, &quot;Post-hoc Interpretability
+              for Neural NLP: A Survey,&quot; ACM Comput. Surv., vol. 55, no. 8,
+              p. 155:1-155:42, Dec. 2022, doi: 10.1145/3546577.
             </li>
           </AccordionItem>
         </Accordion>
